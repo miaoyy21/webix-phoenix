@@ -1,0 +1,30 @@
+{
+  "name": "webix-phoenix",
+  "version": "1.0.0",
+  "description": "一个低代码量的配置平台",
+  "main": "bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kazmodon@protonmail.com",
+  "license": "GPL",
+  "dependencies": {
+    "@mdi/font": "^6.7.96",
+    "@wbx/view-monaco-editor": "^0.18.0",
+    "css-loader": "^6.7.1",
+    "monaco-editor-webpack-plugin": "^7.0.1",
+    "style-loader": "^3.3.1",
+    "underscore": "^1.13.4",
+    "uuid": "^8.3.2",
+    "webix": "^9.4.0",
+    "webpack": "^5.72.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-transform-async-to-generator": "^7.17.12",
+    "@babel/plugin-transform-regenerator": "^7.18.0",
+    "@babel/plugin-transform-runtime": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5"
+  }
+}
