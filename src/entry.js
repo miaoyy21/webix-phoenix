@@ -110,8 +110,7 @@ webix.ready(function () {
         webix.ajax().get("/api/sys/login?method=ByToken", params)
             .then((data) => {
                 var menus = _.map(
-                    _.sortBy(data.json(), (o) => Number(o["order_"])),
-                    (d) => ({
+                    _.sortBy(data.json(), (o) => Number(o["order_"])), (d) => ({
                         "id": d["id"],
                         "menu_": d["menu_"],
                         "value": d["name_"],
