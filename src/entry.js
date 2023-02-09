@@ -109,7 +109,15 @@ webix.ready(function () {
         webix.extend($$("PHOENIX_MENU"), webix.ProgressBar).showProgress();
         webix.ajax().get("/api/sys/login?method=ByToken", params)
             .then((data) => {
-                var menus = _.map(data.json(), (d) => ({ "id": d["id"], "menu_": d["menu_"], "value": d["name_"], "parent_id_": d["parent_id_"], "icon": d["icon_"] }));
+                var menus = _.map(
+                    _.sortBy(data.json(), (o) => Number(o["order_"])),
+                    (d) => ({
+                        "id": d["id"],
+                        "menu_": d["menu_"],
+                        "value": d["name_"],
+                        "parent_id_": d["parent_id_"],
+                        "icon": d["icon_"]
+                    }));
 
                 $$("PHOENIX_MENU").clearAll();
                 $$("PHOENIX_MENU").define("data", utils.tree.buildTree(menus))
