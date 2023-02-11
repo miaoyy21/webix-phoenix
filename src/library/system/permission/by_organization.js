@@ -54,7 +54,7 @@ function builder() {
                                     $$(tree_menu_id).clearAll();
                                     webix.extend($$(tree_menu_id), webix.ProgressBar).showProgress();
 
-                                    webix.ajax("/api/sys/permissions", { "organization_id": id })
+                                    webix.ajax("/api/sys/organization_roles?method=Permissions", { "organization_id": id })
                                         .then((data) => {
                                             $$(tree_menu_id).define("data", utils.tree.buildTree(data.json()))
                                             $$(tree_menu_id).openAll();
