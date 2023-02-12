@@ -133,6 +133,9 @@ function builder() {
                                     isChanged = true;
                                 }
                             },
+                            onAfterDrop(context, native_event) {
+                                isChanged = true;
+                            },
                             onBeforeLoad() {
                                 this.showOverlay("数据加载中...");
                             },
