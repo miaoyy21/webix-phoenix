@@ -3,7 +3,7 @@ function builder() {
         uploader: "doc_", // 设置附件上传组件 String ｜ Array
         data: {
             "text_": "It is a Text",
-            "doc_": "dgxvkfzyqd9kcb8f97fuajbgx8g4shtg,dgxvkn55gc4mx6o2arbcw4m4autpccwu"
+            "doc_": "dhp97jjoz7faptpq9amvahnrgt9n9fuk,dhp97km8g725ha7k9pqvrgrhnpmnttvo"
         }
     });
     var out = utils.UUID();

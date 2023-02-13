@@ -28,7 +28,7 @@ function uploader(options) {
                     link: list_id,
                     accept: _options["accept"],
                     multiple: _options["multiple"],
-                    upload: "/api/sys/docs?method=Upload",
+                    upload: "/api/sys/docs?method=Upload"
                 },
                 {
                     id: list_id,
@@ -41,10 +41,11 @@ function uploader(options) {
                     on: {
                         onItemClick(id) {
                             var item = $$(list_id).getItem(id);
-                            if (!item) return;
+                            console.log($$(list_id));
 
-                            webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: item.value }, function (text, data) {
-                                webix.html.download(data, item["name"]);
+                            webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: id }, function (text, data) {
+                                // TODO 设置刚上传成功的文件名
+                                webix.html.download(data, item ? item["name"] : id);
                             });
                         }
                     }

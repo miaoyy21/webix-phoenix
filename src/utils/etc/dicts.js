@@ -5,7 +5,6 @@ function load() {
     var data = webix.ajax().sync().get("/api/sys/dict_items?scope=ALL&PHOENIX_USING_MENU=0");
 
     dicts = _.groupBy(JSON.parse(data.response), "code");
-    console.log(dicts)
 }
 
 load();
