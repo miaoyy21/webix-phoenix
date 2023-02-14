@@ -9,12 +9,12 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "button", label: "创建", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
+                        view: "button", label: "新建流程", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                         click() {
                             open(
                                 { "grid": grid_id, "operation": "insert" },
                                 {
-                                    "diagram": { "category": "Diagram", "exceed_days_": "0" },
+                                    "diagram": { "category": "Diagram", "icon_": "mdi mdi-checkbox-blank-circle-outline", "exceed_days_": "0" },
                                     "nodes": [],
                                     "links": [],
                                 },
@@ -48,6 +48,7 @@ function builder() {
                 scrollX: false,
                 drag: "order",
                 select: true,
+                rightSplit: 1,
                 url: "/api/wf/diagrams",
                 save: {
                     url: "/api/wf/diagrams",
@@ -62,7 +63,7 @@ function builder() {
                     {
                         id: "description_", header: [{ text: "描述", css: { "text-align": "center" } }, { content: "textFilter" }], sort: "text", fillspace: true
                     },
-                    { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                    { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["date"].format, width: 80, css: { "text-align": "center" } },
                     { id: "update_at_", header: { text: "修改时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                     { id: "publish_at_", header: { text: "发布时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                     {

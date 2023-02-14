@@ -20,6 +20,7 @@ function open(item, options, model) {
         { id: "category", label: "类型", options: categories },
         { id: "code_", label: "流程编码", type: "text", tooltip: "流程编码需与代码中定义的一致" },
         { id: "name_", label: "流程名称", type: "text", tooltip: "流程的名称" },
+        { id: "icon_", label: "[图标]", tooltip: "双击选择图标" },
         { id: "description_", label: "流程描述", type: "text", tooltip: "流程的描述信息" },
         { id: "keyword_", label: "关键字", type: "text", tooltip: "表单信息要素中有重要意义的信息要素。示例：物资编号 #code_#；物资名称 #name_#" },
         {
@@ -161,7 +162,7 @@ function open(item, options, model) {
         modal: true,
         fullscreen: true,
         animate: { type: "flip", subtype: "vertical" },
-        head: "流程设计",
+        head: "流程设计器",
         position: "center",
         body: {
             rows: [
@@ -170,7 +171,7 @@ function open(item, options, model) {
                     cols: [
                         { width: 12 },
                         {
-                            view: "button", label: "保存", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
+                            view: "button", label: "流程保存", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
                             click() {
                                 webix.ajax().post("/api/wf/diagrams?method=Save", {
                                     "operation": item["operation"],
@@ -205,7 +206,7 @@ function open(item, options, model) {
                             }
                         },
                         {
-                            view: "button", label: "发布", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-rocket-launch",
+                            view: "button", label: "流程发布", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-rocket-launch",
                             click() {
                                 webix.ajax().post("/api/wf/diagrams?method=Publish", { "id": item["id"] })
                                     .then((res) => {
@@ -421,6 +422,16 @@ function open(item, options, model) {
                                                 find["executor_name_roles_"] = name;
 
                                                 return true;
+                                            }
+                                        })
+                                    } else if (_.isEqual(id, "icon_")) {
+                                        // 选择图标
+                                        utils.windows.icons({
+                                            callback(icon) {
+                                                item.value = icon;
+                                                self.refresh(id);
+
+                                                options.diagram["icon_"] = icon;
                                             }
                                         })
                                     }
