@@ -4,7 +4,7 @@ function builder() {
     // var grid_index_id = utils.UUID();
     // var grid_foreign_key_id = utils.UUID();
 
-    function open_window(table_id) {
+    function open(table_id) {
         var isChanged = false;
 
         webix.ui({
@@ -385,7 +385,7 @@ function builder() {
                         var row = this.getItem(item.row);
                         if (!row["sync_status_"]) return;
 
-                        open_window(item.row);
+                        open(item.row);
                     },
                     btn_remove(e, item) {
                         $$(grid_id).select(item.row, false);

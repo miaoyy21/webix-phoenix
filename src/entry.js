@@ -102,8 +102,6 @@ webix.ready(function () {
         ]
     }).hide();
 
-    // 李伟 七部
-
     // 自动加载用户菜单
     function reloadMenus(params) {
         webix.extend($$("PHOENIX_MENU"), webix.ProgressBar).showProgress();
@@ -211,7 +209,7 @@ webix.ready(function () {
                                     //     template: "这是首页"
                                     // }
                                     _.extend(
-                                        PHOENIX_MENUS.diagram_designer.builder(),
+                                        PHOENIX_MENUS.diagram_full_designer.builder(),
                                         {
                                             id: "PHOENIX_PAGE_HOME",
                                             css: { "border-left": "none", "border-top": "none" }
