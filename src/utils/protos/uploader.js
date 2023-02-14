@@ -1,5 +1,8 @@
 function uploader(options) {
+    var uploader_id = utils.UUID();
     var list_id = utils.UUID();
+
+    console.log(options);
 
     // 默认配置
     var _options = _.extend(
@@ -19,6 +22,7 @@ function uploader(options) {
         body: {
             rows: [
                 {
+                    id: uploader_id,
                     view: "uploader",
                     value: "上传",
                     inputWidth: 120,
@@ -28,7 +32,17 @@ function uploader(options) {
                     link: list_id,
                     accept: _options["accept"],
                     multiple: _options["multiple"],
-                    upload: "/api/sys/docs?method=Upload"
+                    upload: "/api/sys/docs?method=Upload",
+                    on: {
+                        // ⭐️ 在文件上传完成后，修改文件ID。否则无法查看和删除
+                        onUploadComplete(response) {
+                            _.each(this.files.data.pull,
+                                (v, k) => {
+                                    if (k != v.id) this.files.data.changeId(k, v.id);
+                                },
+                            );
+                        }
+                    }
                 },
                 {
                     id: list_id,
@@ -39,10 +53,12 @@ function uploader(options) {
                     template: (_options["editable"] ? "{common.removeIcon()}{common.percent()}" : "")
                         + "<div style='float:right'>#sizetext#</div><a>{common.fileName()}</a>",
                     on: {
-                        onItemClick(id) {
-                            var item = $$(list_id).getItem(id);
-                            console.log($$(list_id));
+                        onItemClick(id, e, node) {
+                            console.log(id);
+                            console.log($$(uploader_id).files.data.pull);
 
+
+                            var item = $$(list_id).getItem(id);
                             webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: id }, function (text, data) {
                                 // TODO 设置刚上传成功的文件名
                                 webix.html.download(data, item ? item["name"] : id);

@@ -3,6 +3,7 @@ function form(options) {
 
     // Form ID
     var form_id = options["id"] || utils.UUID();
+
     var _options = _.extend(
         {
             id: form_id,
@@ -82,6 +83,8 @@ function form(options) {
             }
         })
     }
+
+    console.log(_options);
 
     return _options;
 };
