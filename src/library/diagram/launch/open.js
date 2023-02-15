@@ -40,10 +40,9 @@ function open(options) {
                             width: 240,
                             select: true,
                             data: [
-                                { id: "Revoked", value: "撤回", badge: "1" },
-                                { id: "Rejected", value: "驳回" },
-                                { id: "Suspended", value: "挂起", badge: "12" },
+                                { id: "DraftRevokedRejected", value: "草稿箱", badge: "1" },
                                 { id: "Executing", value: "执行中", badge: "24" },
+                                { id: "Suspended", value: "已挂起" },
                                 { id: "Finished", value: "已结束", badge: "1224" }
                             ],
                             on: {
