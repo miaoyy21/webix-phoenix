@@ -1,4 +1,4 @@
-import { open } from "./open";
+import { open } from "./window";
 
 function builder() {
     var dview = utils.UUID();

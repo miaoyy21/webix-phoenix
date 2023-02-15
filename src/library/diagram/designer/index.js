@@ -1,4 +1,4 @@
-import { open } from "./open";
+import { open } from "./window";
 
 function builder() {
     var grid_id = utils.UUID();
@@ -45,7 +45,6 @@ function builder() {
                 resizeColumn: true,
                 editable: true,
                 tooltip: true,
-                scrollX: false,
                 drag: "order",
                 select: true,
                 rightSplit: 1,
@@ -118,18 +117,6 @@ function builder() {
                         this.data.each(function (obj, i) {
                             obj.index = i + 1;
                         })
-                    },
-                    onBeforeEditStart(cell) {
-                        if (cell.column === "name_" || cell.column === "description_") {
-                            return true;
-                        }
-
-                        var row = this.getItem(cell.row);
-                        if (_.isUndefined(row["sync_status_"]) || _.isNull(row["sync_status_"]) || row["sync_status_"] === "Creating") {
-                            return true;
-                        }
-
-                        return false;
                     },
                     onBeforeLoad() {
                         this.showOverlay("数据加载中...");
