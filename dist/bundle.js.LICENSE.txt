@@ -1,5 +1,3 @@
-/*! Author: kazmodon@protonmail.com */
-
 /*! attaching onStoreUpdated event
      **/
 
@@ -40,8 +38,6 @@
      *		object { post: { hash of post params as name: value }, get: { hash of get params as name: value } }
      **/
 
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
 /*! select text in textarea
      **/
 
@@ -65,10 +61,11 @@
      *		event object
      **/
 
+/*! 作者: 530308418@qq.com */
 
 /**
  * @license
- * webix UI v.9.3.0
+ * webix UI v.9.4.0
  * This software is allowed to use under GPL or you need to obtain Commercial License
  * to use it in non-GPL project. Please contact sales@webix.com for details
  */
