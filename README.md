@@ -1,13 +1,19 @@
-# 安装依赖模块
+# 使用npm安装依赖模块
 
 ```
 npm install
 ```
 
 
-# 以开发模式下运行
+# 使用webpack以开发模式下运行
 
 ```
 webpack-dev-server --progress --mode="development"
 ```
 
+
+# 使用webpack打包命令
+
+```
+webpack build
+```
