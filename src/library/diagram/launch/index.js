@@ -8,7 +8,7 @@ function builder() {
             {
                 view: "toolbar", cols: [
                     {
-                        view: "search", align: "center", placeholder: "请输入流程名称等 ...",
+                        view: "search", placeholder: "请输入流程名称等 ...",
                         on: {
                             onTimedKeyPress() {
                                 var value = this.getValue().toLowerCase();
