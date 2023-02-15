@@ -3,6 +3,7 @@ function open(item, options, model) {
     var palette = utils.UUID();
     var diagram = utils.UUID();
     var property = utils.UUID();
+    var popup = utils.UUID();
 
     // 分类
     var categories = [
@@ -21,8 +22,8 @@ function open(item, options, model) {
         { id: "code_", label: "流程编码", type: "text", tooltip: "流程编码需与代码中定义的一致" },
         { id: "name_", label: "流程名称", type: "text", tooltip: "流程的名称" },
         { id: "icon_", label: "[图标]", tooltip: "双击选择图标" },
-        { id: "description_", label: "流程描述", type: "text", tooltip: "流程的描述信息" },
-        { id: "keyword_", label: "关键字", type: "text", tooltip: "表单信息要素中有重要意义的信息要素。示例：物资编号 #code_#；物资名称 #name_#" },
+        { id: "description_", label: "流程描述", type: "popup", popup: popup, height: 88, tooltip: "流程的描述信息" },
+        { id: "keyword_", label: "关键字", type: "popup", popup: popup, tooltip: "表单信息要素中有重要意义的信息要素。示例：物资编号 #code_#；物资名称 #name_#" },
         {
             id: "exceed_days_", label: "超时天数", type: "richselect",
             options: [
@@ -459,6 +460,16 @@ function open(item, options, model) {
         },
         on: { onHide() { this.close() } }
     }).show();
+
+    // 注册弹出编辑框组件
+    webix.ui({
+        id: popup,
+        view: "popup",
+        point: true,
+        body: { view: "textarea", width: 300, height: 120 }
+    });
+
+    $$(property).registerType("popup", { editor: "popup" });
 };
 
 export { open }
