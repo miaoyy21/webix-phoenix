@@ -10,11 +10,8 @@ import _ from "underscore";
 
 console.log("gojs", go);
 
-/** WebIX **/
-import * as webix from "webix";
-
-// 全局可以使用工具库和组件库
-_.extend(global, { _, webix });
+// 全局可以使用工具库和组件库 webix md5
+_.extend(global, { _, webix: require("webix"), md5: require("md5") });
 
 // 组件库的相关配置
 webix.env.cdn = "./";

@@ -1,3 +1,5 @@
+import { backwards } from "../advance/backwards";
+
 function open(options) {
     var win = utils.UUID();
     var menu = utils.UUID();
@@ -11,7 +13,7 @@ function open(options) {
         modal: true,
         fullscreen: true,
         animate: { type: "flip", subtype: "vertical" },
-        head: "【" + options["code"] + "】  " + options["name"],
+        head: "【" + options["diagram_code_"] + "】" + options["diagram_name_"],
         position: "center",
         body: {
             cols: [
@@ -24,7 +26,7 @@ function open(options) {
                             view: "menu",
                             layout: "y",
                             select: true,
-                            url: "/api/wf/flows?method=Summary&diagram_id=" + options.id,
+                            url: "/api/wf/flows?method=Summary&diagram_id=" + options["diagram_id_"],
                             on: {
                                 onBeforeLoad() {
                                     webix.extend(this, webix.ProgressBar).showProgress();
@@ -36,7 +38,7 @@ function open(options) {
                                 },
                                 onAfterSelect(id) {
                                     $$(dtable).clearAll();
-                                    $$(dtable).load(() => webix.ajax("/api/wf/flows", { "diagram_id": options.id, "status": id }));
+                                    $$(dtable).load(() => webix.ajax("/api/wf/flows", { "diagram_id": options["diagram_id_"], "status": id }));
                                 }
                             }
                         }
@@ -51,6 +53,7 @@ function open(options) {
                                 {
                                     view: "button", label: "创建流程", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                                     click() {
+                                        show(_.extend({}, options, { "$menu": menu, "$dtable": dtable, "operation": "insert" }));
                                     }
                                 },
                                 {},
@@ -125,7 +128,7 @@ function open(options) {
                                             </div>
                                         `;
                                         } else {
-                                            return `<div class="webix_el_box" style="padding:0px; text-align:center"> Invalid Flow Status "` + row["status_"] + `" </div>`;
+                                            return `<div class="webix_el_box" style="padding:0px; text-align:center"> invalid Flow Status "` + row["status_"] + `" </div>`;
                                         }
                                     },
                                 },
@@ -136,16 +139,40 @@ function open(options) {
                             },
                             onClick: {
                                 btn_edit(e, item) {
-                                    console.log("button edit");
+                                    var row = this.getItem(item.row);
+                                    show(_.extend({}, options, {
+                                        "$menu": menu,
+                                        "$dtable": dtable,
+                                        "operation": "update",
+                                        "id": item.row,
+                                        "status_": row["status_"],
+                                        "values_md5_": row["values_md5_"]
+                                    }));
                                 },
                                 btn_view(e, item) {
-                                    console.log("button view");
+                                    var row = this.getItem(item.row);
+                                    show(_.extend({}, options, {
+                                        "$menu": menu,
+                                        "$dtable": dtable,
+                                        "operation": "view",
+                                        "id": item.row,
+                                        "status_": row["status_"],
+                                        "values_md5_": row["values_md5_"]
+                                    }));
                                 },
                                 btn_revoke(e, item) {
-                                    console.log("button revoke");
+                                    console.log("button revoke ", item.row);
                                 },
                                 btn_start(e, item) {
-                                    console.log("button start");
+                                    var row = this.getItem(item.row);
+                                    advStart(_.extend({}, options, {
+                                        "$menu": menu,
+                                        "$dtable": dtable,
+                                        "operation": "view",
+                                        "id": item.row,
+                                        "status_": row["status_"],
+                                        "values_md5_": row["values_md5_"]
+                                    }));
                                 },
                             },
                             on: {
@@ -175,5 +202,220 @@ function open(options) {
         on: { onHide() { this.close() } }
     }).show();
 };
+
+// 启动流程
+function advStart(options) {
+    webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["id"] })
+        .then((res) => {
+            console.log(res.json());
+            backwards({
+                title: "启动流程",
+                backwards: res.json(),
+                callback(backs) {
+                    console.log(backs);
+                }
+            })
+
+            // var s1 = (find["executor_users_"] || "").split(",");
+            // var s2 = (find["executor_name_users_"] || "").split(",");
+
+            // var checked = _.map(s1, (id, i) => ({ "id": id, "user_name_": s2[i] }));
+
+            // // 选择用户
+            // utils.windows.users({
+            //     multiple: true,
+            //     checked: checked,
+            //     callback(checked) {
+            //         var value = _.pluck(checked, "id").join(",");
+            //         var name = _.pluck(checked, "user_name_").join(",");
+
+            //         item.value = name;
+            //         self.refresh(id);
+
+            //         find["executor_users_"] = value;
+            //         find["executor_name_users_"] = name;
+
+            //         return true;
+            //     }
+            // })
+
+            webix.message({ type: "success", text: "启动成功" });
+
+            $$(options["$menu"]).clearAll();
+            $$(options["$menu"]).load($$(options["$menu"]).config.url);
+
+            $$(options["$win"]) && $$(options["$win"]).hide();
+        })
+}
+
+function show(options) {
+    options = _.extend({}, options, { "$win": utils.UUID(), editable: false });
+
+    // 表单
+    if (_.isEqual(options["operation"], "insert") || _.isEqual(options["operation"], "update")) {
+        options["editable"] = true;
+    }
+    var view = PHOENIX_FLOWS[options["diagram_code_"]].builder(options);
+
+    // 按钮 启动
+    var save = {
+        view: "button", label: "保存", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
+        click() {
+            var values = view.values();
+            var text = JSON.stringify(values);
+            var hash = md5(text);
+
+            console.log(options["values_md5_"], hash);
+            if (!_.isEqual(options["values_md5_"], hash)) {
+                webix.ajax().post("/api/wf/flows", {
+                    "operation": options["operation"],
+                    "id": options["id"],
+                    "values_": text,
+                    "values_md5_": hash,
+                    "keyword_": webix.template(options["keyword_"])(values),
+                    "diagram_id_": options["diagram_id_"],
+                }).then((res) => {
+                    var row = res.json();
+                    options["id"] = row["id"];
+                    options["values_md5_"] = hash;
+
+                    webix.message({ type: "success", text: "保存成功" });
+                })
+            }
+        }
+    };
+
+    // 按钮 启动
+    var start = {
+        view: "button", label: "启动", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-rocket-launch",
+        click() {
+            var values = view.values();
+            var text = JSON.stringify(values);
+            var hash = md5(text);
+
+            if (!_.isEqual(options["values_md5_"], hash)) {
+                console.log("数据已发生变化，先保存后再启动流程");
+                webix.ajax().post("/api/wf/flows", {
+                    "operation": options["operation"],
+                    "id": options["id"],
+                    "values_": text,
+                    "values_md5_": hash,
+                    "keyword_": webix.template(options["keyword_"])(values),
+                    "diagram_id_": options["diagram_id_"],
+                }).then((res) => {
+                    options["id"] = res.json()["id"];
+                    advStart(options);
+                })
+            } else {
+                console.log("数据没有发生变化，直接启动流程");
+                advStart(options);
+            }
+        }
+    };
+
+    // 按钮 撤回
+    var revoke = {
+        view: "button", label: "撤回", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-undo-variant",
+        click() {
+            console.log("撤回");
+        }
+    }
+
+    // 显示按钮
+    var actions = [];
+    if (_.isEqual(options["operation"], "insert")) {
+        actions = [save, start];
+    } else if (_.isEqual(options["operation"], "update")) {
+        if (_.isEqual(options["status_"], "Draft")) {
+            actions = [save, start];
+        } else if (_.isEqual(options["status_"], "Revoked") || _.isEqual(options["status_"], "Rejected")) {
+            actions = [start];
+        }
+    } else {
+        if (_.isEqual(options["status_"], "Executing")) {
+            actions = [revoke];
+        }
+    }
+
+    if (_.isEqual(options["operation"], "insert")) {
+        var values = view.default();
+        if (_.isUndefined(values) || _.isNull(values)) values = {};
+
+        showUI(view.show(values), actions, options);
+    } else {
+        // 加载数据值
+        webix.ajax().get("/api/wf/flows?method=Values", { id: options["id"] }).then(
+            (res) => {
+                showUI(view.show(res.json()), actions, options);
+            }
+        );
+    }
+};
+
+function showUI(view, actions, options) {
+
+    // 标题
+    var operation = _.isEqual(options["operation"], "insert") ? "创建" :
+        _.isEqual(options["operation"], "update") ? "编辑" : "查看";
+    if (_.isUndefined(PHOENIX_FLOWS[options["diagram_code_"]])) {
+        webix.message({ type: "error", text: "没有找到" + options["diagram_code_"] + "的注册表单" });
+        return;
+    };
+
+    // 表单
+    var views = {
+        header: "<span class='webix_icon mdi mdi-format-wrap-tight'></span>" + options["diagram_name_"],
+        body: _.size(actions) > 0 ?
+            { rows: [{ view: "toolbar", cols: [...actions, {},] }, view] } :
+            view,
+    };
+
+    // 流程图
+    var chart = {
+        header: "<span class='webix_icon mdi mdi-mushroom'></span>流程图",
+        body: {
+            view: "template",
+            template: "xxxx"
+        },
+    };
+
+    // 流转记录
+    var record = {
+        header: "<span class='webix_icon mdi mdi-record-circle'></span>流转记录",
+        body: {
+            view: "template",
+            template: "333"
+        },
+    };
+
+    // 显示的tab页
+    var tabs = [views, chart, record];
+    if (_.isEqual(options["operation"], "insert")) {
+        tabs = [views, chart]
+    } else if (_.isEqual(options["operation"], "update")) {
+        if (_.isEqual(options["status_"], "Draft")) {
+            tabs = [views, chart]
+        }
+    }
+
+    webix.ui({
+        id: options["$win"],
+        view: "window",
+        close: true,
+        modal: true,
+        fullscreen: true,
+        animate: { type: "flip", subtype: "horizontal" },
+        head: operation + "  【" + options["diagram_code_"] + "】" + options["diagram_name_"],
+        position: "center",
+        body: {
+            view: "tabview",
+            tabbar: { optionWidth: 160 },
+            cells: tabs,
+        },
+        on: {
+            onHide() { this.close(); }
+        }
+    }).show();
+}
 
 export { open }

@@ -1,24 +1,22 @@
-function builder() {
+function builder(options) {
+    console.log("A01 UI options is ", options)
 
     // 请假单
     return {
-        rows: [
-            {
-                view: "toolbar",
-                cols: [
-                    {
-                        view: "button", label: "创建", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
-                        click() {
-                        }
-                    },
-                ]
-            },
-            {
+        show(values) {
+            console.log("A01 UI values is ", values)
+            return {
                 view: "template",
-                template: "1张请假单"
-            },
-        ],
-    };
-}
+                template: JSON.stringify(values)
+            }
+        },
+        default() {
+            return { "aaa": 123, "id": options["diagram_id_"] };
+        },
+        values() {
+            return { "bbb": "aaaaaa", "days_": Math.ceil(Math.random() * 4) };
+        },
+    }
+};
 
 export { builder };

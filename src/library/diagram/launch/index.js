@@ -14,7 +14,7 @@ function builder() {
                                 var value = this.getValue().toLowerCase();
 
                                 $$(dview).filter(function (obj) {
-                                    return (obj["code_"] + "|" + obj["name_"] + "|" + (obj["description_"] || "")).toLowerCase().indexOf(value) != -1;
+                                    return (obj["diagram_code_"] + "|" + obj["diagram_name_"] + "|" + (obj["description_"] || "")).toLowerCase().indexOf(value) != -1;
                                 });
                             }
                         }
@@ -25,11 +25,11 @@ function builder() {
             {
                 view: "dataview",
                 id: dview,
-                tooltip: "【#code_#】#name_#</br>#description_#",
+                tooltip: "【#diagram_code_#】#diagram_name_#</br>#description_#",
                 template: `
                     <div class='webix_strong'> 
                         <span class='phoenix_primary_icon mdi-18px #icon_#'></span>
-                        【#code_#】#name_#
+                        【#diagram_code_#】#diagram_name_#
                     </div> 
                     <div class='webix_light' style="height:24px;text-indent:2em;">#description_#</div>
                     <div style="text-align:right">
@@ -49,10 +49,10 @@ function builder() {
                         var row = this.getItem(id);
                         if (!row) return;
 
-                        open({ "id": id, "code": row["code_"], "name": row["name_"] });
+                        open(_.pick(row, "diagram_id_", "diagram_code_", "diagram_name_", "keyword_"));
                     },
                 },
-                url: "/api/wf/diagrams?scope=SIMPLE",
+                url: "/api/wf/diagrams?method=Publish&scope=SIMPLE",
                 on: {
                     "data->onStoreUpdated": function () {
                         this.data.each(function (obj, i) {
