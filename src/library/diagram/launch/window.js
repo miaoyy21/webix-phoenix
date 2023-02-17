@@ -212,7 +212,13 @@ function advStart(options) {
                 title: "启动流程",
                 backwards: res.json(),
                 callback(backs) {
-                    console.log(backs);
+
+                    webix.message({ type: "success", text: "启动成功" });
+
+                    $$(options["$menu"]).clearAll();
+                    $$(options["$menu"]).load($$(options["$menu"]).config.url);
+
+                    $$(options["$win"]) && $$(options["$win"]).hide();
                 }
             })
 
@@ -238,13 +244,6 @@ function advStart(options) {
             //         return true;
             //     }
             // })
-
-            webix.message({ type: "success", text: "启动成功" });
-
-            $$(options["$menu"]).clearAll();
-            $$(options["$menu"]).load($$(options["$menu"]).config.url);
-
-            $$(options["$win"]) && $$(options["$win"]).hide();
         })
 }
 
@@ -267,6 +266,7 @@ function show(options) {
 
             console.log(options["values_md5_"], hash);
             if (!_.isEqual(options["values_md5_"], hash)) {
+                console.log("数据已发生变化，执行保存");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": options["operation"],
                     "id": options["id"],
