@@ -207,12 +207,35 @@ function open(options) {
 function advStart(options) {
     webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["id"] })
         .then((res) => {
-            console.log(res.json());
+            var backs = res.json();
+            backs[-7] = {
+                "key": -7,
+                "name": "总经理",
+                "category": "Execute",
+                "routes": [
+                    -1,
+                    -7
+                ],
+                "executors": {
+                    "U013": "韦雪晴",
+                    "U019": "周亮亮"
+                },
+                "organization": [
+                    "D000",
+                    "U013",
+                    "U019",
+                    "U026",
+                    "U056",
+                ]
+            }
+
             backwards({
+                id: options["id"],
                 title: "启动流程",
-                rejectable: false,
-                acceptable: true,
-                backwards: res.json(),
+                // start: true,
+                // accept: false,
+                // reject: false,
+                backwards: backs,
                 callback(backs) {
 
                     webix.message({ type: "success", text: "启动成功" });
@@ -223,29 +246,6 @@ function advStart(options) {
                     $$(options["$win"]) && $$(options["$win"]).hide();
                 }
             })
-
-            // var s1 = (find["executor_users_"] || "").split(",");
-            // var s2 = (find["executor_name_users_"] || "").split(",");
-
-            // var checked = _.map(s1, (id, i) => ({ "id": id, "user_name_": s2[i] }));
-
-            // // 选择用户
-            // utils.windows.users({
-            //     multiple: true,
-            //     checked: checked,
-            //     callback(checked) {
-            //         var value = _.pluck(checked, "id").join(",");
-            //         var name = _.pluck(checked, "user_name_").join(",");
-
-            //         item.value = name;
-            //         self.refresh(id);
-
-            //         find["executor_users_"] = value;
-            //         find["executor_name_users_"] = name;
-
-            //         return true;
-            //     }
-            // })
         })
 }
 

@@ -2,7 +2,7 @@
 import { icons } from "../etc/icons";
 
 // 默认状态
-const DefaultOptions = { multiple: false, cache: true, checked: [], callback: (select) => { } };
+const DefaultOptions = { multiple: false, cache: true, checked: [], filter: (departId, userId) => true, callback: (select) => { } };
 
 const instance = {
     window_id: "phoenix_utils_windows_users",
@@ -23,12 +23,18 @@ const instance = {
 // 加载用户
 instance.load = function (id) {
     var request = webix.ajax().sync().get("/api/sys/users", { "depart_id": id, scope: "SIMPLE" });
+
+    // 根据条件进行数据筛选
     var users = JSON.parse(request.responseText);
+    if (!instance.options.filter(id)) {
+        users = _.filter(users, (user) => instance.options.filter(id, user["id"]));
+    }
 
     // 设置选中状态
     $$(instance.grid_id).clearAll();
 
     var rows = _.map(users, (user) => _.extend(user, { "checked": _.findIndex(instance.options.checked, (obj) => user.id == obj.id) >= 0 }));
+
 
     $$(instance.grid_id).define("data", rows)
     $$(instance.grid_id).refresh();
@@ -79,6 +85,8 @@ instance.ok = function () {
 
     // 回调成功，隐藏对话框
     if (instance.options.callback(checked)) {
+        instance.options = _.extend({}, DefaultOptions);
+
         $$(instance.window_id).hide();
     }
 }
@@ -233,6 +241,7 @@ webix.ui({
     {
         multiple    可选    是否启用多选，默认单选
         cache       可选    是否开启缓存数据，默认开启
+        filter      可选    筛选数据回调函数
         checked     可选    已选用户ID，[{"id":"user's id","user_name_":"user's name"}, ...]
         callback    必须    点击确定的回调函数
     }
@@ -240,7 +249,7 @@ webix.ui({
 export function users(options) {
 
     // 参数配置
-    _.extend(instance.options, DefaultOptions, options);
+    instance.options = _.extend({}, DefaultOptions, options);
 
     // 返回数组格式
     if (_.isEmpty(instance.options.checked)) {
