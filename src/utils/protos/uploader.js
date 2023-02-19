@@ -60,7 +60,6 @@ function uploader(options) {
 
                             var item = $$(list_id).getItem(id);
                             webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: id }, function (text, data) {
-                                // TODO 设置刚上传成功的文件名
                                 webix.html.download(data, item ? item["name"] : id);
                             });
                         }

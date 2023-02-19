@@ -210,6 +210,8 @@ function advStart(options) {
             console.log(res.json());
             backwards({
                 title: "启动流程",
+                rejectable: false,
+                acceptable: true,
                 backwards: res.json(),
                 callback(backs) {
 
