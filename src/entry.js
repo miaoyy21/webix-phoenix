@@ -203,19 +203,19 @@ webix.ready(function () {
                                 id: "PHOENIX_VIEWS",
                                 animate: false,
                                 cells: [
-                                    // {
-                                    //     id: "PHOENIX_PAGE_HOME",
-                                    //     view: "template",
-                                    //     template: "这是首页"
-                                    // }
-                                    _.extend(
-                                        PHOENIX_MENUS.diagram_full_designer.builder(),
-                                        {
-                                            id: "PHOENIX_PAGE_HOME",
-                                            css: { "border-left": "none", "border-top": "none" }
-                                        },
-                                    )
+                                    {
+                                        id: "PHOENIX_PAGE_HOME",
+                                        view: "template",
+                                        template: "这是首页"
+                                    }
 
+                                    // _.extend(
+                                    //     PHOENIX_MENUS.diagram_full_designer.builder(),
+                                    //     {
+                                    //         id: "PHOENIX_PAGE_HOME",
+                                    //         css: { "border-left": "none", "border-top": "none" }
+                                    //     },
+                                    // )
                                 ]
                             },
                             {

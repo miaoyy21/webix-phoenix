@@ -1,53 +1,69 @@
 
-/*
-{
-    title: "*******",
-    backwards:{},
-    callback: function(backwards){ }
-}
-*/
 function backwards(options) {
     var win = utils.UUID();
-    var form = utils.UUID();
+    var comm = utils.UUID();
 
-    var values = _.extend({}, { executors: {}, comment: "无" });
-    _.each(options["backwards"], (back, key) => { values["executors"][key] = _.values(back["executors"]).join("; ") });
-
-    // 构建执行者选择
-    var keys = _.map(options["backwards"], (back, key) => {
-        return ({
+    var elements = _.map(options["backwards"], (back) => {
+        return {
             view: "fieldset",
             label: back["name"],
             body: {
-                rows: [
+                minHeight: 88,
+                cols: [
                     {
-                        name: "executors." + key, view: "search", label: " ", labelWidth: 20, readonly: true, required: true,
-                        on: {
-                            onSearchIconClick() {
-                                var checked = _.map(back["executors"], (value, key) => ({ "id": key, "user_name_": value }));
+                        id: win + "$" + back["key"],
+                        view: "dataview",
+                        borderless: true,
+                        autoheight: true,
+                        template: `
+                            <div class='webix_strong' >
+                                <button type="button" class="btn_remove webix_icon_button" >
+                                    <span class="phoenix_danger_icon mdi mdi-dark mdi-18px mdi-account-remove"></span>
+                                </button> 
+                                #name#
+                            </div>
+                        `,
+                        data: back["executors"],
+                        type: {
+                            type: "tiles",
+                            width: 112,
+                            height: 38,
+                        },
+                        onClick: {
+                            btn_remove(e, id) {
+                                this.remove(id);
+                            },
+                        },
+                    },
+                    {
+                        view: "icon", icon: "mdi mdi-24px mdi-account-plus-outline", width: 48,
+                        click() {
+                            var checked = _.map(
+                                $$(win + "$" + back["key"]).data.pull,
+                                (row) => ({ "id": row["id"], "user_name_": row["name"] }),
+                            );
 
-                                // 选择用户
-                                utils.windows.users({
-                                    multiple: true,
-                                    cache: false,
-                                    checked: checked,
-                                    filter: (departId, userId) => _.findIndex(back["organization"], (org) => org == departId || org == userId) >= 0,
-                                    callback: (checked) => {
-                                        options["backwards"][key]["executors"] = _.object(_.pluck(checked, "id"), _.pluck(checked, "user_name_"));
+                            // 选择用户
+                            utils.windows.users({
+                                multiple: true,
+                                cache: false,
+                                checked: checked,
+                                filter: (departId, userId) => _.findIndex(back["organization"], (org) => org == departId || org == userId) >= 0,
+                                callback: (checked) => {
+                                    $$(win + "$" + back["key"]).clearAll();
+                                    $$(win + "$" + back["key"]).parse(
+                                        _.map(checked, (user) => ({ "id": user["id"], "name": user["user_name_"] }))
+                                    );
 
-                                        values["executors"][key] = _.pluck(checked, "user_name_").join("; ");
-                                        $$(form).setValues(values);
-
-                                        return true;
-                                    }
-                                })
-                            }
+                                    return true;
+                                }
+                            })
                         }
                     },
                 ]
-            },
-        });
-    });
+            }
+        };
+    })
 
     webix.ui({
         id: win,
@@ -64,25 +80,11 @@ function backwards(options) {
             paddingX: 12,
             rows: [
                 { height: 8 },
+                ...elements,
                 {
-                    id: form,
-                    view: "form",
-                    borderless: true,
-                    complexData: true,
-                    data: {},
-                    rows: [
-                        ...keys,
-                        {
-                            view: "fieldset",
-                            label: "流转意见",
-                            body: {
-                                rows: [
-                                    { name: "comment", view: "textarea", placeholder: "请输入流转意见 ..." },
-                                ]
-                            },
-                        },
-                    ],
-                    elementsConfig: { labelAlign: "right", clear: false },
+                    view: "fieldset",
+                    label: "流转意见",
+                    body: { id: comm, name: "comment", view: "textarea", placeholder: "请输入流转意见 ..." },
                 },
                 {
                     view: "toolbar",
@@ -93,18 +95,22 @@ function backwards(options) {
                         {
                             view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
                             click() {
-                                if (!$$(form).validate()) return;
+                                var data = {
+                                    "id": options["id"],
+                                    "backwards": _.map(options["backwards"],
+                                        (back) => {
+                                            var item = _.pick(back, "key", "name", "routes");
 
-                                // 获取设置的执行者
-                                var backs = {};
-                                _.each(options["backwards"], (back, key) => {
-                                    backs[key] = _.pick(back, "key", "name", "routes", "executors")
-                                })
+                                            item["executors"] = _.values($$(win + "$" + back["key"]).data.pull);
+                                            return item;
+                                        }
+                                    ),
+                                    "comment": $$(comm).getValue()
+                                };
 
-                                var values = $$(form).getValues();
-                                var execute = { "id": options["id"], "backwards": backs, "comment": values["comment"] };
-
-                                console.log(execute);
+                                if (options.callback(data)) {
+                                    $$(win).hide();
+                                }
                             }
                         },
                         { width: 8 }

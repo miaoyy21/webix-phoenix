@@ -207,43 +207,26 @@ function open(options) {
 function advStart(options) {
     webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["id"] })
         .then((res) => {
-            var backs = res.json();
-            backs[-7] = {
-                "key": -7,
-                "name": "总经理",
-                "category": "Execute",
-                "routes": [
-                    -1,
-                    -7
-                ],
-                "executors": {
-                    "U013": "韦雪晴",
-                    "U019": "周亮亮"
-                },
-                "organization": [
-                    "D000",
-                    "U013",
-                    "U019",
-                    "U026",
-                    "U056",
-                ]
-            }
-
             backwards({
                 id: options["id"],
                 title: "启动流程",
-                // start: true,
-                // accept: false,
-                // reject: false,
-                backwards: backs,
-                callback(backs) {
+                backwards: res.json(),
+                callback(data) {
+                    var request = webix.ajax().sync().post("/api/wf/flows?method=Start", data);
+                    var res = JSON.parse(request.responseText);
 
-                    webix.message({ type: "success", text: "启动成功" });
+                    if (res["status"] == "success") {
+                        webix.message({ type: "success", text: "启动成功" });
 
-                    $$(options["$menu"]).clearAll();
-                    $$(options["$menu"]).load($$(options["$menu"]).config.url);
+                        $$(options["$menu"]).clearAll();
+                        $$(options["$menu"]).load($$(options["$menu"]).config.url);
 
-                    $$(options["$win"]) && $$(options["$win"]).hide();
+                        $$(options["$win"]) && $$(options["$win"]).hide();
+
+                        return true;
+                    }
+
+                    return false;
                 }
             })
         })
