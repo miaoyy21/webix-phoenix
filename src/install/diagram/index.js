@@ -15,10 +15,14 @@ webix.protoUI({
         var myDiagram = $(go.Diagram, this.$view.firstChild,
             {
                 "LinkDrawn": node.label, "LinkRelinked": node.label, "undoManager.isEnabled": true,
-                grid: editable ? $(go.Panel, "Grid",
+                // grid: editable ? $(go.Panel, "Grid",
+                //     $(go.Shape, "LineH", { stroke: "lightgray", strokeWidth: 0.5 }),
+                //     $(go.Shape, "LineV", { stroke: "lightgray", strokeWidth: 0.5 })
+                // ) : null,
+                grid: $(go.Panel, "Grid",
                     $(go.Shape, "LineH", { stroke: "lightgray", strokeWidth: 0.5 }),
                     $(go.Shape, "LineV", { stroke: "lightgray", strokeWidth: 0.5 })
-                ) : null,
+                ),
                 allowCopy: editable,
                 allowClipboard: editable,
                 allowMove: editable,

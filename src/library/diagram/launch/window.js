@@ -435,23 +435,36 @@ function showUI(view, actions, options) {
         body: {
             rows: [
                 {
-                    view: "goDiagram",
-                    editable: true,
-                    model: options["model"],
-                },
-                {
-                    view: "toolbar",
-                    height: 30,
                     cols: [
-                        { css: { "background": "lightskyblue" }, width: 72, view: "template", template: "<div style='text-align: center'>已执行</div>", },
-                        { css: { "background": "lightgreen" }, width: 72, view: "template", template: "<div style='text-align: center'>执行中</div>", },
-                        { css: { "background": "orange" }, width: 72, view: "template", template: "<div style='text-align: center'>撤回</div>", },
-                        { css: { "background": "coral" }, width: 72, view: "template", template: "<div style='text-align: center'>驳回</div>", },
-                        { css: { "background": "lightgrey" }, width: 72, view: "template", template: "<div style='text-align: center'>挂起</div>", },
-                        { css: { "background": "black" }, width: 72, view: "template", template: "<div style='text-align: center'>未知</div>", },
-                        {},
+                        { width: 12 },
+                        {
+                            view: "goDiagram",
+                            editable: false,
+                            model: options["model"],
+                        },
+                        { width: 24 },
+                        {
+                            width: 72,
+                            rows: [
+                                { height: 12 },
+                                { css: { "background": "lightskyblue" }, height: 30, view: "template", template: "<div style='text-align: center'>已执行</div>", },
+                                { height: 12 },
+                                { css: { "background": "lightgreen" }, height: 30, view: "template", template: "<div style='text-align: center'>执行中</div>", },
+                                { height: 12 },
+                                { css: { "background": "orange" }, height: 30, view: "template", template: "<div style='text-align: center'>撤回</div>", },
+                                { height: 12 },
+                                { css: { "background": "coral" }, height: 30, view: "template", template: "<div style='text-align: center'>驳回</div>", },
+                                { height: 12 },
+                                { css: { "background": "lightgrey" }, height: 30, view: "template", template: "<div style='text-align: center'>挂起</div>", },
+                                { height: 12 },
+                                { css: { "background": "black" }, height: 30, view: "template", template: "<div style='text-align: center'>未知</div>", },
+                                {},
+                            ]
+                        },
+                        { width: 48 },
                     ]
                 },
+                { height: 12 },
             ]
         }
     };
