@@ -271,13 +271,33 @@ function advRevoke(options) {
 }
 
 function show(options) {
-    options = _.extend({}, options, { "$win": utils.UUID(), editable: false });
+    options = _.extend({}, options, { "$win": utils.UUID(), readonly: true });
 
     // 表单
     if (_.isEqual(options["operation"], "insert") || _.isEqual(options["operation"], "update")) {
-        options["editable"] = true;
+        options["readonly"] = false;
     }
-    var view = PHOENIX_FLOWS[options["diagram_code_"]].builder(options);
+
+    var values = {};
+    var mod = PHOENIX_FLOWS[options["diagram_code_"]];
+    if (_.isEqual(options["operation"], "insert")) {
+
+        // 加载流程图
+        var request = webix.ajax().sync().get("/api/wf/diagrams?method=Publish", { id: options["diagram_id_"], scope: "MODEL" });
+        var resp = JSON.parse(request.responseText);
+
+        options["model"] = resp;
+        values = mod.defaultValues ? mod.defaultValues(options) : {};
+    } else {
+        // 加载数据值
+        var request = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["id"] });
+        var resp = JSON.parse(request.responseText);
+
+        options["model"] = JSON.parse(resp["model"]);
+        values = JSON.parse(resp["values"]);
+    }
+    var view = mod.builder(options, values);
+
 
     // 按钮 启动
     var save = {
@@ -363,32 +383,7 @@ function show(options) {
         }
     }
 
-    if (_.isEqual(options["operation"], "insert")) {
-        var values = view.default();
-        if (_.isUndefined(values) || _.isNull(values)) values = {};
-
-        // 加载流程图
-        webix.ajax().get("/api/wf/diagrams?method=Publish", { id: options["diagram_id_"], scope: "MODEL" }).then(
-            (res) => {
-                var model = JSON.parse(res.json());
-                options["model"] = model;
-
-                showUI(view.show(values), actions, options);
-            }
-        );
-    } else {
-        // 加载数据值
-        webix.ajax().get("/api/wf/flows?method=ModelValues", { id: options["id"] }).then(
-            (res) => {
-                var resp = res.json();
-
-                var model = JSON.parse(resp["model"]);
-                options["model"] = model;
-
-                showUI(view.show(JSON.parse(resp["values"])), actions, options);
-            }
-        );
-    }
+    showUI(view.show(), actions, options);
 };
 
 function showUI(view, actions, options) {

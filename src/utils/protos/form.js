@@ -4,10 +4,9 @@ function form(options) {
     // Form ID
     var form_id = options["id"] || utils.UUID();
 
-    var _options = _.extend(
+    var newOptions = _.extend(
         {
             id: form_id,
-            uploader: [],
             data: {},
             rows: [
                 {
@@ -21,7 +20,6 @@ function form(options) {
                         ]
                     },
                 },
-                utils.protos.uploader({ name: "doc_", label: "附件资料", editable: true }),
                 { name: "textarea_", view: "textarea", label: "Textarea", placeholder: "Textarea ..." },
                 {
                     name: "search_datatable_", view: "search", label: "DataTable", readonly: true, required: true,
@@ -62,32 +60,7 @@ function form(options) {
         { view: "form" }
     );
 
-    // 设置附件上传组件数据
-    if (_options["data"] && _.size(_options["uploader"])) {
-        var uploader = !_.isArray(_options["uploader"]) ? [_options["uploader"]] : _options["uploader"];
-
-        // Ajax请求附件信息
-        _.each(uploader, function (name) {
-            console.log(_options);
-            var text = _options["data"][name];
-            if (_.size(text) < 1) {
-                _options["data"][name] = [];
-            } else if (_.isString(text)) {
-                var value = JSON.parse(webix.ajax().sync().get("/api/sys/docs", { id: text }).responseText);
-                _options["data"][name] = _.map(value, (v) => ({
-                    id: v.id,
-                    value: v.id,
-                    name: v["name_"],
-                    sizetext: utils.formats.fileSize(Number(v["size_"])),
-                    status: "server"
-                }));
-            } else {
-                console.error("it is not a document Object ", text)
-            }
-        })
-    }
-
-    return _options;
+    return newOptions;
 };
 
 export { form };
