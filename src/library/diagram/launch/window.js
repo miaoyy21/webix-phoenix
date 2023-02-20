@@ -145,6 +145,9 @@ function open(options) {
                                         "$dtable": dtable,
                                         "operation": "update",
                                         "id": item.row,
+                                        "_keyword": row["keyword_"],
+                                        "executed_keys_": row["executed_keys_"],
+                                        "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     }));
@@ -155,8 +158,10 @@ function open(options) {
                                         "$menu": menu,
                                         "$dtable": dtable,
                                         "operation": "view",
+                                        "$keyword": row["keyword_"],
                                         "id": item.row,
-                                        "_keyword": row["keyword_"],
+                                        "executed_keys_": row["executed_keys_"],
+                                        "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     }));
@@ -167,8 +172,8 @@ function open(options) {
                                         "$menu": menu,
                                         "$dtable": dtable,
                                         "operation": "view",
+                                        "$keyword": row["keyword_"],
                                         "id": item.row,
-                                        "_keyword": row["keyword_"],
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     })
@@ -251,7 +256,7 @@ function advStart(options) {
 function advRevoke(options) {
     webix.confirm({
         title: "系统提示",
-        text: "确认撤回流程实例 【" + options["_keyword"] + "】 ?",
+        text: "确认撤回流程实例 【" + options["$keyword"] + "】 ?",
         type: "confirm-error"
     }).then((result) => {
         webix.ajax().post("/api/wf/flows?method=Revoke", { id: options["id"] })
@@ -267,7 +272,6 @@ function advRevoke(options) {
 
 function show(options) {
     options = _.extend({}, options, { "$win": utils.UUID(), editable: false });
-    console.log("show() options ", options);
 
     // 表单
     if (_.isEqual(options["operation"], "insert") || _.isEqual(options["operation"], "update")) {
@@ -363,19 +367,32 @@ function show(options) {
         var values = view.default();
         if (_.isUndefined(values) || _.isNull(values)) values = {};
 
-        showUI(view.show(values), actions, options);
+        // 加载流程图
+        webix.ajax().get("/api/wf/diagrams?method=Publish", { id: options["diagram_id_"], scope: "MODEL" }).then(
+            (res) => {
+                var model = JSON.parse(res.json());
+                options["model"] = model;
+
+                showUI(view.show(values), actions, options);
+            }
+        );
     } else {
         // 加载数据值
-        webix.ajax().get("/api/wf/flows?method=Values", { id: options["id"] }).then(
+        webix.ajax().get("/api/wf/flows?method=ModelValues", { id: options["id"] }).then(
             (res) => {
-                var values = JSON.parse(res.json());
-                showUI(view.show(values), actions, options);
+                var resp = res.json();
+
+                var model = JSON.parse(resp["model"]);
+                options["model"] = model;
+
+                showUI(view.show(JSON.parse(resp["values"])), actions, options);
             }
         );
     }
 };
 
 function showUI(view, actions, options) {
+    console.log("showUI() Options is", options);
 
     // 标题
     var operation = _.isEqual(options["operation"], "insert") ? "创建" :
@@ -394,12 +411,23 @@ function showUI(view, actions, options) {
     };
 
     // 流程图
+    var executed = JSON.parse(options["executed_keys_"] || "[]");
+    var activated = JSON.parse(options["activated_keys_"] || "[]");
+    _.each(options["model"]["nodeDataArray"], (node) => {
+        _.extend(node, {
+            "color": _.indexOf(executed, node.key) >= 0 ?
+                "lightgreen" : _.indexOf(activated, node.key) >= 0 ?
+                    "lightblue" : "white"
+        })
+    })
+
     var chart = {
         header: "<span class='webix_icon mdi mdi-mushroom'></span>流程图",
         body: {
-            view: "template",
-            template: "xxxx"
-        },
+            view: "goDiagram",
+            editable: true,
+            model: options["model"],
+        }
     };
 
     // 流转记录

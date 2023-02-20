@@ -70,7 +70,9 @@ function form(options) {
         _.each(uploader, function (name) {
             console.log(_options);
             var text = _options["data"][name];
-            if (_.isString(text)) {
+            if (_.size(text) < 1) {
+                _options["data"][name] = [];
+            } else if (_.isString(text)) {
                 var value = JSON.parse(webix.ajax().sync().get("/api/sys/docs", { id: text }).responseText);
                 _options["data"][name] = _.map(value, (v) => ({
                     id: v.id,
