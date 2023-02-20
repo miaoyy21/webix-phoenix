@@ -409,19 +409,50 @@ function showUI(view, actions, options) {
     var executed = JSON.parse(options["executed_keys_"] || "[]");
     var activated = JSON.parse(options["activated_keys_"] || "[]");
     _.each(options["model"]["nodeDataArray"], (node) => {
-        _.extend(node, {
-            "color": _.indexOf(executed, node.key) >= 0 ?
-                "lightgreen" : _.indexOf(activated, node.key) >= 0 ?
-                    "lightblue" : "white"
-        })
+
+        var color = "white";
+        if (_.indexOf(activated, node.key) >= 0) {
+            if (options["status_"] == "Executing") {
+                color = "lightgreen";
+            } else if (options["status_"] == "Revoked") {
+                color = "orange";
+            } else if (options["status_"] == "Rejected") {
+                color = "coral";
+            } else if (options["status_"] == "Suspended") {
+                color = "lightgrey";
+            } else {
+                color = "black";
+            }
+        } else if (_.indexOf(executed, node.key) >= 0) {
+            color = "lightskyblue";
+        }
+
+        _.extend(node, { "color": color });
     })
 
     var chart = {
         header: "<span class='webix_icon mdi mdi-mushroom'></span>流程图",
         body: {
-            view: "goDiagram",
-            editable: true,
-            model: options["model"],
+            rows: [
+                {
+                    view: "goDiagram",
+                    editable: true,
+                    model: options["model"],
+                },
+                {
+                    view: "toolbar",
+                    height: 30,
+                    cols: [
+                        { css: { "background": "lightskyblue" }, width: 72, view: "template", template: "<div style='text-align: center'>已执行</div>", },
+                        { css: { "background": "lightgreen" }, width: 72, view: "template", template: "<div style='text-align: center'>执行中</div>", },
+                        { css: { "background": "orange" }, width: 72, view: "template", template: "<div style='text-align: center'>撤回</div>", },
+                        { css: { "background": "coral" }, width: 72, view: "template", template: "<div style='text-align: center'>驳回</div>", },
+                        { css: { "background": "lightgrey" }, width: 72, view: "template", template: "<div style='text-align: center'>挂起</div>", },
+                        { css: { "background": "black" }, width: 72, view: "template", template: "<div style='text-align: center'>未知</div>", },
+                        {},
+                    ]
+                },
+            ]
         }
     };
 
@@ -429,8 +460,39 @@ function showUI(view, actions, options) {
     var record = {
         header: "<span class='webix_icon mdi mdi-record-circle'></span>流转记录",
         body: {
-            view: "template",
-            template: "333"
+            view: "datatable",
+            css: "webix_data_border webix_header_border",
+            select: "row",
+            url: "/api/wf/flows?method=Records&id=" + options["id"],
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+                { id: "name_", header: { text: "节点名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
+                { id: "executor_user_name_", header: { text: "执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
+                { id: "status_", header: { text: "节点状态", css: { "text-align": "center" } }, options: "/assets/flow_node_status.json", width: 100, css: { "text-align": "center" } },
+                { id: "comment_", header: { text: "流转意见", css: { "text-align": "center" } }, fillspace: true },
+                { id: "activated_at_", header: { text: "创建时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                { id: "canceled_at_", header: { text: "取消时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                { id: "executed_at_", header: { text: "执行时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+            ],
+            on: {
+                "data->onStoreUpdated": function () {
+                    this.data.each(function (obj, i) {
+                        obj.index = i + 1;
+                    })
+                },
+                onBeforeLoad() {
+                    this.showOverlay("数据加载中...");
+                },
+                onAfterLoad() {
+                    this.hideOverlay();
+                    if (!this.count()) {
+                        this.showOverlay("无检索数据");
+                        return;
+                    }
+
+                    this.select(this.getFirstId());
+                },
+            }
         },
     };
 

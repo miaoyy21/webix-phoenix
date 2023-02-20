@@ -1,0 +1,22 @@
+[
+    {
+        "id": "Executing",
+        "value": "等待执行"
+    },
+    {
+        "id": "Canceled",
+        "value": "已取消"
+    },
+    {
+        "id": "Executed Auto",
+        "value": "自动执行"
+    },
+    {
+        "id": "Executed Accepted",
+        "value": "用户审批同意"
+    },
+    {
+        "id": "Executed Rejected",
+        "value": "用户审批驳回"
+    }
+]

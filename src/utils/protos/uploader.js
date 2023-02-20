@@ -6,6 +6,7 @@ function uploader(options) {
     // 默认配置
     var newOptions = _.extend(
         {
+            css: { "border-top": "none" },
             label: "附件",   // 显示名称
             readonly: false, // 是否可以只读，不可编辑（删除，上传）
             accept: "*",    // 上传的文件类型  https://en.wikipedia.org/wiki/Media_type#List_of_common_media_types
@@ -22,6 +23,7 @@ function uploader(options) {
     return {
         id: id,
         view: "form",
+        css: newOptions["css"],
         data: { doc: docs },
         rows: [
             {
