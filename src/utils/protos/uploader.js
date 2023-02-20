@@ -1,5 +1,5 @@
 function uploader(options) {
-    var uploader_id = utils.UUID();
+    var uploader_id = options["id"] || utils.UUID();
     var list_id = utils.UUID();
 
     console.log(options);
@@ -54,11 +54,8 @@ function uploader(options) {
                         + "<div style='float:right'>#sizetext#</div><a>{common.fileName()}</a>",
                     on: {
                         onItemClick(id, e, node) {
-                            console.log(id);
-                            console.log($$(uploader_id).files.data.pull);
-
-
                             var item = $$(list_id).getItem(id);
+
                             webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: id }, function (text, data) {
                                 webix.html.download(data, item ? item["name"] : id);
                             });

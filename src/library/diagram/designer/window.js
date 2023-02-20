@@ -252,7 +252,6 @@ function open(item, options, model) {
                                 if ($$(property)) {
                                     var elements = diagramElements;
                                     var data = options.diagram;
-                                    console.log(data);
 
                                     if (node) {
                                         if (_.has(node, "key")) {

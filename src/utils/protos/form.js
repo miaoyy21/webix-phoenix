@@ -68,6 +68,7 @@ function form(options) {
 
         // Ajax请求附件信息
         _.each(uploader, function (name) {
+            console.log(_options);
             var text = _options["data"][name];
             if (_.isString(text)) {
                 var value = JSON.parse(webix.ajax().sync().get("/api/sys/docs", { id: text }).responseText);
@@ -83,8 +84,6 @@ function form(options) {
             }
         })
     }
-
-    console.log(_options);
 
     return _options;
 };

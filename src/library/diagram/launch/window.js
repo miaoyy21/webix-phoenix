@@ -4,7 +4,6 @@ function open(options) {
     var win = utils.UUID();
     var menu = utils.UUID();
     var dtable = utils.UUID();
-    console.log(options);
 
     webix.ui({
         id: win,
@@ -27,14 +26,15 @@ function open(options) {
                             layout: "y",
                             select: true,
                             url: "/api/wf/flows?method=Summary&diagram_id=" + options["diagram_id_"],
+                            ready() {
+                                this.select(this.getFirstId());
+                            },
                             on: {
                                 onBeforeLoad() {
                                     webix.extend(this, webix.ProgressBar).showProgress();
                                 },
                                 onAfterLoad() {
                                     webix.extend(this, webix.ProgressBar).hideProgress();
-
-                                    this.select(this.getFirstId());
                                 },
                                 onAfterSelect(id) {
                                     $$(dtable).clearAll();
@@ -156,12 +156,22 @@ function open(options) {
                                         "$dtable": dtable,
                                         "operation": "view",
                                         "id": item.row,
+                                        "_keyword": row["keyword_"],
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     }));
                                 },
                                 btn_revoke(e, item) {
-                                    console.log("button revoke ", item.row);
+                                    var row = this.getItem(item.row);
+                                    advRevoke({
+                                        "$menu": menu,
+                                        "$dtable": dtable,
+                                        "operation": "view",
+                                        "id": item.row,
+                                        "_keyword": row["keyword_"],
+                                        "status_": row["status_"],
+                                        "values_md5_": row["values_md5_"]
+                                    })
                                 },
                                 btn_start(e, item) {
                                     var row = this.getItem(item.row);
@@ -203,6 +213,14 @@ function open(options) {
     }).show();
 };
 
+function refresh(options) {
+    var selected = $$(options["$menu"]).getSelectedId();
+
+    $$(options["$menu"]).clearAll();
+    $$(options["$menu"]).load($$(options["$menu"]).config.url)
+        .then(() => { $$(options["$menu"]).select(selected) });
+}
+
 // 启动流程
 function advStart(options) {
     webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["id"] })
@@ -218,11 +236,8 @@ function advStart(options) {
                     if (res["status"] == "success") {
                         webix.message({ type: "success", text: "启动成功" });
 
-                        $$(options["$menu"]).clearAll();
-                        $$(options["$menu"]).load($$(options["$menu"]).config.url);
-
+                        refresh(options);
                         $$(options["$win"]) && $$(options["$win"]).hide();
-
                         return true;
                     }
 
@@ -232,8 +247,27 @@ function advStart(options) {
         })
 }
 
+// 撤回流程
+function advRevoke(options) {
+    webix.confirm({
+        title: "系统提示",
+        text: "确认撤回流程实例 【" + options["_keyword"] + "】 ?",
+        type: "confirm-error"
+    }).then((result) => {
+        webix.ajax().post("/api/wf/flows?method=Revoke", { id: options["id"] })
+            .then((res) => {
+                webix.message({ type: "success", text: "撤回成功" });
+
+                refresh(options);
+                $$(options["$win"]) && $$(options["$win"]).hide();
+                return true;
+            });
+    });
+}
+
 function show(options) {
     options = _.extend({}, options, { "$win": utils.UUID(), editable: false });
+    console.log("show() options ", options);
 
     // 表单
     if (_.isEqual(options["operation"], "insert") || _.isEqual(options["operation"], "update")) {
@@ -246,10 +280,11 @@ function show(options) {
         view: "button", label: "保存", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
         click() {
             var values = view.values();
+            if (!values) return;
+
             var text = JSON.stringify(values);
             var hash = md5(text);
 
-            console.log(options["values_md5_"], hash);
             if (!_.isEqual(options["values_md5_"], hash)) {
                 console.log("数据已发生变化，执行保存");
                 webix.ajax().post("/api/wf/flows", {
@@ -261,10 +296,12 @@ function show(options) {
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
                     var row = res.json();
+                    options["operation"] = "update";
                     options["id"] = row["id"];
                     options["values_md5_"] = hash;
 
                     webix.message({ type: "success", text: "保存成功" });
+                    refresh(options);
                 })
             }
         }
@@ -275,6 +312,8 @@ function show(options) {
         view: "button", label: "启动", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-rocket-launch",
         click() {
             var values = view.values();
+            if (!values) return;
+
             var text = JSON.stringify(values);
             var hash = md5(text);
 
@@ -301,9 +340,7 @@ function show(options) {
     // 按钮 撤回
     var revoke = {
         view: "button", label: "撤回", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-undo-variant",
-        click() {
-            console.log("撤回");
-        }
+        click() { advRevoke(options) }
     }
 
     // 显示按钮
@@ -331,7 +368,8 @@ function show(options) {
         // 加载数据值
         webix.ajax().get("/api/wf/flows?method=Values", { id: options["id"] }).then(
             (res) => {
-                showUI(view.show(res.json()), actions, options);
+                var values = JSON.parse(res.json());
+                showUI(view.show(values), actions, options);
             }
         );
     }
