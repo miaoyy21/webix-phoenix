@@ -420,8 +420,6 @@ function showUI(view, actions, options) {
                 color = "coral";
             } else if (options["status_"] == "Suspended") {
                 color = "lightgrey";
-            } else {
-                color = "black";
             }
         } else if (_.indexOf(executed, node.key) >= 0) {
             color = "lightskyblue";
@@ -456,8 +454,6 @@ function showUI(view, actions, options) {
                                 { css: { "background": "coral" }, height: 30, view: "template", template: "<div style='text-align: center'>驳回</div>", },
                                 { height: 12 },
                                 { css: { "background": "lightgrey" }, height: 30, view: "template", template: "<div style='text-align: center'>挂起</div>", },
-                                { height: 12 },
-                                { css: { "background": "black" }, height: 30, view: "template", template: "<div style='text-align: center'>未知</div>", },
                                 {},
                             ]
                         },
