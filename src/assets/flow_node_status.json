@@ -1,7 +1,7 @@
 [
     {
         "id": "Executing",
-        "value": "等待执行"
+        "value": "执行中"
     },
     {
         "id": "Canceled",
@@ -13,10 +13,10 @@
     },
     {
         "id": "Executed Accepted",
-        "value": "用户审批同意"
+        "value": "用户同意"
     },
     {
         "id": "Executed Rejected",
-        "value": "用户审批驳回"
+        "value": "用户驳回"
     }
 ]
