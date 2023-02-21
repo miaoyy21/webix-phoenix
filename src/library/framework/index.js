@@ -1,5 +1,5 @@
 var framework = {};
 
-framework.framework_executing = require("./executing");
+framework.framework_tasks = require("./tasks");
 
 export { framework }

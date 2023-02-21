@@ -270,8 +270,8 @@ function datatable(options) {
                             _.forEach(state.filter, (v, k) => { params["filter[" + k + "]"] = v });
                         }
 
+                        datatable.clearAll();
                         datatable.load(() => webix.ajax(datatable.config.url, params));
-                        datatable.refresh();
                     }
                 }
             }

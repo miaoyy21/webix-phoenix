@@ -45,9 +45,7 @@ function uploader(options) {
                             upload: "/api/sys/docs?method=Upload",
                             on: {
                                 onViewShow() {
-                                    console.log("onViewShow 1", options["value"]);
                                     var value = _.size(options["value"]) > 2 ? options["value"] : "[]";
-                                    console.log("onViewShow 2", value);
 
                                     $$(uploader_id).files.parse(JSON.parse(value));
                                 },

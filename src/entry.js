@@ -153,13 +153,13 @@ webix.ready(function () {
                     { view: "label", label: PHOENIX_SETTING["name"] },
                     {},
                     {
-                        view: "icon", icon: "mdi mdi-message", tooltip: "消息中心",
+                        view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
                         badge: webix.storage.local.get("PHOENIX_EXECUTING_COUNT"),
                         click() {
                             onMenuSelect({
                                 "id": EXECUTING_PAGE_ID,
-                                "menu_": "framework_executing",
-                                "value": "待办事项"
+                                "menu_": "framework_tasks",
+                                "value": "任务中心"
                             });
                         }
                     },

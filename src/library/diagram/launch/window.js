@@ -1,4 +1,4 @@
-import { backwards } from "../advance/backwards";
+import { backwards } from "../../framework/backwards";
 
 function open(options) {
     var win = utils.UUID();
@@ -85,7 +85,7 @@ function open(options) {
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                                 { id: "keyword_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 240 },
                                 { id: "status_", header: { text: "流程状态", css: { "text-align": "center" } }, options: "/assets/flow_status.json", sort: "text", css: { "text-align": "center" }, width: 100 },
-                                { id: "status_text_", header: { text: "状态描述", css: { "text-align": "center" } }, sort: "text", width: 360 },
+                                { id: "status_text_", header: { text: "流程状态描述", css: { "text-align": "center" } }, sort: "text", width: 360 },
 
                                 { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                                 { id: "start_at_", header: { text: "启动时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
@@ -133,10 +133,6 @@ function open(options) {
                                     },
                                 },
                             ],
-                            rules: {
-                                "code_": webix.rules.isNotEmpty,
-                                "name_": webix.rules.isNotEmpty,
-                            },
                             onClick: {
                                 btn_edit(e, item) {
                                     var row = this.getItem(item.row);
@@ -144,8 +140,8 @@ function open(options) {
                                         "$menu": menu,
                                         "$dtable": dtable,
                                         "operation": "update",
-                                        "id": item.row,
-                                        "_keyword": row["keyword_"],
+                                        "flow_id_": item.row,
+                                        "$keyword": row["keyword_"],
                                         "executed_keys_": row["executed_keys_"],
                                         "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
@@ -159,7 +155,7 @@ function open(options) {
                                         "$dtable": dtable,
                                         "operation": "view",
                                         "$keyword": row["keyword_"],
-                                        "id": item.row,
+                                        "flow_id_": item.row,
                                         "executed_keys_": row["executed_keys_"],
                                         "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
@@ -173,7 +169,7 @@ function open(options) {
                                         "$dtable": dtable,
                                         "operation": "view",
                                         "$keyword": row["keyword_"],
-                                        "id": item.row,
+                                        "flow_id_": item.row,
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     })
@@ -184,7 +180,7 @@ function open(options) {
                                         "$menu": menu,
                                         "$dtable": dtable,
                                         "operation": "view",
-                                        "id": item.row,
+                                        "flow_id_": item.row,
                                         "status_": row["status_"],
                                         "values_md5_": row["values_md5_"]
                                     }));
@@ -228,10 +224,10 @@ function refresh(options) {
 
 // 启动流程
 function advStart(options) {
-    webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["id"] })
+    webix.ajax().post("/api/wf/flows?method=StartBackwards", { "id": options["flow_id_"] })
         .then((res) => {
             backwards({
-                id: options["id"],
+                id: options["flow_id_"],
                 title: "启动流程",
                 backwards: res.json(),
                 callback(data) {
@@ -259,7 +255,7 @@ function advRevoke(options) {
         text: "确认撤回流程实例 【" + options["$keyword"] + "】 ?",
         type: "confirm-error"
     }).then((result) => {
-        webix.ajax().post("/api/wf/flows?method=Revoke", { id: options["id"] })
+        webix.ajax().post("/api/wf/flows?method=Revoke", { id: options["flow_id_"] })
             .then((res) => {
                 webix.message({ type: "success", text: "撤回成功" });
 
@@ -280,6 +276,11 @@ function show(options) {
 
     var values = {};
     var mod = PHOENIX_FLOWS[options["diagram_code_"]];
+    if (_.isUndefined(mod)) {
+        webix.message({ type: "error", text: "没有找到" + options["diagram_code_"] + "的注册表单" });
+        return;
+    };
+
     if (_.isEqual(options["operation"], "insert")) {
 
         // 加载流程图
@@ -290,7 +291,7 @@ function show(options) {
         values = mod.defaultValues ? mod.defaultValues(options) : {};
     } else {
         // 加载数据值
-        var request = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["id"] });
+        var request = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["flow_id_"] });
         var resp = JSON.parse(request.responseText);
 
         options["model"] = JSON.parse(resp["model"]);
@@ -299,7 +300,7 @@ function show(options) {
     var view = mod.builder(options, values);
 
 
-    // 按钮 启动
+    // 按钮 保存
     var save = {
         view: "button", label: "保存", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
         click() {
@@ -313,15 +314,16 @@ function show(options) {
                 console.log("数据已发生变化，执行保存");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": options["operation"],
-                    "id": options["id"],
+                    "id": options["flow_id_"],
                     "values_": text,
                     "values_md5_": hash,
                     "keyword_": webix.template(options["keyword_"])(values),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
                     var row = res.json();
+
                     options["operation"] = "update";
-                    options["id"] = row["id"];
+                    options["flow_id_"] = row["id"];
                     options["values_md5_"] = hash;
 
                     webix.message({ type: "success", text: "保存成功" });
@@ -345,13 +347,13 @@ function show(options) {
                 console.log("数据已发生变化，先保存后再启动流程");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": options["operation"],
-                    "id": options["id"],
+                    "id": options["flow_id_"],
                     "values_": text,
                     "values_md5_": hash,
                     "keyword_": webix.template(options["keyword_"])(values),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
-                    options["id"] = res.json()["id"];
+                    options["flow_id_"] = res.json()["id"];
                     advStart(options);
                 })
             } else {
@@ -392,10 +394,6 @@ function showUI(view, actions, options) {
     // 标题
     var operation = _.isEqual(options["operation"], "insert") ? "创建" :
         _.isEqual(options["operation"], "update") ? "编辑" : "查看";
-    if (_.isUndefined(PHOENIX_FLOWS[options["diagram_code_"]])) {
-        webix.message({ type: "error", text: "没有找到" + options["diagram_code_"] + "的注册表单" });
-        return;
-    };
 
     // 表单
     var views = {
@@ -474,16 +472,17 @@ function showUI(view, actions, options) {
             view: "datatable",
             css: "webix_data_border webix_header_border",
             select: "row",
-            url: "/api/wf/flows?method=Records&id=" + options["id"],
+            url: "/api/wf/flows?method=Records&id=" + options["flow_id_"],
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                { id: "name_", header: { text: "节点名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
-                { id: "executor_user_name_", header: { text: "执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
-                { id: "status_", header: { text: "节点状态", css: { "text-align": "center" } }, options: "/assets/flow_node_status.json", width: 100, css: { "text-align": "center" } },
-                { id: "comment_", header: { text: "流转意见", css: { "text-align": "center" } }, fillspace: true },
-                { id: "activated_at_", header: { text: "创建时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
-                { id: "canceled_at_", header: { text: "取消时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
-                { id: "executed_at_", header: { text: "执行时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
+                { id: "executed_depart_name_", header: { text: "执行者所属部门", css: { "text-align": "center" } }, width: 160, css: { "text-align": "center" } },
+                { id: "executed_user_name_", header: { text: "执行者", css: { "text-align": "center" } }, width: 80, css: { "text-align": "center" } },
+                { id: "status_", header: { text: "任务状态", css: { "text-align": "center" } }, options: "/assets/flow_node_status.json", width: 100, css: { "text-align": "center" } },
+                { id: "comment_", header: { text: "任务流转意见", css: { "text-align": "center" } }, minWidth: 360, fillspace: true },
+                { id: "activated_at_", header: { text: "任务创建时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                { id: "canceled_at_", header: { text: "任务取消时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
+                { id: "executed_at_", header: { text: "任务执行时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
             ],
             on: {
                 "data->onStoreUpdated": function () {
