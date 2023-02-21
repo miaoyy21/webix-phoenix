@@ -128,7 +128,7 @@ function builder() {
                             view: "form",
                             elements: [
                                 { view: "text", name: "name_", label: "菜单名称", required: true },
-                                { view: "combo", name: "menu_", label: "功能点", options: _.flatten(["NONE", _.sortBy(_.map(PHOENIX_MENUS, (_, k) => k))]), required: true },
+                                { view: "combo", name: "menu_", label: "功能点", options: _.flatten(["NONE", _.sortBy(_.map(PHOENIX_MENUS_DATA, (_, k) => k))]), required: true },
                                 {
                                     view: "search", name: "icon_", label: "菜单图标", readonly: true, required: true, clear: false,
                                     on: {

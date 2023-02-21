@@ -420,6 +420,8 @@ function showUI(view, actions, options) {
                 color = "coral";
             } else if (options["status_"] == "Suspended") {
                 color = "lightgrey";
+            } else {
+                color = "black";
             }
         } else if (_.indexOf(executed, node.key) >= 0) {
             color = "lightskyblue";
@@ -445,15 +447,15 @@ function showUI(view, actions, options) {
                             width: 72,
                             rows: [
                                 { height: 12 },
-                                { css: { "background": "lightskyblue" }, height: 30, view: "template", template: "<div style='text-align: center'>已执行</div>", },
+                                { css: { "background": "lightskyblue" }, height: 28, view: "template", template: "<div style='text-align: center'>已执行</div>", },
                                 { height: 12 },
-                                { css: { "background": "lightgreen" }, height: 30, view: "template", template: "<div style='text-align: center'>执行中</div>", },
+                                { css: { "background": "lightgreen" }, height: 28, view: "template", template: "<div style='text-align: center'>执行中</div>", },
                                 { height: 12 },
-                                { css: { "background": "orange" }, height: 30, view: "template", template: "<div style='text-align: center'>撤回</div>", },
+                                { css: { "background": "orange" }, height: 28, view: "template", template: "<div style='text-align: center'>撤回</div>", },
                                 { height: 12 },
-                                { css: { "background": "coral" }, height: 30, view: "template", template: "<div style='text-align: center'>驳回</div>", },
+                                { css: { "background": "coral" }, height: 28, view: "template", template: "<div style='text-align: center'>驳回</div>", },
                                 { height: 12 },
-                                { css: { "background": "lightgrey" }, height: 30, view: "template", template: "<div style='text-align: center'>挂起</div>", },
+                                { css: { "background": "lightgrey" }, height: 28, view: "template", template: "<div style='text-align: center'>挂起</div>", },
                                 {},
                             ]
                         },

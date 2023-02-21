@@ -4,12 +4,25 @@ import { utils } from "./utils";
 // 自定义的工具库
 _.extend(global, { utils });
 
+
+_.extend(global, {
+    MAIN_PAGE_ID: "PHOENIX_MAIN",
+    EXECUTING_PAGE_ID: "PHOENIX_EXECUTING_PAGE",
+    LOGIN_PAGE_ID: "PHOENIX_LOGIN_PAGE",
+    LOGIN_PAGE_FORM_ID: "PHOENIX_LOGIN_PAGE_FORM",
+    CHANGE_PASSWORD_PAGE_ID: "PHOENIX_CHANGE_PASSWORD_PAGE",
+    HOME_PAGE_ID: "PHOENIX_HOME_PAGE",
+    MENU_TREE_ID: "PHOENIX_MENU_TREE",
+    VIEWS_ID: "PHOENIX_VIEWS",
+    VIEWS_TABBAR_ID: "PHOENIX_VIEWS_TABBAR",
+});
+
 // 界面初始化
 webix.ready(function () {
 
     // 登录界面
     webix.ui({
-        id: "PHOENIX_LOGIN",
+        id: LOGIN_PAGE_ID,
         css: {
             "background": "url('./assets/background.jpeg') no-repeat right top",
             "background-size": "100% 100%",
@@ -20,7 +33,7 @@ webix.ready(function () {
                 cols: [
                     {},
                     {
-                        id: "PHOENIX_LOGIN_FORM",
+                        id: LOGIN_PAGE_FORM_ID,
                         view: "form",
                         width: 360,
                         rows: [
@@ -44,12 +57,12 @@ webix.ready(function () {
                                     {
                                         view: "button", value: "登录", css: "webix_primary",
                                         click() {
-                                            if (!$$("PHOENIX_LOGIN_FORM").validate()) return;
+                                            if (!$$(LOGIN_PAGE_FORM_ID).validate()) return;
 
-                                            var user = $$("PHOENIX_LOGIN_FORM").getValues();
+                                            var user = $$(LOGIN_PAGE_FORM_ID).getValues();
                                             var departs = JSON.parse(webix.ajax().sync().get("/api/sys/users?PHOENIX_USING_MENU=0", { scope: "LOGIN", "account_id": user["account_id"] }).responseText);
 
-                                            var departView = $$("PHOENIX_LOGIN_FORM").elements["depart_id"];
+                                            var departView = $$(LOGIN_PAGE_FORM_ID).elements["depart_id"];
                                             if (_.size(departs) < 1) {
                                                 webix.message({ type: "error", text: "不存在的用户" });
                                                 return
@@ -79,11 +92,11 @@ webix.ready(function () {
                                                         webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
                                                     }
 
-                                                    $$("PHOENIX_LOGIN_FORM").clear();
+                                                    $$(LOGIN_PAGE_FORM_ID).clear();
                                                     departView.hide();
 
-                                                    $$("PHOENIX_MAIN").show();
-                                                    $$("PHOENIX_LOGIN").hide();
+                                                    $$(MAIN_PAGE_ID).show();
+                                                    $$(LOGIN_PAGE_ID).hide();
 
                                                     // 设置该参数的意义：避免密码登录时，多显示1条Token登录
                                                     reloadMenus({ "byPassword": true });
@@ -104,11 +117,13 @@ webix.ready(function () {
 
     // 自动加载用户菜单
     function reloadMenus(params) {
-        webix.extend($$("PHOENIX_MENU"), webix.ProgressBar).showProgress();
+        webix.extend($$(MENU_TREE_ID), webix.ProgressBar).showProgress();
         webix.ajax().get("/api/sys/login?method=ByToken", params)
-            .then((data) => {
+            .then((res) => {
+                var data = res.json();
+
                 var menus = _.map(
-                    _.sortBy(data.json(), (o) => Number(o["order_"])), (d) => ({
+                    _.sortBy(data["menus"], (o) => Number(o["order_"])), (d) => ({
                         "id": d["id"],
                         "menu_": d["menu_"],
                         "value": d["name_"],
@@ -116,8 +131,10 @@ webix.ready(function () {
                         "icon": d["icon_"]
                     }));
 
-                $$("PHOENIX_MENU").clearAll();
-                $$("PHOENIX_MENU").define("data", utils.tree.buildTree(menus))
+                $$(MENU_TREE_ID).clearAll();
+                $$(MENU_TREE_ID).define("data", utils.tree.buildTree(menus))
+
+                webix.storage.local.put("PHOENIX_EXECUTING_COUNT", data["executing"])
 
                 webix.extend(view, webix.ProgressBar).hideProgress();
             })
@@ -125,18 +142,27 @@ webix.ready(function () {
 
     // 主界面
     webix.ui({
-        id: "PHOENIX_MAIN",
+        id: MAIN_PAGE_ID,
         rows: [
             {
                 view: "toolbar", padding: 2, elements: [
                     {
                         view: "icon", icon: "mdi mdi-menu",
-                        click: function () { $$("PHOENIX_MENU").toggle() }
+                        click: () => { $$(MENU_TREE_ID).toggle() }
                     },
                     { view: "label", label: PHOENIX_SETTING["name"] },
                     {},
-                    { view: "icon", icon: "wxi-pencil", tooltip: "Edit", badge: 4 },
-                    { view: "icon", icon: "wxi-alert", tooltip: "消息中心", badge: 88 },
+                    {
+                        view: "icon", icon: "mdi mdi-message", tooltip: "消息中心",
+                        badge: webix.storage.local.get("PHOENIX_EXECUTING_COUNT"),
+                        click() {
+                            onMenuSelect({
+                                "id": EXECUTING_PAGE_ID,
+                                "menu_": "framework_executing",
+                                "value": "待办事项"
+                            });
+                        }
+                    },
                     {
                         view: "icon", icon: "wxi-user", tooltip: "个人设置",
                         popup: {
@@ -154,14 +180,14 @@ webix.ready(function () {
                                         webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
 
                                         // 显示登录界面
-                                        $$("PHOENIX_LOGIN").show();
-                                        $$("PHOENIX_LOGIN_FORM").elements["depart_id"].hide();
-                                        $$("PHOENIX_LOGIN_FORM").clear();
+                                        $$(LOGIN_PAGE_ID).show();
+                                        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
+                                        $$(LOGIN_PAGE_FORM_ID).clear();
 
                                         // 关闭所有的页面，并隐藏主界面
-                                        var menus = _.map($$("PHOENIX_VIEWS").getChildViews(), "config.id");
-                                        _.forEach(menus, (id) => { if (id !== "PHOENIX_PAGE_HOME") $$("PHOENIX_TABBAR").removeOption(id) });
-                                        $$("PHOENIX_MAIN").hide();
+                                        var menus = _.map($$(VIEWS_ID).getChildViews(), "config.id");
+                                        _.forEach(menus, (id) => { if (id !== HOME_PAGE_ID) $$(VIEWS_TABBAR_ID).removeOption(id) });
+                                        $$(MAIN_PAGE_ID).hide();
 
                                         webix.storage.cookie.put("PHOENIX_USING_MENU", null);
                                     }
@@ -174,45 +200,45 @@ webix.ready(function () {
             {
                 cols: [
                     {
-                        id: "PHOENIX_MENU",
+                        id: MENU_TREE_ID,
                         view: "sidebar",
                         scroll: "y",
                         width: 240,
                         data: null,
-                        on: { onAfterSelect: onMenuSelect }
+                        on: { onAfterSelect(id) { onMenuSelect(this.getItem(id)) } }
                     },
                     { view: "resizer" },
                     {
                         rows: [
                             {
-                                id: "PHOENIX_TABBAR",
+                                id: VIEWS_TABBAR_ID,
                                 view: "tabbar",
                                 multiview: true,
                                 multipleOpen: true,
                                 options: [
-                                    { id: "PHOENIX_PAGE_HOME", value: "<span style='font-size:12px'>首页</span>" }
+                                    { id: HOME_PAGE_ID, value: "<span style='font-size:12px'>首页</span>" }
                                 ],
                                 optionWidth: 120,
                                 height: 30,
                                 on: {
-                                    onOptionRemove(id) { $$("PHOENIX_VIEWS").removeView(id) },
+                                    onOptionRemove(id) { $$(VIEWS_ID).removeView(id) },
                                     onChange: onTabChange
                                 },
                             },
                             {
-                                id: "PHOENIX_VIEWS",
+                                id: VIEWS_ID,
                                 animate: false,
                                 cells: [
                                     {
-                                        id: "PHOENIX_PAGE_HOME",
+                                        id: HOME_PAGE_ID,
                                         view: "template",
                                         template: "这是首页"
                                     }
 
                                     // _.extend(
-                                    //     PHOENIX_MENUS.diagram_full_designer.builder(),
+                                    //     PHOENIX_MENUS_DATA.diagram_full_designer.builder(),
                                     //     {
-                                    //         id: "PHOENIX_PAGE_HOME",
+                                    //         id: HOME_PAGE_ID,
                                     //         css: { "border-left": "none", "border-top": "none" }
                                     //     },
                                     // )
@@ -233,15 +259,15 @@ webix.ready(function () {
 
     // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
     if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {
-        $$("PHOENIX_LOGIN").hide();
+        $$(LOGIN_PAGE_ID).hide();
 
-        $$("PHOENIX_MAIN").show();
+        $$(MAIN_PAGE_ID).show();
         reloadMenus();
     } else {
-        $$("PHOENIX_LOGIN").show();
-        $$("PHOENIX_LOGIN_FORM").elements["depart_id"].hide();
+        $$(LOGIN_PAGE_ID).show();
+        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
-        $$("PHOENIX_MAIN").hide();
+        $$(MAIN_PAGE_ID).hide();
     }
 });
 
@@ -250,7 +276,7 @@ webix.ready(function () {
 // 修改密码
 function change_password() {
     webix.ui({
-        id: "PHOENIX_CHANGE_PASSWORD",
+        id: CHANGE_PASSWORD_PAGE_ID,
         view: "window",
         modal: true,
         close: true,
@@ -307,7 +333,7 @@ function change_password() {
                                     }
                                 ).then((data) => {
                                     webix.message({ type: "success", text: "修改密码成功" });
-                                    $$("PHOENIX_CHANGE_PASSWORD").hide();
+                                    $$(CHANGE_PASSWORD_PAGE_ID).hide();
                                 })
                             }
                         },
@@ -322,19 +348,21 @@ function change_password() {
 }
 
 // 选择菜单
-function onMenuSelect(id) {
-    var item = this.getItem(id);
-
+function onMenuSelect(item) {
     if (!$$(item.id)) {
-        if (!_.has(PHOENIX_MENUS, item["menu_"], 'builder')) {
-            $$("PHOENIX_VIEWS").addView({
+        var module = _.has(PHOENIX_MENUS_DATA, item["menu_"], "builder") ?
+            PHOENIX_MENUS_DATA[item["menu_"]] :
+            PHOENIX_FRAMEWORK_DATA[item["menu_"]];
+
+        if (!module) {
+            $$(VIEWS_ID).addView({
                 id: item.id,
                 view: "template",
                 template: "Menu:" + item["menu_"] + "<br>Value: " + item.value
             });
         } else {
-            $$("PHOENIX_VIEWS").addView(_.extend(
-                PHOENIX_MENUS[item["menu_"]].builder(),
+            $$(VIEWS_ID).addView(_.extend(
+                module.builder(),
                 {
                     id: item.id,
                     css: { "border-left": "none", "border-top": "none" }
@@ -342,13 +370,13 @@ function onMenuSelect(id) {
             ));
         }
 
-        $$("PHOENIX_TABBAR").addOption({
+        $$(VIEWS_TABBAR_ID).addOption({
             id: item.id,
             close: true,
             value: "<span style='font-size:12px'>" + item.value.trim() + "</span>"
         }, true);
     } else {
-        $$("PHOENIX_TABBAR").setValue(item.id);
+        $$(VIEWS_TABBAR_ID).setValue(item.id);
     }
 }
 
@@ -359,15 +387,15 @@ function onTabChange(newid, oldid) {
     _.forEach(PHOENIX_SIDE_MENUS, (s) => $$(s) && $$(s).hide());
 
     // 取消选中原菜单
-    if (!newid || newid === 'PHOENIX_PAGE_HOME') {
-        return $$("PHOENIX_MENU").unselect(oldid);
+    if (!newid || newid === HOME_PAGE_ID || newid == EXECUTING_PAGE_ID) {
+        return $$(MENU_TREE_ID).unselect(oldid);
     }
 
     // 寻找当前菜单的路径
-    var path = utils.tree.path($$("PHOENIX_MENU"), newid);
-    _.forEach(path, (id) => $$("PHOENIX_MENU").open(id, true));
+    var path = utils.tree.path($$(MENU_TREE_ID), newid);
+    _.forEach(path, (id) => $$(MENU_TREE_ID).open(id, true));
 
     // 设置选中菜单
-    $$("PHOENIX_MENU").select(newid);
+    $$(MENU_TREE_ID).select(newid);
     webix.storage.cookie.put("PHOENIX_USING_MENU", newid);
 }

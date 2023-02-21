@@ -24,11 +24,11 @@ webix.attachEvent("onAjaxError", function (xhr) {
         webix.message({ type: "error", text: "Token已失效，需要重新登录" });
 
         // 显示登录界面
-        $$("PHOENIX_LOGIN").show();
-        $$("PHOENIX_LOGIN_FORM").elements["depart_id"].hide();
+        $$(LOGIN_PAGE_ID).show();
+        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
         // 隐藏主界面
-        $$("PHOENIX_MAIN").hide();
+        $$(MAIN_PAGE_ID).hide();
     } else {
         webix.message({ type: "error", text: obj["error"] });
     }
