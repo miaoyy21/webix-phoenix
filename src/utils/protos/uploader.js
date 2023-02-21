@@ -83,13 +83,13 @@ function uploader(options) {
         ],
         on: {
             onAfterLoad() {
-                console.log("onAfterLoad", arguments)
+                // console.log("onAfterLoad", arguments)
             },
             onBindRequest() {
-                console.log("onBindRequest", arguments)
+                // console.log("onBindRequest", arguments)
             },
             onValues() {
-                console.log("onValues", arguments)
+                // console.log("onValues", arguments)
             }
         },
         elementsConfig: options["elementsConfig"],

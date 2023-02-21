@@ -145,7 +145,8 @@ webix.ready(function () {
         id: MAIN_PAGE_ID,
         rows: [
             {
-                view: "toolbar", padding: 2, elements: [
+                view: "toolbar",
+                css: { "background": "#F8F9F9" }, elements: [
                     {
                         view: "icon", icon: "mdi mdi-menu",
                         click: () => { $$(MENU_TREE_ID).toggle() }
@@ -153,7 +154,7 @@ webix.ready(function () {
                     { view: "label", label: PHOENIX_SETTING["name"] },
                     {},
                     {
-                        view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
+                        view: "icon", css: "phoenix_primary_icon", icon: "mdi mdi-message", tooltip: "任务中心",
                         badge: webix.storage.local.get("PHOENIX_EXECUTING_COUNT"),
                         click() {
                             onMenuSelect({
@@ -202,6 +203,7 @@ webix.ready(function () {
                     {
                         id: MENU_TREE_ID,
                         view: "sidebar",
+                        css: { "background": "#F8F9F9" },
                         scroll: "y",
                         width: 240,
                         data: null,
@@ -229,11 +231,7 @@ webix.ready(function () {
                                 id: VIEWS_ID,
                                 animate: false,
                                 cells: [
-                                    {
-                                        id: HOME_PAGE_ID,
-                                        view: "template",
-                                        template: "这是首页"
-                                    }
+                                    PHOENIX_FRAMEWORK_DATA.framework_home.builder(),
 
                                     // _.extend(
                                     //     PHOENIX_MENUS_DATA.diagram_full_designer.builder(),

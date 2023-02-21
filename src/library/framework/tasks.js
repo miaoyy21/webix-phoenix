@@ -3,7 +3,7 @@ function builder() {
 
     var taskStatus = [
         { "id": "Executing", "value": "正在执行中" },
-        { "id": "Executed Accepted", "value": "已同意" },
+        { "id": "Executed Accepted", "value": "已通过" },
         { "id": "Executed Rejected", "value": "已驳回" }
     ];
 
@@ -23,7 +23,7 @@ function builder() {
                     },
                     {},
                     {
-                        view: "search", width: 240, placeholder: "请输入流程实例关键字等 ...",
+                        view: "search", width: 300, placeholder: "请输入流程名称、流程实例关键字等 ...",
                         on: {
                             onTimedKeyPress() {
                                 var value = this.getValue().toLowerCase();
@@ -147,9 +147,9 @@ function show(options) {
     var values = JSON.parse(resp["values"]);
     var view = mod.builder(options, values);
 
-    // 按钮 同意
+    // 按钮 通过
     var accept = {
-        view: "button", label: "同意", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-clipboard-check-multiple",
+        view: "button", label: "通过", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-clipboard-check-multiple",
         click() {
             // var values = view.values();
             // if (!values) return;
