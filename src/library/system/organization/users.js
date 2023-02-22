@@ -142,6 +142,7 @@ function builder() {
             multiple: false,
             filter: text,
             callback(checked) {
+                console.log(checked);
                 if (checked["type_"] === "depart") {
                     var path = utils.tree.path($$(tree_id), checked["id"]);
 

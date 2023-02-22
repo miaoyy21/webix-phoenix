@@ -7,6 +7,7 @@ _.extend(global, { utils });
 
 _.extend(global, {
     MAIN_PAGE_ID: "PHOENIX_MAIN",
+    MAIN_PAGE_TASKS_ID: "MAIN_PAGE_TASKS",
     EXECUTING_PAGE_ID: "PHOENIX_EXECUTING_PAGE",
     LOGIN_PAGE_ID: "PHOENIX_LOGIN_PAGE",
     LOGIN_PAGE_FORM_ID: "PHOENIX_LOGIN_PAGE_FORM",
@@ -134,7 +135,8 @@ webix.ready(function () {
                 $$(MENU_TREE_ID).clearAll();
                 $$(MENU_TREE_ID).define("data", utils.tree.buildTree(menus))
 
-                webix.storage.local.put("PHOENIX_EXECUTING_COUNT", data["executing"])
+                $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
+                $$(MAIN_PAGE_TASKS_ID).refresh();
 
                 webix.extend(view, webix.ProgressBar).hideProgress();
             })
@@ -147,15 +149,11 @@ webix.ready(function () {
             {
                 view: "toolbar",
                 css: { "background": "#F8F9F9" }, elements: [
-                    {
-                        view: "icon", icon: "mdi mdi-menu",
-                        click: () => { $$(MENU_TREE_ID).toggle() }
-                    },
+                    { view: "icon", icon: "mdi mdi-menu", click: () => { $$(MENU_TREE_ID).toggle() } },
                     { view: "label", label: PHOENIX_SETTING["name"] },
                     {},
                     {
-                        view: "icon", css: "phoenix_primary_icon", icon: "mdi mdi-message", tooltip: "任务中心",
-                        badge: webix.storage.local.get("PHOENIX_EXECUTING_COUNT"),
+                        id: MAIN_PAGE_TASKS_ID, view: "icon", css: "phoenix_primary_icon", icon: "mdi mdi-message", tooltip: "任务中心",
                         click() {
                             onMenuSelect({
                                 "id": EXECUTING_PAGE_ID,
@@ -186,8 +184,8 @@ webix.ready(function () {
                                         $$(LOGIN_PAGE_FORM_ID).clear();
 
                                         // 关闭所有的页面，并隐藏主界面
-                                        var menus = _.map($$(VIEWS_ID).getChildViews(), "config.id");
-                                        _.forEach(menus, (id) => { if (id !== HOME_PAGE_ID) $$(VIEWS_TABBAR_ID).removeOption(id) });
+                                        var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
+                                        _.each(menus, (id) => { id != HOME_PAGE_ID && $$(VIEWS_TABBAR_ID).removeOption(id) });
                                         $$(MAIN_PAGE_ID).hide();
 
                                         webix.storage.cookie.put("PHOENIX_USING_MENU", null);
@@ -273,6 +271,7 @@ webix.ready(function () {
 
 // 修改密码
 function change_password() {
+
     webix.ui({
         id: CHANGE_PASSWORD_PAGE_ID,
         view: "window",
