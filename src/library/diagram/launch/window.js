@@ -51,7 +51,7 @@ function open(options) {
                             view: "toolbar",
                             cols: [
                                 {
-                                    view: "button", label: "创建流程", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
+                                    view: "button", label: "创建流程实例", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                                     click() {
                                         show(_.extend({}, options, { "$menu": menu, "$dtable": dtable, "operation": "insert" }));
                                     }
