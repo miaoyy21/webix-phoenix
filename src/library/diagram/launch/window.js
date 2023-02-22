@@ -145,7 +145,6 @@ function open(options) {
                                         "executed_keys_": row["executed_keys_"],
                                         "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
-                                        "values_md5_": row["values_md5_"]
                                     }));
                                 },
                                 btn_view(e, item) {
@@ -159,7 +158,6 @@ function open(options) {
                                         "executed_keys_": row["executed_keys_"],
                                         "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
-                                        "values_md5_": row["values_md5_"]
                                     }));
                                 },
                                 btn_revoke(e, item) {
@@ -171,7 +169,6 @@ function open(options) {
                                         "$keyword": row["keyword_"],
                                         "flow_id_": item.row,
                                         "status_": row["status_"],
-                                        "values_md5_": row["values_md5_"]
                                     })
                                 },
                                 btn_start(e, item) {
@@ -182,7 +179,6 @@ function open(options) {
                                         "operation": "view",
                                         "flow_id_": item.row,
                                         "status_": row["status_"],
-                                        "values_md5_": row["values_md5_"]
                                     }));
                                 },
                             },
@@ -299,32 +295,27 @@ function show(options) {
     }
     var view = mod.builder(options, values);
 
-
     // 按钮 保存
     var save = {
         view: "button", label: "保存", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline",
         click() {
-            var values = view.values();
-            if (!values) return;
+            var newValues = view.values();
+            if (!newValues) return;
 
-            var text = JSON.stringify(values);
-            var hash = md5(text);
-
-            if (!_.isEqual(options["values_md5_"], hash)) {
+            if (!_.isEqual(values, newValues)) {
                 console.log("数据已发生变化，执行保存");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": options["operation"],
                     "id": options["flow_id_"],
-                    "values_": text,
-                    "values_md5_": hash,
+                    "values_": JSON.stringify(newValues),
                     "keyword_": webix.template(options["keyword_"])(values),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
                     var row = res.json();
 
+                    values = newValues;
                     options["operation"] = "update";
                     options["flow_id_"] = row["id"];
-                    options["values_md5_"] = hash;
 
                     webix.message({ type: "success", text: "保存成功" });
                     refresh(options);
@@ -337,19 +328,15 @@ function show(options) {
     var start = {
         view: "button", label: "启动", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-rocket-launch",
         click() {
-            var values = view.values();
-            if (!values) return;
+            var newValues = view.values();
+            if (!newValues) return;
 
-            var text = JSON.stringify(values);
-            var hash = md5(text);
-
-            if (!_.isEqual(options["values_md5_"], hash)) {
+            if (!_.isEqual(values, newValues)) {
                 console.log("数据已发生变化，先保存后再启动流程");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": options["operation"],
                     "id": options["flow_id_"],
-                    "values_": text,
-                    "values_md5_": hash,
+                    "values_": JSON.stringify(newValues),
                     "keyword_": webix.template(options["keyword_"])(values),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
@@ -476,8 +463,9 @@ function showUI(view, actions, options) {
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                 { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
-                { id: "executed_depart_name_", header: { text: "执行者所属部门", css: { "text-align": "center" } }, width: 160, css: { "text-align": "center" } },
-                { id: "executed_user_name_", header: { text: "执行者", css: { "text-align": "center" } }, width: 80, css: { "text-align": "center" } },
+                { id: "executor_user_name_", header: { text: "指定执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
+                { id: "executed_depart_name_", header: { text: "实际执行部门", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
+                { id: "executed_user_name_", header: { text: "实际执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
                 { id: "status_", header: { text: "任务状态", css: { "text-align": "center" } }, options: "/assets/flow_node_status.json", width: 100, css: { "text-align": "center" } },
                 { id: "comment_", header: { text: "任务流转意见", css: { "text-align": "center" } }, minWidth: 360, fillspace: true },
                 { id: "activated_at_", header: { text: "任务创建时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },

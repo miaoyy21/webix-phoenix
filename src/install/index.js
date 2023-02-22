@@ -7,11 +7,12 @@ import "../assets/phoenix.css";
 
 import "../assets/goJs";
 import _ from "underscore";
+import * as webix from "webix";
 
 console.log("gojs", go);
 
 // 全局可以使用工具库和组件库 webix md5
-_.extend(global, { _, webix: require("webix"), md5: require("md5") });
+_.extend(global, { _, webix });
 
 // 组件库的相关配置
 webix.env.cdn = "./";

@@ -1,3 +1,5 @@
+import { backwards } from "./backwards";
+
 function builder() {
     var dtable = utils.UUID();
 
@@ -76,7 +78,7 @@ function builder() {
                             } else if (row["task_status_"] == "Executing") {
                                 return `
                                     <div class="webix_el_box" style="padding:0px; text-align:center">
-                                        <button webix_tooltip="处理" type="button" class="btn_deal webix_icon_button" style="height:30px;width:30px;">
+                                        <button webix_tooltip="执行" type="button" class="btn_execute webix_icon_button" style="height:30px;width:30px;">
                                             <span class="phoenix_primary_icon mdi mdi-18px mdi-hand-coin"></span>
                                         </button> 
                                     </div>
@@ -86,11 +88,11 @@ function builder() {
                     },
                 ],
                 onClick: {
-                    btn_deal(e, item) {
+                    btn_execute(e, item) {
                         var row = this.getItem(item.row);
                         show(_.extend({}, row, {
                             "$dtable": dtable,
-                            "operation": "deal",
+                            "operation": "execute",
                             "$keyword": row["keyword_text_"],
                             "task_id_": item.row,
                         }));
@@ -129,6 +131,32 @@ function builder() {
     };
 }
 
+function advAccept(options) {
+    webix.ajax().post("/api/wf/flows?method=ExecuteBackwards", { "id": options["task_id_"] })
+        .then((res) => {
+            backwards({
+                id: options["task_id_"],
+                title: "流转通过",
+                backwards: res.json(),
+                callback(data) {
+                    var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteAccept", data);
+                    var res = JSON.parse(request.responseText);
+
+                    if (res["status"] == "success") {
+                        webix.message({ type: "success", text: "流转成功" });
+
+                        $$(options["$dtable"]).clearAll();
+                        $$(options["$dtable"]).load($$(options["$dtable"]).config.url);
+
+                        $$(options["$win"]) && $$(options["$win"]).hide();
+                        return true;
+                    }
+
+                    return false;
+                }
+            })
+        })
+}
 
 function show(options) {
     options = _.extend({}, options, { "$win": utils.UUID(), readonly: true });
@@ -139,8 +167,8 @@ function show(options) {
     };
 
     // 加载数据值
-    var request = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["flow_id_"] });
-    var resp = JSON.parse(request.responseText);
+    var respText = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["flow_id_"] }).responseText;
+    var resp = JSON.parse(respText);
 
     options["model"] = JSON.parse(resp["model"]);
 
@@ -151,29 +179,23 @@ function show(options) {
     var accept = {
         view: "button", label: "通过", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-clipboard-check-multiple",
         click() {
-            // var values = view.values();
-            // if (!values) return;
+            var newValues = view.values();
+            if (!newValues) return;
 
-            // var text = JSON.stringify(values);
-            // var hash = md5(text);
-
-            // if (!_.isEqual(options["values_md5_"], hash)) {
-            //     console.log("数据已发生变化，先保存后再启动流程");
-            //     webix.ajax().post("/api/wf/flows", {
-            //         "operation": options["operation"],
-            //         "id": options["flow_id_"],
-            //         "values_": text,
-            //         "values_md5_": hash,
-            //         "keyword_": webix.template(options["keyword_"])(values),
-            //         "diagram_id_": options["diagram_id_"],
-            //     }).then((res) => {
-            //         options["flow_id_"] = res.json()["id"];
-            //         advStart(options);
-            //     })
-            // } else {
-            //     console.log("数据没有发生变化，直接启动流程");
-            //     advStart(options);
-            // }
+            if (!_.isEqual(values, newValues)) {
+                console.log("数据已发生变化，先保存后再流转");
+                webix.ajax().post("/api/wf/flows", {
+                    "operation": "update",
+                    "id": options["flow_id_"],
+                    "values_": JSON.stringify(newValues),
+                    "keyword_": webix.template(options["keyword_"])(values),
+                }).then((res) => {
+                    advAccept(options);
+                })
+            } else {
+                console.log("数据没有发生变化，直接流转");
+                advAccept(options);
+            }
         }
     };
 
@@ -187,7 +209,7 @@ function show(options) {
 
     // 显示按钮
     var actions = [];
-    if (_.isEqual(options["operation"], "deal")) {
+    if (_.isEqual(options["operation"], "execute")) {
         actions = [accept, reject];
     }
 
@@ -198,7 +220,7 @@ function showUI(view, actions, options) {
     console.log("showUI() Options is", options);
 
     // 标题
-    var operation = _.isEqual(options["operation"], "deal") ? "执行" : "查看";
+    var operation = _.isEqual(options["operation"], "execute") ? "执行" : "查看";
 
     // 表单
     var views = {
@@ -281,8 +303,9 @@ function showUI(view, actions, options) {
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                 { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
-                { id: "executed_depart_name_", header: { text: "执行者所属部门", css: { "text-align": "center" } }, width: 160, css: { "text-align": "center" } },
-                { id: "executed_user_name_", header: { text: "执行者", css: { "text-align": "center" } }, width: 80, css: { "text-align": "center" } },
+                { id: "executor_user_name_", header: { text: "指定执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
+                { id: "executed_depart_name_", header: { text: "实际执行部门", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },
+                { id: "executed_user_name_", header: { text: "实际执行者", css: { "text-align": "center" } }, width: 100, css: { "text-align": "center" } },
                 { id: "status_", header: { text: "任务状态", css: { "text-align": "center" } }, options: "/assets/flow_node_status.json", width: 100, css: { "text-align": "center" } },
                 { id: "comment_", header: { text: "任务流转意见", css: { "text-align": "center" } }, minWidth: 360, fillspace: true },
                 { id: "activated_at_", header: { text: "任务创建时间", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
