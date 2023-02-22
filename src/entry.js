@@ -43,9 +43,9 @@ webix.ready(function () {
                                 label: "登 录",
                                 body: {
                                     rows: [
-                                        { view: "text", name: "account_id", label: "登录名", labelPosition: "top", clear: true, required: true },
-                                        { view: "text", name: "password", label: "密码", labelPosition: "top", type: "password", clear: true, required: true },
-                                        { view: "switch", name: "auto_login", label: "自动登录", labelWidth: 60, labelAlign: "right" },
+                                        { view: "text", name: "account_id", value: "admin", label: "登录名", labelPosition: "top", clear: true, required: true },
+                                        { view: "text", name: "password", value: "12345678", label: "密码", labelPosition: "top", type: "password", clear: true, required: true },
+                                        { view: "switch", name: "auto_login", label: "自动登录", value: 1, labelWidth: 60, labelAlign: "right" },
                                     ]
                                 }
                             },
