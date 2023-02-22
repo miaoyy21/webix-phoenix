@@ -40,7 +40,7 @@ function icons(options) {
         width: 480,
         headHeight: 40,
         position: "center",
-        head: "选择图标对话框",
+        head: "选择图标",
         body: {
             rows: [
                 {

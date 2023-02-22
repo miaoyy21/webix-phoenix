@@ -1,3 +1,4 @@
+import { frontwards } from "./frontwards";
 import { backwards } from "./backwards";
 
 function builder() {
@@ -136,14 +137,14 @@ function advAccept(options) {
         .then((res) => {
             backwards({
                 id: options["task_id_"],
-                title: "流转通过",
+                title: "同意【" + options["diagram_name_"] + "】 " + options["$keyword"],
                 backwards: res.json(),
                 callback(data) {
                     var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteAccept", data);
                     var res = JSON.parse(request.responseText);
 
                     if (res["status"] == "success") {
-                        webix.message({ type: "success", text: "流转成功" });
+                        webix.message({ type: "success", text: "任务执行成功" });
 
                         $$(options["$dtable"]).clearAll();
                         $$(options["$dtable"]).load($$(options["$dtable"]).config.url);
@@ -156,6 +157,29 @@ function advAccept(options) {
                 }
             })
         })
+}
+
+function advReject(options) {
+    frontwards({
+        id: options["task_id_"],
+        title: "驳回【" + options["diagram_name_"] + "】 " + options["$keyword"],
+        callback(data) {
+            var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteReject", data);
+            var res = JSON.parse(request.responseText);
+
+            if (res["status"] == "success") {
+                webix.message({ type: "success", text: "任务驳回成功" });
+
+                $$(options["$dtable"]).clearAll();
+                $$(options["$dtable"]).load($$(options["$dtable"]).config.url);
+
+                $$(options["$win"]) && $$(options["$win"]).hide();
+                return true;
+            }
+
+            return false;
+        }
+    })
 }
 
 function show(options) {
@@ -175,9 +199,9 @@ function show(options) {
     var values = JSON.parse(resp["values"]);
     var view = mod.builder(options, values);
 
-    // 按钮 通过
+    // 按钮 同意
     var accept = {
-        view: "button", label: "通过", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-clipboard-check-multiple",
+        view: "button", label: "同意", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-clipboard-check-multiple",
         click() {
             var newValues = view.values();
             if (!newValues) return;
@@ -188,7 +212,7 @@ function show(options) {
                     "operation": "update",
                     "id": options["flow_id_"],
                     "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(values),
+                    "keyword_": webix.template(options["keyword_"])(newValues),
                 }).then((res) => {
                     advAccept(options);
                 })
@@ -203,7 +227,7 @@ function show(options) {
     var reject = {
         view: "button", label: "驳回", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-backspace",
         click() {
-            //  TODO
+            advReject(options);
         }
     }
 

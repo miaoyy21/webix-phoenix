@@ -308,7 +308,7 @@ function show(options) {
                     "operation": options["operation"],
                     "id": options["flow_id_"],
                     "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(values),
+                    "keyword_": webix.template(options["keyword_"])(newValues),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
                     var row = res.json();
@@ -337,7 +337,7 @@ function show(options) {
                     "operation": options["operation"],
                     "id": options["flow_id_"],
                     "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(values),
+                    "keyword_": webix.template(options["keyword_"])(newValues),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
                     options["flow_id_"] = res.json()["id"];

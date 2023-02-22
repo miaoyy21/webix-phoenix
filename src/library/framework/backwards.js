@@ -3,19 +3,25 @@ function backwards(options) {
     var win = utils.UUID();
     var comm = utils.UUID();
 
-    var elements = _.map(options["backwards"], (back) => {
-        return {
-            view: "fieldset",
-            label: back["name"],
-            body: {
-                minHeight: 88,
-                cols: [
-                    {
-                        id: win + "$" + back["key"],
-                        view: "dataview",
-                        borderless: true,
-                        autoheight: true,
-                        template: `
+    // 是否为结束节点
+    var isEnd = _.findWhere(options["backwards"], { "category": "End" });
+
+    var elements = !isEnd ?
+        _.map(options["backwards"], (back) => {
+            console.log(back);
+
+            return {
+                view: "fieldset",
+                label: "指定【" + back["name"] + "】执行者",
+                body: {
+                    minHeight: 88,
+                    cols: [
+                        {
+                            id: win + "$" + back["key"],
+                            view: "dataview",
+                            borderless: true,
+                            autoheight: true,
+                            template: `
                             <div class='webix_strong' >
                                 <button type="button" class="btn_remove webix_icon_button" >
                                     <span class="phoenix_danger_icon mdi mdi-dark mdi-18px mdi-account-remove"></span>
@@ -23,47 +29,42 @@ function backwards(options) {
                                 #name#
                             </div>
                         `,
-                        data: back["executors"],
-                        type: {
-                            type: "tiles",
-                            width: 112,
-                            height: 38,
-                        },
-                        onClick: {
-                            btn_remove(e, id) {
-                                this.remove(id);
+                            data: back["executors"],
+                            type: {
+                                type: "tiles",
+                                width: 112,
+                                height: 38,
+                            },
+                            onClick: {
+                                btn_remove(e, id) {
+                                    this.remove(id);
+                                },
                             },
                         },
-                    },
-                    {
-                        view: "icon", icon: "mdi mdi-24px mdi-account-plus-outline", width: 48,
-                        click() {
-                            var checked = _.map(
-                                $$(win + "$" + back["key"]).data.pull,
-                                (row) => ({ "id": row["id"], "user_name_": row["name"] }),
-                            );
+                        {
+                            view: "icon", icon: "mdi mdi-24px mdi-account-plus-outline", width: 48,
+                            click() {
+                                var checked = _.map($$(win + "$" + back["key"]).data.pull, (row) => ({ "id": row["id"], "user_name_": row["name"] }));
 
-                            // 选择用户
-                            utils.windows.users({
-                                multiple: true,
-                                cache: false,
-                                checked: checked,
-                                filter: (departId, userId) => _.findIndex(back["organization"], (org) => org == departId || org == userId) >= 0,
-                                callback: (checked) => {
-                                    $$(win + "$" + back["key"]).clearAll();
-                                    $$(win + "$" + back["key"]).parse(
-                                        _.map(checked, (user) => ({ "id": user["id"], "name": user["user_name_"] }))
-                                    );
+                                // 选择用户
+                                utils.windows.users({
+                                    multiple: true,
+                                    cache: false,
+                                    checked: checked,
+                                    filter: (departId, userId) => _.findIndex(back["organization"], (org) => org == departId || org == userId) >= 0,
+                                    callback: (checked) => {
+                                        $$(win + "$" + back["key"]).clearAll();
+                                        $$(win + "$" + back["key"]).parse(_.map(checked, (user) => ({ "id": user["id"], "name": user["user_name_"] })));
 
-                                    return true;
-                                }
-                            })
-                        }
-                    },
-                ]
-            }
-        };
-    })
+                                        return true;
+                                    }
+                                })
+                            }
+                        },
+                    ]
+                }
+            };
+        }) : [{ template: "【结束】", type: "section" }];
 
     webix.ui({
         id: win,
@@ -72,7 +73,7 @@ function backwards(options) {
         close: true,
         move: true,
         width: 600,
-        minHeight: 300,
+        minHeight: !isEnd ? 300 : 240,
         headHeight: 40,
         position: "center",
         head: options["title"],
@@ -97,14 +98,15 @@ function backwards(options) {
                             click() {
                                 var data = {
                                     "id": options["id"],
-                                    "backwards": _.map(options["backwards"],
-                                        (back) => {
-                                            var item = _.pick(back, "key", "name", "routes");
+                                    "backwards":
+                                        _.map(options["backwards"],
+                                            (back) => {
+                                                var item = _.pick(back, "key", "name", "routes");
 
-                                            item["executors"] = _.values($$(win + "$" + back["key"]).data.pull);
-                                            return item;
-                                        }
-                                    ),
+                                                item["executors"] = !isEnd ? _.values($$(win + "$" + back["key"]).data.pull) : [];
+                                                return item;
+                                            }
+                                        ),
                                     "comment": $$(comm).getValue()
                                 };
 
