@@ -340,7 +340,10 @@ function show(options) {
                     "keyword_": webix.template(options["keyword_"])(newValues),
                     "diagram_id_": options["diagram_id_"],
                 }).then((res) => {
-                    options["flow_id_"] = res.json()["id"];
+                    var row = res.json();
+
+                    options["operation"] = "update";
+                    options["flow_id_"] = row["id"];
                     advStart(options);
                 })
             } else {
