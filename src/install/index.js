@@ -40,6 +40,7 @@ require("./view/ace");
 require("./view/tree");
 require("./view/list");
 require("./diagram");
+require("../assets/hcharts");
 
 // 初始化全局存储
 require("./store");
