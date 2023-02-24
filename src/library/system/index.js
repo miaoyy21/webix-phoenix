@@ -3,6 +3,7 @@ var system = {};
 system.system_organization_departs = require("./organization/departs");
 system.system_organization_users = require("./organization/users");
 system.system_admin_setting = require("./admin/setting");
+system.system_admin_system = require("./admin/system");
 system.system_admin_roles = require("./admin/roles");
 system.system_admin_menus = require("./admin/menus");
 system.system_admin_operate_logs = require("./admin/operate_logs");

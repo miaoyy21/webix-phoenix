@@ -11,7 +11,6 @@ function builder() {
         readonly: false
     });
 
-    // uploader: "doc_", // 设置附件上传组件 String ｜ Array
     var out = utils.UUID();
 
     return {
