@@ -111,6 +111,9 @@ function open(options) {
                                                 <button webix_tooltip="编辑" type="button" class="btn_edit webix_icon_button" style="height:30px;width:30px;">
                                                     <span class="phoenix_primary_icon mdi mdi-18px mdi-pencil"></span>
                                                 </button> 
+                                                <button webix_tooltip="删除" type="button" class="btn_remove webix_icon_button" style="height:30px;width:30px;">
+                                                    <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"></span>
+                                                </button>
                                                 <button webix_tooltip="启动" type="button" class="btn_start webix_icon_button" style="height:30px;width:30px;">
                                                     <span class="phoenix_warning_icon mdi mdi-18px mdi-rocket-launch"></span>
                                                 </button> 
@@ -146,6 +149,17 @@ function open(options) {
                                         "activated_keys_": row["activated_keys_"],
                                         "status_": row["status_"],
                                     }));
+                                },
+                                btn_remove(e, item) {
+                                    var row = this.getItem(item.row);
+                                    advRemove({
+                                        "$menu": menu,
+                                        "$dtable": dtable,
+                                        "operation": "view",
+                                        "$keyword": row["keyword_"],
+                                        "flow_id_": item.row,
+                                        "status_": row["status_"],
+                                    })
                                 },
                                 btn_view(e, item) {
                                     var row = this.getItem(item.row);
@@ -242,6 +256,24 @@ function advStart(options) {
                 }
             })
         })
+}
+
+// 删除流程
+function advRemove(options) {
+    webix.confirm({
+        title: "系统提示",
+        text: "确认删除流程实例 【" + options["$keyword"] + "】 ?",
+        type: "confirm-error"
+    }).then((result) => {
+        webix.ajax().post("/api/wf/flows?method=Remove", { id: options["flow_id_"] })
+            .then((res) => {
+                webix.message({ type: "success", text: "删除成功" });
+
+                refresh(options);
+                $$(options["$win"]) && $$(options["$win"]).hide();
+                return true;
+            });
+    });
 }
 
 // 撤回流程

@@ -50,9 +50,10 @@ function open(item, options, model) {
                 { label: "基本配置", type: "label" },
                 { id: "code_", label: "用户编码", type: "text", tooltip: "用户自定义编码" },
                 { id: "revocable_", label: "允许撤回", type: "checkbox", tooltip: "是否允许流程发起者在流程开始后且流程结束前进行撤回操作" },
-                { id: "on_before_script_", label: "{开始前事件}", tooltip: "在流程启动前触发的事件" },
-                { id: "on_after_script_", label: "{开始后事件}", tooltip: "在流程启动后触发的事件" },
-                { id: "on_revoke_script_", label: "{撤回事件}", tooltip: "在流程撤回时触发的事件" },
+                { id: "on_before_script_", label: "{开始前事件}", tooltip: "在流程实例启动前触发的事件" },
+                { id: "on_after_script_", label: "{开始后事件}", tooltip: "在流程实例启动后触发的事件" },
+                { id: "on_revoke_script_", label: "{撤回事件}", tooltip: "在流程实例撤回时触发的事件" },
+                { id: "on_remove_script_", label: "{删除事件}", tooltip: "在流程实例删除时触发的事件" },
             ]
         },
         "Execute": {
