@@ -84,7 +84,7 @@ webix.ready(function () {
                                             }
 
                                             webix.ajax()
-                                                .post("/api/sys/login?method=ByPassword", user)
+                                                .post("/api/sys/login?method=ByPassword&PHOENIX_USING_MENU=[密码登录]", user)
                                                 .then((data) => {
                                                     // 自动登录
                                                     if (user["auto_login"]) {
@@ -119,7 +119,7 @@ webix.ready(function () {
     // 自动加载用户菜单
     function reloadMenus(params) {
         webix.extend($$(MENU_TREE_ID), webix.ProgressBar).showProgress();
-        webix.ajax().get("/api/sys/login?method=ByToken", params)
+        webix.ajax().get("/api/sys/login?method=ByToken&PHOENIX_USING_MENU=[Token登录]", params)
             .then((res) => {
                 var data = res.json();
 
@@ -323,7 +323,7 @@ function change_password() {
                                 }
 
                                 // 修改密码
-                                webix.ajax().post("/api/sys/login?method=ChangePassword&PHOENIX_USING_MENU=0",
+                                webix.ajax().post("/api/sys/login?method=ChangePassword&PHOENIX_USING_MENU=[修改密码]",
                                     {
                                         "old_password": values["old_password"],
                                         "new_password": values["new_password1"]

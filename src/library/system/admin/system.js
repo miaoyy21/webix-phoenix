@@ -2,9 +2,9 @@ function builder() {
     var out = utils.UUID();
 
     function load() {
-        webix.ajax().get("/api/system")
+        webix.ajax().get("/api/sys", { "method": "System" })
             .then((res) => {
-                $$(out).setHTML("<pre>" + res.text() + "</pre>");
+                $$(out).setHTML("<pre>" + res.json() + "</pre>");
             });
     }
 
@@ -15,10 +15,7 @@ function builder() {
             {
                 view: "toolbar",
                 cols: [
-                    {
-                        view: "button", label: "刷新", css: "webix_primary", autowidth: true, type: "icon", icon: "mdi mdi-18px mdi-refresh",
-                        click: load
-                    }
+                    { view: "button", label: "刷新", css: "webix_primary", autowidth: true, type: "icon", icon: "mdi mdi-18px mdi-refresh", click: load }
                 ]
             },
             {

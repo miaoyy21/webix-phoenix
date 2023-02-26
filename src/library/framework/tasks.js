@@ -20,7 +20,7 @@ function builder() {
                         on: {
                             onChange(newValue) {
                                 $$(dtable).clearAll();
-                                $$(dtable).load(() => webix.ajax("/api/wf/flows?method=Tasks", { "status": newValue }));
+                                $$(dtable).load(() => webix.ajax("/api/wf/flows?method=Tasks", { "PHOENIX_USING_MENU": "[任务中心]", "status": newValue }));
                             }
                         }
                     },
@@ -48,7 +48,7 @@ function builder() {
                 select: true,
                 leftSplit: 3,
                 rightSplit: 1,
-                url: "/api/wf/flows?method=Tasks&status=Executing",
+                url: "/api/wf/flows?method=Tasks&status=Executing&PHOENIX_USING_MENU=[任务中心]",
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                     { id: "diagram_name_", header: { text: "流程名称", css: { "text-align": "center" } }, sort: "text", width: 120 },
@@ -133,14 +133,14 @@ function builder() {
 }
 
 function advAccept(options) {
-    webix.ajax().post("/api/wf/flows?method=ExecuteBackwards", { "id": options["task_id_"] })
+    webix.ajax().post("/api/wf/flows?method=ExecuteBackwards", { "PHOENIX_USING_MENU": "[任务中心]", "id": options["task_id_"] })
         .then((res) => {
             backwards({
                 id: options["task_id_"],
                 title: "同意【" + options["diagram_name_"] + "】 " + options["$keyword"],
                 backwards: res.json(),
                 callback(data) {
-                    var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteAccept", data);
+                    var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteAccept&PHOENIX_USING_MENU=[任务中心]", data);
                     var res = JSON.parse(request.responseText);
 
                     if (res["status"] == "success") {
@@ -164,7 +164,7 @@ function advReject(options) {
         id: options["task_id_"],
         title: "驳回【" + options["diagram_name_"] + "】 " + options["$keyword"],
         callback(data) {
-            var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteReject", data);
+            var request = webix.ajax().sync().post("/api/wf/flows?method=ExecuteReject&PHOENIX_USING_MENU=[任务中心]", data);
             var res = JSON.parse(request.responseText);
 
             if (res["status"] == "success") {
@@ -191,7 +191,7 @@ function show(options) {
     };
 
     // 加载数据值
-    var respText = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { id: options["flow_id_"] }).responseText;
+    var respText = webix.ajax().sync().get("/api/wf/flows?method=ModelValues", { "PHOENIX_USING_MENU": "[任务中心]", id: options["flow_id_"] }).responseText;
     var resp = JSON.parse(respText);
 
     options["model"] = JSON.parse(resp["model"]);
@@ -209,6 +209,7 @@ function show(options) {
             if (!_.isEqual(values, newValues)) {
                 console.log("数据已发生变化，先保存后再流转");
                 webix.ajax().post("/api/wf/flows", {
+                    "PHOENIX_USING_MENU": "[任务中心]",
                     "operation": "update",
                     "id": options["flow_id_"],
                     "values_": JSON.stringify(newValues),
@@ -323,7 +324,7 @@ function showUI(view, actions, options) {
             view: "datatable",
             css: "webix_data_border webix_header_border",
             select: "row",
-            url: "/api/wf/flows?method=Records&id=" + options["flow_id_"],
+            url: "/api/wf/flows?method=Records&PHOENIX_USING_MENU=[任务中心]&id=" + options["flow_id_"],
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                 { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, width: 120, css: { "text-align": "center" } },

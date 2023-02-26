@@ -4,11 +4,9 @@ import { flow } from "../../library/flow";
 import { framework } from "../../library/framework";
 
 // 系统设置
-var PHOENIX_SETTING = JSON.parse(
-    webix.ajax().sync()
-        .get("/api/sys/setting?PHOENIX_USING_MENU=0&scope=LOGIN")
-        .responseText
-);
+var text = webix.ajax().sync().get("/api/sys", { "method": "Setting", "PHOENIX_USING_MENU": "[系统加载]" }).responseText;
+var PHOENIX_SETTING = JSON.parse(text);
+
 _.extend(global, { PHOENIX_SETTING });
 
 // 使用Cookie记录当前打开菜单
