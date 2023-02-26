@@ -2,7 +2,7 @@ function builder() {
     var out = utils.UUID();
 
     function load() {
-        webix.ajax().get("/api/sys", { "method": "System" })
+        webix.ajax().get("/api/sys/system")
             .then((res) => {
                 $$(out).setHTML("<pre>" + res.json() + "</pre>");
             });

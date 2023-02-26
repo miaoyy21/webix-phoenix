@@ -4,20 +4,6 @@ import { utils } from "./utils";
 // 自定义的工具库
 _.extend(global, { utils });
 
-
-_.extend(global, {
-    MAIN_PAGE_ID: "PHOENIX_MAIN",
-    MAIN_PAGE_TASKS_ID: "MAIN_PAGE_TASKS",
-    EXECUTING_PAGE_ID: "PHOENIX_EXECUTING_PAGE",
-    LOGIN_PAGE_ID: "PHOENIX_LOGIN_PAGE",
-    LOGIN_PAGE_FORM_ID: "PHOENIX_LOGIN_PAGE_FORM",
-    CHANGE_PASSWORD_PAGE_ID: "PHOENIX_CHANGE_PASSWORD_PAGE",
-    HOME_PAGE_ID: "PHOENIX_HOME_PAGE",
-    MENU_TREE_ID: "PHOENIX_MENU_TREE",
-    VIEWS_ID: "PHOENIX_VIEWS",
-    VIEWS_TABBAR_ID: "PHOENIX_VIEWS_TABBAR",
-});
-
 // 界面初始化
 webix.ready(function () {
 
@@ -61,7 +47,7 @@ webix.ready(function () {
                                             if (!$$(LOGIN_PAGE_FORM_ID).validate()) return;
 
                                             var user = $$(LOGIN_PAGE_FORM_ID).getValues();
-                                            var departs = JSON.parse(webix.ajax().sync().get("/api/sys/users?PHOENIX_USING_MENU=0", { scope: "LOGIN", "account_id": user["account_id"] }).responseText);
+                                            var departs = JSON.parse(webix.ajax().sync().get("/api/sys", { "method": "Depart", "PHOENIX_USING_MENU": "[所属部门]", scope: "LOGIN", "account_id": user["account_id"] }).responseText);
 
                                             var departView = $$(LOGIN_PAGE_FORM_ID).elements["depart_id"];
                                             if (_.size(departs) < 1) {
@@ -84,7 +70,7 @@ webix.ready(function () {
                                             }
 
                                             webix.ajax()
-                                                .post("/api/sys/login?method=ByPassword&PHOENIX_USING_MENU=[密码登录]", user)
+                                                .post("/api/sys?method=LoginByPassword&PHOENIX_USING_MENU=[密码登录]", user)
                                                 .then((data) => {
                                                     // 自动登录
                                                     if (user["auto_login"]) {
@@ -119,7 +105,7 @@ webix.ready(function () {
     // 自动加载用户菜单
     function reloadMenus(params) {
         webix.extend($$(MENU_TREE_ID), webix.ProgressBar).showProgress();
-        webix.ajax().get("/api/sys/login?method=ByToken&PHOENIX_USING_MENU=[Token登录]", params)
+        webix.ajax().get("/api/sys?method=LoginByToken&PHOENIX_USING_MENU=[Token登录]", params)
             .then((res) => {
                 var data = res.json();
 
