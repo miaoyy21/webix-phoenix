@@ -105,7 +105,7 @@ webix.ready(function () {
     // 自动加载用户菜单
     function reloadMenus(params) {
         webix.extend($$(MENU_TREE_ID), webix.ProgressBar).showProgress();
-        webix.ajax().get("/api/sys?method=LoginByToken&PHOENIX_USING_MENU=[Token登录]", params)
+        webix.ajax().get("/api/sys/users?method=LoginByToken&PHOENIX_USING_MENU=[Token登录]", params)
             .then((res) => {
                 var data = res.json();
 
@@ -216,14 +216,6 @@ webix.ready(function () {
                                 animate: false,
                                 cells: [
                                     PHOENIX_FRAMEWORK_DATA.framework_home.builder(),
-
-                                    // _.extend(
-                                    //     PHOENIX_MENUS_DATA.diagram_full_designer.builder(),
-                                    //     {
-                                    //         id: HOME_PAGE_ID,
-                                    //         css: { "border-left": "none", "border-top": "none" }
-                                    //     },
-                                    // )
                                 ]
                             },
                             {
@@ -257,7 +249,6 @@ webix.ready(function () {
 
 // 修改密码
 function change_password() {
-
     webix.ui({
         id: CHANGE_PASSWORD_PAGE_ID,
         view: "window",
@@ -309,7 +300,7 @@ function change_password() {
                                 }
 
                                 // 修改密码
-                                webix.ajax().post("/api/sys/login?method=ChangePassword&PHOENIX_USING_MENU=[修改密码]",
+                                webix.ajax().post("/api/sys/users?method=ChangedPassword&PHOENIX_USING_MENU=[修改密码]",
                                     {
                                         "old_password": values["old_password"],
                                         "new_password": values["new_password1"]

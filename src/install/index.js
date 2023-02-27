@@ -32,18 +32,22 @@ webix.i18n.setLocale("zh-CN");
 
 // 全局AJAX请求报错提示
 webix.attachEvent("onAjaxError", function (xhr) {
-    var obj = JSON.parse(xhr.response);
-    if (obj["error"] === "[PHOENIX_TOKEN_EXPIRE]") {
-        webix.message({ type: "error", text: "Token已失效，需要重新登录" });
+    try {
+        var obj = JSON.parse(xhr.response);
+        if (obj["error"] === "[PHOENIX_TOKEN_EXPIRE]") {
+            webix.message({ type: "error", text: "Token已失效，需要重新登录" });
 
-        // 显示登录界面
-        $$(LOGIN_PAGE_ID) && $$(LOGIN_PAGE_ID).show();
-        $$(LOGIN_PAGE_FORM_ID) && $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
+            // 显示登录界面
+            $$(LOGIN_PAGE_ID) && $$(LOGIN_PAGE_ID).show();
+            $$(LOGIN_PAGE_FORM_ID) && $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
-        // 隐藏主界面
-        $$(MAIN_PAGE_ID) && $$(MAIN_PAGE_ID).hide();
-    } else {
-        webix.message({ type: "error", text: obj["error"] });
+            // 隐藏主界面
+            $$(MAIN_PAGE_ID) && $$(MAIN_PAGE_ID).hide();
+        } else {
+            webix.message({ type: "error", text: obj["error"] });
+        }
+    } catch (e) {
+        webix.message({ type: "error", text: xhr.responseText });
     }
 });
 
