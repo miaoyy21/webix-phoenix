@@ -55,6 +55,7 @@ webix.attachEvent("onAjaxError", function (xhr) {
 require("./view/ace");
 require("./view/tree");
 require("./view/list");
+require("./view/winmenu");
 require("./diagram");
 
 // 初始化全局存储
