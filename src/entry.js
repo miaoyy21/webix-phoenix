@@ -362,6 +362,7 @@ function onTabChange(newid, oldid) {
 
     // 取消选中原菜单
     if (!newid || newid === HOME_PAGE_ID || newid == EXECUTING_PAGE_ID) {
+        webix.storage.cookie.put("PHOENIX_USING_MENU", newid);
         return $$(MENU_TREE_ID).unselect(oldid);
     }
 
