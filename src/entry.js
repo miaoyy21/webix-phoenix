@@ -153,8 +153,8 @@ webix.ready(function () {
                         popup: {
                             view: 'contextmenu',
                             data: [
-                                { id: "change_password", value: '修改密码' },
-                                { id: 'logout', value: '退出系统' },
+                                { id: "change_password", value: '修改密码', icon: "mdi mdi-shield-key" },
+                                { id: 'logout', value: '退出系统', icon: "mdi mdi-exit-to-app" },
                             ],
                             on: {
                                 onMenuItemClick(id) {
