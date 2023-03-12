@@ -11,6 +11,7 @@ system.system_service_tables = require("./service/tables");
 system.system_service_dicts = require("./service/dicts");
 system.system_service_auto_no = require("./service/auto_no");
 system.system_service_data = require("./service/data");
+system.system_service_time_task = require("./service/time_task");
 system.system_permission_organization = require("./permission/organization");
 system.system_permission_roles = require("./permission/roles");
 system.system_permission_by_organization = require("./permission/by_organization");
