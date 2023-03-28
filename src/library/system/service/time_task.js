@@ -1,6 +1,5 @@
 function builder() {
     var form = utils.UUID();
-    var field_once = utils.UUID();
 
     return {
         rows: [
@@ -14,9 +13,6 @@ function builder() {
                             console.log(values);
                         }
                     }
-                    // tree.actions.add(),
-                    // tree.actions.addChild(),
-                    // tree.actions.remove(),
                 ]
             },
             {
@@ -27,14 +23,31 @@ function builder() {
                     view: "form",
                     borderless: true,
                     gravity: 2,
-                    url: "/api/sys/setting",
                     rows: [
                         { view: "text", name: "name_", label: "任务名称", required: true },
-                        { view: "combo", name: "type_", label: "任务类型", options: [{ id: "Repeat", value: "重复执行" }, { id: "Once", value: "执行一次" }], required: true },
+                        {
+                            view: "combo", name: "type_", label: "任务类型", required: true,
+                            options: [{ id: "Repeat", value: "重复执行" }, { id: "Once", value: "执行一次" }],
+                            on: {
+                                onChange(val) {
+                                    _.each($$(form).elements, (v, k) => {
+                                        if (_.isEqual(k, "name_") || _.isEqual(k, "type_")) {
+                                            return
+                                        }
+
+                                        if (_.isEqual(val, "Once")) {
+                                            _.isEqual(k, "once_at_") ? $$(form).elements[k].enable() : $$(form).elements[k].disable();
+                                            return
+                                        }
+
+                                        _.isEqual(k, "once_at_") ? $$(form).elements[k].disable() : $$(form).elements[k].enable();
+                                    })
+                                },
+                            }
+                        },
 
                         /*** 执行一次 ***/
                         {
-                            id: field_once,
                             view: "fieldset",
                             label: "执行一次",
                             body: { view: "datepicker", name: "once_at_", label: "日期时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
@@ -80,10 +93,22 @@ function builder() {
                                     },
                                     {
                                         cols: [
-                                            { view: "datepicker", type: "time", name: "frequency_day_start_", label: "开始时间", editable: true, suggest: { type: "timeboard", seconds: true, twelve: false, body: { button: true } } },
-                                            { view: "datepicker", type: "time", name: "frequency_day_end_", label: "结束时间", editable: true, suggest: { type: "timeboard", seconds: true, twelve: false, body: { button: true } } }
+                                            { view: "datepicker", type: "time", name: "frequency_day_start_", label: "开始时间", editable: true },
+                                            { view: "datepicker", type: "time", name: "frequency_day_end_", label: "结束时间", editable: true }
                                         ]
                                     }
+                                ]
+                            },
+                        },
+
+                        /*** 持续时间 ***/
+                        {
+                            view: "fieldset",
+                            label: "持续时间",
+                            body: {
+                                cols: [
+                                    { view: "datepicker", name: "frequency_start_at_", label: "开始时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
+                                    { view: "datepicker", name: "frequency_end_at_", label: "结束时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
                                 ]
                             },
                         },
