@@ -9,8 +9,10 @@ function builder() {
                     {
                         view: "button", label: "Get Values", autowidth: true,
                         click() {
-                            var values = $$(form).getValues();
-                            console.log(values);
+                            if ($$(form).validate()) {
+                                var values = $$(form).getValues();
+                                console.log(values);
+                            }
                         }
                     }
                 ]
@@ -30,17 +32,32 @@ function builder() {
                             options: [{ id: "Repeat", value: "重复执行" }, { id: "Once", value: "执行一次" }],
                             on: {
                                 onChange(val) {
+                                    console.log($$(form).elements["once_at_"].define("required", true))
+
                                     _.each($$(form).elements, (v, k) => {
                                         if (_.isEqual(k, "name_") || _.isEqual(k, "type_")) {
                                             return
                                         }
 
                                         if (_.isEqual(val, "Once")) {
-                                            _.isEqual(k, "once_at_") ? $$(form).elements[k].enable() : $$(form).elements[k].disable();
-                                            return
+                                            if (_.isEqual(k, "once_at_")) {
+                                                $$(form).elements[k].define("required", true);
+                                                $$(form).elements[k].enable();
+                                            } else {
+                                                $$(form).elements[k].define("required", false);
+                                                $$(form).elements[k].disable();
+                                            }
+                                        } else {
+                                            if (_.isEqual(k, "once_at_")) {
+                                                $$(form).elements[k].define("required", false);
+                                                $$(form).elements[k].disable();
+                                            } else {
+                                                $$(form).elements[k].define("required", true);
+                                                $$(form).elements[k].enable();
+                                            }
                                         }
 
-                                        _.isEqual(k, "once_at_") ? $$(form).elements[k].disable() : $$(form).elements[k].enable();
+                                        $$(form).elements[k].refresh();
                                     })
                                 },
                             }
