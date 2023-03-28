@@ -50,7 +50,7 @@ function builder() {
                         {
                             view: "fieldset",
                             label: "执行一次",
-                            body: { view: "datepicker", name: "once_at_", label: "日期时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
+                            body: { view: "datepicker", name: "once_at_", label: "日期时间", editable: true, stringResult: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
                         },
 
                         /*** 执行频率 ***/
@@ -93,8 +93,8 @@ function builder() {
                                     },
                                     {
                                         cols: [
-                                            { view: "datepicker", type: "time", name: "frequency_day_start_", label: "开始时间", editable: true },
-                                            { view: "datepicker", type: "time", name: "frequency_day_end_", label: "结束时间", editable: true }
+                                            { view: "datepicker", type: "time", name: "frequency_day_start_", label: "开始时间", editable: true, stringResult: true, format: "%H:%i:%s" },
+                                            { view: "datepicker", type: "time", name: "frequency_day_end_", label: "结束时间", editable: true, stringResult: true, format: "%H:%i:%s" }
                                         ]
                                     }
                                 ]
@@ -107,8 +107,8 @@ function builder() {
                             label: "持续时间",
                             body: {
                                 cols: [
-                                    { view: "datepicker", name: "frequency_start_at_", label: "开始时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
-                                    { view: "datepicker", name: "frequency_end_at_", label: "结束时间", editable: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
+                                    { view: "datepicker", name: "frequency_start_at_", label: "开始时间", editable: true, stringResult: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
+                                    { view: "datepicker", name: "frequency_end_at_", label: "结束时间", editable: true, stringResult: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
                                 ]
                             },
                         },
