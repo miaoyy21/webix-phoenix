@@ -24,8 +24,8 @@ function builder() {
             {
                 view: "toolbar",
                 cols: [
-                    { view: "button", label: "重置", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-undo", click: reset },
                     { view: "button", label: "保存", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-content-save-outline", click: save },
+                    { view: "button", label: "重置", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-undo", click: reset },
                 ]
             },
             {

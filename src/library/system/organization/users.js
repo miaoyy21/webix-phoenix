@@ -78,10 +78,9 @@ function builder() {
                     view: "toolbar",
                     borderless: true,
                     cols: [
-                        {},
-                        { view: "button", value: "取消", css: "webix_transparent ", click: () => $$(sidemenu_id).hide() },
+                        { gravity: 2 },
                         {
-                            view: "button", value: "保存", css: "webix_primary", click() {
+                            view: "button", width: 100, value: "保存", css: "webix_primary", click() {
                                 if ($$(form_id).validate()) {
                                     var value = $$(form_id).getValues();
 
@@ -113,7 +112,9 @@ function builder() {
                                 }
                             }
                         },
-                        {}
+                        {},
+                        { view: "button", width: 100, value: "取消", css: "webix_transparent ", click: () => $$(sidemenu_id).hide() },
+                        { gravity: 2 },
                     ]
                 }
             ]
