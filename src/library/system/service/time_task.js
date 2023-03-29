@@ -12,7 +12,7 @@ function builder() {
             close: true,
             modal: true,
             width: 800,
-            height: 600,
+            height: 640,
             animate: { type: "flip", subtype: "vertical" },
             head: "定时任务配置",
             position: "center",
@@ -114,7 +114,7 @@ function builder() {
                                                         /* 重复执行 */
                                                         {
                                                             cols: [
-                                                                { view: "counter", name: "frequency_day_repeat_", label: "执行间隔", min: 1, max: 60, width: 256 },
+                                                                { view: "counter", name: "frequency_day_repeat_", label: "执行间隔", min: 1, max: 360, width: 256 },
                                                                 { view: "richselect", name: "frequency_day_repeat_unit_", options: [{ id: "S", value: "秒" }, { id: "M", value: "分钟" }, { id: "H", value: "小时" }], inputWidth: 88 },
                                                             ]
                                                         },
@@ -134,22 +134,14 @@ function builder() {
                                                 label: "持续时间",
                                                 body: {
                                                     cols: [
-                                                        { view: "datepicker", name: "frequency_start_at_", label: "开始时间", editable: true, stringResult: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
-                                                        { view: "datepicker", name: "frequency_end_at_", label: "结束时间", editable: true, stringResult: true, timepicker: true, format: "%Y-%m-%d %H:%i:%s" },
+                                                        { view: "datepicker", name: "frequency_start_at_", label: "开始时间", editable: true, stringResult: true, format: "%Y-%m-%d" },
+                                                        { view: "datepicker", name: "frequency_end_at_", label: "结束时间", editable: true, stringResult: true, format: "%Y-%m-%d" },
                                                     ]
                                                 },
                                             },
                                         ],
                                         elementsConfig: { labelWidth: 120, labelAlign: "right" },
-                                        on: {
-                                            onBeforeLoad() {
-                                                webix.extend(this, webix.ProgressBar).showProgress();
-                                            },
-                                            onAfterLoad() {
-                                                webix.extend(this, webix.ProgressBar).hideProgress();
-                                            },
-                                            onChange() { this.validate() }
-                                        }
+                                        on: { onChange() { this.validate() } }
                                     },
                                 },
                             },
@@ -166,12 +158,7 @@ function builder() {
                                         borderless: true,
                                         gravity: 2,
                                         data: options,
-                                        rows: [
-                                            {
-                                                view: "ace-editor",
-                                                mode: "javascript",
-                                                name: "source_"
-                                            }]
+                                        rows: [{ view: "ace-editor", mode: "javascript", name: "source_" }]
                                     }
                                 }
                             },
@@ -186,7 +173,26 @@ function builder() {
                             {},
                             {
                                 view: "button", width: 100, label: "保存", css: "webix_primary",
-                                click() { }
+                                click() {
+                                    if ($$(form).validate() && $$(formSource).validate()) {
+
+                                        var row = _.extend({}, $$(form).getValues(), _.pick($$(formSource).getValues(), "source_"));
+                                        webix.ajax().post("/api/sys/time_tasks", row).then(
+                                            (res) => {
+                                                webix.dp($$(table)).ignore(
+                                                    () => {
+                                                        if (_.isEqual(row["operation"], "insert")) {
+                                                            utils.grid.add($$(table), _.extend(row, res.json()));
+                                                        } else {
+                                                            $$(table).updateItem(row["id"], _.extend(row, res.json()));
+                                                        }
+
+                                                        $$(win).hide() && webix.message({ type: "success", text: "保存成功" });
+                                                    }
+                                                );
+                                            });
+                                    }
+                                }
                             },
                             { width: 8 },
                             { view: "button", width: 100, value: "取消", css: "webix_transparent ", click: () => $$(win).hide() },
@@ -210,15 +216,18 @@ function builder() {
                     {
                         view: "button", label: "创建任务", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                         click() {
-                            open({ "type_": "Repeat" });
-                        }
-                    },
-                    {
-                        view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
-                        click() {
-                            $$(table).editCancel();
-                            $$(table).clearAll();
-                            $$(table).load($$(table).config.url);
+                            open({
+                                "operation": "insert",
+                                "type_": "Repeat",
+                                "frequency_": "EveryDay",
+                                "frequency_day_": "Repeat",
+                                "frequency_day_repeat_": 10,
+                                "frequency_day_repeat_unit_": "M",
+                                "frequency_day_start_": "00:00:00",
+                                "frequency_day_end_": "23:59:59",
+                                "frequency_start_at_": utils.formats.date.format(new Date()),
+                                "frequency_end_at_": "2099-12-31"
+                            });
                         }
                     },
                     {},
@@ -243,7 +252,7 @@ function builder() {
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                     { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, sort: "text", width: 160 },
-                    { id: "type_", header: { text: "任务类型", css: { "text-align": "center" } }, sort: "text", width: 100 },
+                    { id: "type_", header: { text: "任务类型", css: { "text-align": "center" } }, options: [{ id: "Repeat", value: "重复执行" }, { id: "Once", value: "执行一次" }], sort: "text", width: 80, css: { "text-align": "center" } },
                     { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, sort: "text", fillspace: true },
                     { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                     { id: "update_at_", header: { text: "修改时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
@@ -259,29 +268,27 @@ function builder() {
                                         <button webix_tooltip="删除" type="button" class="btn_remove webix_icon_button" style="height:30px;width:30px;">
                                             <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"></span>
                                         </button>
-                                        <button webix_tooltip="同步" type="button" class="btn_sync webix_icon_button" style="height:30px;width:30px;">
-                                            <span class="phoenix_primary_icon mdi mdi-18px mdi-cloud-sync"></span>
+                                        <button webix_tooltip="启动" type="button" class="btn_start webix_icon_button" style="height:30px;width:30px;">
+                                            <span class="phoenix_primary_icon mdi mdi-18px mdi-near-me"></span>
                                         </button> 
                                     </div>`,
                     },
                 ],
-                rules: {
-                    "code_": webix.rules.isNotEmpty,
-                    "name_": webix.rules.isNotEmpty,
-                },
                 onClick: {
                     btn_edit(e, item) {
                         var row = this.getItem(item.row);
-                        if (!row["sync_status_"]) return;
-
-                        open(item.row);
+                        webix.ajax("/api/sys/time_tasks?method=Extra", { "id": item.row })
+                            .then((res) => {
+                                open(_.extend({}, row, _.first(res.json()), { "operation": "update" }))
+                            });
                     },
                     btn_remove(e, item) {
                         $$(table).select(item.row, false);
-                        utils.grid.remove($$(table), null, "数据库表", "code_")
+                        utils.grid.remove($$(table), null, "定时任务", "name_")
                     },
-                    btn_sync(e, item) {
+                    btn_start(e, item) {
                         var row = this.getItem(item.row);
+                        console.log("Start", row);
                     },
                 },
                 on: {
