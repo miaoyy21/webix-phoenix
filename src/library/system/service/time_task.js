@@ -14,7 +14,7 @@ function builder() {
             width: 800,
             height: 640,
             animate: { type: "flip", subtype: "vertical" },
-            head: "定时任务配置",
+            head: (options["operation"] == "insert" ? "创建" : "修改") + "定时任务",
             position: "center",
             body: {
                 rows: [
@@ -148,7 +148,7 @@ function builder() {
 
                             /************************************** 服务脚本 **************************************/
                             {
-                                header: "<span class='webix_icon mdi mdi-powershell'></span>服务脚本",
+                                header: "<span class='webix_icon mdi mdi-powershell'></span>执行脚本",
                                 body: {
                                     view: "scrollview",
                                     scroll: "y",
@@ -269,7 +269,10 @@ function builder() {
                                             <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"></span>
                                         </button>
                                         <button webix_tooltip="启动" type="button" class="btn_start webix_icon_button" style="height:30px;width:30px;">
-                                            <span class="phoenix_primary_icon mdi mdi-18px mdi-near-me"></span>
+                                            <span class="phoenix_primary_icon mdi mdi-18px mdi-restart"></span>
+                                        </button> 
+                                        <button webix_tooltip="日志" type="button" class="btn_log webix_icon_button" style="height:30px;width:30px;">
+                                            <span class="phoenix_primary_icon mdi mdi-18px mdi-math-log"></span>
                                         </button> 
                                     </div>`,
                     },
@@ -289,6 +292,10 @@ function builder() {
                     btn_start(e, item) {
                         var row = this.getItem(item.row);
                         console.log("Start", row);
+                    },
+                    btn_log(e, item) {
+                        var row = this.getItem(item.row);
+                        console.log("Log", row);
                     },
                 },
                 on: {
