@@ -42,7 +42,12 @@ function open(item, options, model) {
     // 节点
     var nodeElements = {
         "Start": {
-            "default": { "code_": "Start" },
+            "default": {
+                "code_": "Start",
+                "executor_custom_num_": "0",
+                "executor_selectable_num_": "0",
+                "executor_policy_": "None",
+            },
             "elements": [
                 { label: "流程图属性", type: "label" },
                 { id: "category", label: "类型", options: categories },
@@ -118,7 +123,11 @@ function open(item, options, model) {
             ]
         },
         "Branch": {
-            "default": {},
+            "default": {
+                "executor_custom_num_": "0",
+                "executor_selectable_num_": "0",
+                "executor_policy_": "None",
+            },
             "elements": [
                 { label: "流程图属性", type: "label" },
                 { id: "category", label: "类型", options: categories },
@@ -130,6 +139,9 @@ function open(item, options, model) {
         "End": {
             "default": {
                 "code_": "End",
+                "executor_custom_num_": "0",
+                "executor_selectable_num_": "0",
+                "executor_policy_": "None",
             },
             "elements": [
                 { label: "流程图属性", type: "label" },
