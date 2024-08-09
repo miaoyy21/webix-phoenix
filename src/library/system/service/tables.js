@@ -80,7 +80,6 @@ function builder() {
                             {
                                 id: "type_", header: { text: "存储类型", css: { "text-align": "center" } }, editor: "combo",
                                 options: [
-                                    "VARCHAR(1)",
                                     "VARCHAR(32)",
                                     "VARCHAR(256)",
                                     "VARCHAR(4096)",
