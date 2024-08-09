@@ -17,10 +17,10 @@ function tree(options) {
         select: true,
         editable: false,
         editor: "text",
-        editValue: "varchar_256_",
+        editValue: "varchar_32_",
         drag: "order",
         threeState: true,
-        template: "{common.icon()} {common.checkbox()} {common.folder()} #!varchar_256_#",
+        template: "{common.icon()} {common.checkbox()} {common.folder()} #!varchar_32_#",
 
         scheme: {},
         rules: {},

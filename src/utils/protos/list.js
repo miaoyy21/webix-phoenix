@@ -11,9 +11,9 @@ function list(options) {
         multiselect: false,
         editable: false,
         editor: "text",
-        editValue: "varchar_256_",
+        editValue: "varchar_32_",
         drag: "order",
-        template: "#index#. #!varchar_256_#",
+        template: "#index#. #!varchar_32_#",
 
         scheme: {},
         rules: {},
@@ -119,7 +119,6 @@ function list(options) {
 
                         // 支持批量删除
                         id = !_.isArray(id) ? [id] : id;
-                        console.log("remove id", id);
                         var text = "总共选择" + _.size(id) + "条记录，是否删除这些记录 ?";
                         if (_.size(id) === 1) {
                             text = "是否删除第" + (list.getIndexById(_.head(id)) + 1) + "条记录？";

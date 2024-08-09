@@ -32,8 +32,8 @@ function datatable(options) {
 
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "varchar_256_", header: [{ text: "Text", css: { "text-align": "center" } }, { content: "serverFilter" }], editor: "text", adjust: true, minWidth: 120 },
-            { id: "varchar_1024_", header: [{ text: "Options", css: { "text-align": "center" } }, { content: "serverFilter" }], sort: "server", options: [{ id: "SC", value: "生产制造部" }, { id: "WZ", value: "物资采购部" }, { id: "RL", value: "人力资源部" }], adjust: true, minWidth: 100 },
+            { id: "varchar_32_", header: [{ text: "Text", css: { "text-align": "center" } }, { content: "serverFilter" }], editor: "text", adjust: true, minWidth: 120 },
+            { id: "varchar_256_", header: [{ text: "Options", css: { "text-align": "center" } }, { content: "serverFilter" }], sort: "server", options: [{ id: "SC", value: "生产制造部" }, { id: "WZ", value: "物资采购部" }, { id: "RL", value: "人力资源部" }], adjust: true, minWidth: 100 },
             { id: "varchar_4096_", header: { text: "Popup", css: { "text-align": "center" } }, editor: "popup", sort: "server", minWidth: 240, maxWidth: 480 },
             { id: "varchar_1_", header: { text: "Combo", css: { "text-align": "center" } }, editor: "combo", options: "/api/sys/dict_items?kind_code=user_sex", css: { "text-align": "center" }, adjust: true, minWidth: 80 },
             { id: "varchar_2_", header: { text: "Rich Select", css: { "text-align": "center" } }, editor: "richselect", options: "/api/sys/dict_items?kind_code=user_sex", css: { "text-align": "center" }, adjust: true, minWidth: 80 },
@@ -67,13 +67,6 @@ function datatable(options) {
                 editParse: (value) => utils.formats.number.editParse(value, 4),
                 editFormat: (value) => utils.formats.number.editFormat(value, 4),
                 css: { "text-align": "right" }, adjust: true, minWidth: 100
-            },
-            {
-                id: "numeric_23_6_", header: { text: "Numeric(23,6)", css: { "text-align": "center" } }, editor: "text",
-                format: (value) => utils.formats.number.format(value, 6),
-                editParse: (value) => utils.formats.number.editParse(value, 6),
-                editFormat: (value) => utils.formats.number.editFormat(value, 6),
-                css: { "text-align": "right" }, adjust: true
             },
             {
                 id: "numeric_1_", header: { text: "Numeric Price(13,2)", css: { "text-align": "center" } }, editor: "text",
