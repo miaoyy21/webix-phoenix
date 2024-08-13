@@ -34,7 +34,7 @@ webix.i18n.setLocale("zh-CN");
 webix.attachEvent("onAjaxError", function (xhr) {
     try {
         var obj = JSON.parse(xhr.response);
-        if (obj["error"] === "[PHOENIX_TOKEN_EXPIRE]") {
+        if (obj["error"] == "[PHOENIX_TOKEN_EXPIRE]") {
             webix.message({ type: "error", text: "Token已失效，需要重新登录" });
 
             // 显示登录界面
