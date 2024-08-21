@@ -47,8 +47,8 @@ function builder() {
                         url: "/api/sys/roles",
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                            { id: "code_", header: { text: "角色编码", css: { "text-align": "center" } }, sort: "text", width: 120 },
-                            { id: "name_", header: { text: "角色名称", css: { "text-align": "center" } }, sort: "text", fillspace: true },
+                            { id: "name_", header: { text: "角色名称", css: { "text-align": "center" } }, sort: "text", width: 160 },
+                            { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", fillspace: true },
                         ],
                         on: {
                             "data->onStoreUpdated": function () {

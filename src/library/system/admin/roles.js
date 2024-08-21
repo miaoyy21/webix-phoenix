@@ -50,7 +50,6 @@ function builder() {
                             },
                             columns: [
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                                { id: "code_", header: { text: "角色编码", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 120 },
                                 { id: "name_", header: { text: "角色名称", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 160 },
                                 { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", fillspace: true },
                                 { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 160, css: { "text-align": "center" } }
