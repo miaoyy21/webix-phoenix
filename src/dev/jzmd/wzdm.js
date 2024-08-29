@@ -49,7 +49,7 @@ function builder() {
             },
         },
         styles: {
-            cellTextColor: function (row, col) { return row["xyzt"] === "禁用" ? "red" : "black" }
+            cellTextColor: function (row, col) { return row["xyzt"] === "禁用" ? "red" : "none" }
         },
         pager: pager.id
     });
