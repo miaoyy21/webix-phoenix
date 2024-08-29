@@ -7,6 +7,7 @@ import { icons } from "./etc/icons";
 import { dicts } from "./etc/dicts";
 import { grid } from "./etc/grid";
 import { tree } from "./etc/tree";
+import { users } from "./etc/users";
 
 var utils = {};
 
@@ -21,6 +22,8 @@ utils.dicts = dicts;
 
 utils.grid = grid;
 utils.tree = tree;
+utils.users = users;
+
 
 
 export { utils };

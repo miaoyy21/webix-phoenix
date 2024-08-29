@@ -78,7 +78,20 @@ function builder() {
                                 {
                                     cols: [
                                         { view: "text", name: "wzbh", label: "物资编号", disabled: true },
-                                        { view: "richselect", name: "xyzt", label: "选用要求", options: utils.dicts["md_xyzt"], required: true, placeholder: "请选择选用要求..." },
+                                        {
+                                            view: "richselect", name: "xyzt", label: "选用要求", options: utils.dicts["md_xyzt"], required: true, placeholder: "请选择选用要求...",
+                                            on: {
+                                                onChange(val) {
+                                                    var values = $$(formId).getValues();
+
+                                                    if (_.isEqual(val, "禁用")) {
+                                                        $$(formId).setValues(_.extend(values, { "jyry": utils.users.getUserName(), "jyrq": utils.users.getDateTime() }));
+                                                    } else {
+                                                        $$(formId).setValues(_.extend(values, { "jyry": "", "jyrq": "" }));
+                                                    }
+                                                },
+                                            }
+                                        },
                                     ]
                                 },
                                 {
@@ -133,16 +146,16 @@ function builder() {
                                                     var values = $$(formId).getValues();
 
                                                     var checked = [];
-                                                    if (!_.isEmpty(values["cgy_id"])) {
-                                                        checked = [{ "id": values["cgy_id"], "user_name_": values["cgy"] }];
+                                                    if (!_.isEmpty(values["ckbh"])) {
+                                                        checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
                                                     }
 
                                                     // 选择用户
-                                                    utils.windows.users({
+                                                    utils.windows.ckdm({
                                                         multiple: false,
                                                         checked: checked,
                                                         callback(checked) {
-                                                            $$(formId).setValues(_.extend(values, { "cgy_id": checked["id"], "cgy": checked["user_name_"] }));
+                                                            $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
                                                             return true;
                                                         }
                                                     })
@@ -246,6 +259,8 @@ function builder() {
                                 "operation": "insert",
                                 "bylx": "无需报验",
                                 "xyzt": "在用",
+                                "create_user_name_": utils.users.getUserName(),
+                                "create_at_": utils.users.getDateTime(),
                             });
                         }
                     },

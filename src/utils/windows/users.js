@@ -110,38 +110,46 @@ webix.ui({
                 cols: [
                     { width: 1 },
                     {
-                        id: instance.tree_id,
-                        view: "tree",
-                        filterMode: {
-                            showSubItems: false
-                        },
-                        width: 220,
-                        select: true,
-                        template: "{common.icon()} {common.icons()} <span>#name_#</span>",
-                        type: {
-                            icons: (obj) => utils.icons.departs.tree($$(instance.tree_id), obj)
-                        },
-                        on: {
-                            onBeforeLoad() {
-                                webix.extend(this, webix.ProgressBar).showProgress();
-                            },
-                            onAfterLoad() {
-                                webix.extend(this, webix.ProgressBar).hideProgress();
+                        view: "scrollview",
+                        body: {
+                            rows: [
+                                { view: "label", label: "<span style='margin-left:8px'></span>组织架构", height: 38 },
+                                {
+                                    id: instance.tree_id,
+                                    view: "tree",
+                                    filterMode: {
+                                        showSubItems: false
+                                    },
+                                    select: true,
+                                    template: "{common.icon()} {common.icons()} <span>#name_#</span>",
+                                    type: {
+                                        icons: (obj) => utils.icons.departs.tree($$(instance.tree_id), obj)
+                                    },
+                                    on: {
+                                        onBeforeLoad() {
+                                            webix.extend(this, webix.ProgressBar).showProgress();
+                                        },
+                                        onAfterLoad() {
+                                            webix.extend(this, webix.ProgressBar).hideProgress();
 
-                                var overlayBox = webix.extend(this, webix.OverlayBox)
-                                if (!this.count()) {
-                                    overlayBox.showOverlay("无检索数据");
-                                } else {
-                                    overlayBox.hideOverlay();
+                                            var overlayBox = webix.extend(this, webix.OverlayBox)
+                                            if (!this.count()) {
+                                                overlayBox.showOverlay("无检索数据");
+                                            } else {
+                                                overlayBox.hideOverlay();
+                                            }
+
+                                            this.select(this.getFirstId());
+                                        },
+                                        onAfterSelect: (id) => instance.load(id),
+                                    }
                                 }
-
-                                this.select(this.getFirstId());
-                            },
-                            onAfterSelect: (id) => instance.load(id),
-                        }
+                            ]
+                        },
                     },
                     { view: "resizer" },
                     {
+                        gravity: 2,
                         rows: [
                             {
                                 view: "toolbar",
