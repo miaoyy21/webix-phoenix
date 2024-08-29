@@ -134,7 +134,28 @@ function builder() {
                                                 },
                                             }
                                         },
-                                        { view: "search", name: "byyq", label: "检验要求", readonly: true, required: true, on: { onSearchIconClick() { } } }
+                                        {
+                                            view: "search", name: "byyq", label: "检验要求", readonly: true, required: true,
+                                            on: {
+                                                onSearchIconClick() {
+                                                    var values = $$(formId).getValues();
+
+                                                    var checked = [];
+                                                    if (!_.isEmpty(values["byyq"])) {
+                                                        checked = values["byyq"].split(",");;
+                                                    }
+
+                                                    utils.windows.dicts({
+                                                        kind: "md_jyyq",
+                                                        checked: checked,
+                                                        callback(selected) {
+                                                            $$(formId).setValues(_.extend(values, { "byyq": _.pluck(selected, "id").join(",") }));
+                                                            return true;
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        }
                                     ]
                                 },
                                 {

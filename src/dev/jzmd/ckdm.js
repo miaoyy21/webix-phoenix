@@ -68,7 +68,7 @@ function builder() {
                         {
                             cols: [
                                 {
-                                    view: "search", name: "bgy", label: "保管员", readonly: true,
+                                    view: "search", name: "bgy", label: "保管员", readonly: true, required: true,
                                     on: {
                                         onSearchIconClick() {
                                             var values = $$(formId).getValues();
