@@ -40,7 +40,7 @@ instance.load = function (id) {
     $$(instance.grid_id).refresh();
 
     // 默认选中第1个可选用户
-    if ($$(instance.grid_id).select) {
+    if ($$(instance.grid_id).select && $$(instance.grid_id).getFirstId()) {
         $$(instance.grid_id).select($$(instance.grid_id).getFirstId());
     }
 

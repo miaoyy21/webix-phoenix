@@ -15,7 +15,7 @@ function datatable(options) {
         drag: "order",
         sort: "multi",
         leftSplit: 1,
-        rightSplit: 1,
+        rightSplit: 0,
 
         scheme: {},
         rules: {},
@@ -199,6 +199,9 @@ function datatable(options) {
                 console.log("onAfterSelect 1", selection, preserve);
             }
         },
+        styles: {
+            cellTextColor: function (row, col) { }
+        },
         actions: {
             add(callback) {
                 /* callback :: function(){ return Object } */
@@ -270,6 +273,34 @@ function datatable(options) {
             }
         },
     };
+
+    // 扩展onClick事件
+    options["onClick"] = _.extend(_options["onClick"], options["onClick"]);
+
+    // 为数据单元格添加颜色样式
+    if (_.has(options["styles"], "cellTextColor")) {
+        var fn = _.get(options["styles"], "cellTextColor");
+
+        _.each(options.columns, function (column) {
+            if (column["id"] === "buttons") {
+                return;
+            }
+
+            if (_.has(column, "template")) {
+                return;
+            }
+
+            column.template = function (row) {
+                var value = row[column["id"]] || "";
+                var color = fn(row, column["id"]);
+                if (!_.isEmpty(color)) {
+                    return "<span style='color:" + color + ";'>" + value + "</span>";
+                }
+
+                return value;
+            }
+        })
+    }
 
     return _.extend(_options, options, { view: "datatable" });
 }

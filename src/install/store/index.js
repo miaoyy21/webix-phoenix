@@ -2,6 +2,7 @@ import { system } from "../../library/system";
 import { diagram } from "../../library/diagram";
 import { flow } from "../../library/flow";
 import { framework } from "../../library/framework";
+import { dev } from "../../dev";
 
 // 系统设置
 var text = webix.ajax().sync().get("/api/sys", { "method": "Setting", "PHOENIX_USING_MENU": "[系统加载]" }).responseText;
@@ -13,7 +14,7 @@ _.extend(global, { PHOENIX_SETTING });
 webix.storage.cookie.put("PHOENIX_USING_MENU", null);
 
 // 所有UI菜单
-var PHOENIX_MENUS_DATA = _.extend({}, system, diagram);
+var PHOENIX_MENUS_DATA = _.extend({}, system, diagram, dev);
 _.extend(global, { PHOENIX_MENUS_DATA });
 
 // 框架所需UI
