@@ -10,7 +10,7 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "richselect", options: utils.dicts["wgzt"], width: 180, value: "0", labelAlign: "center",
+                        view: "richselect", options: utils.dicts["wgzt"], width: 120, value: "0", labelAlign: "center",
                         on: {
                             onChange(newValue) {
                                 // $$(dtable).clearAll();
@@ -19,7 +19,16 @@ function builder() {
                         }
                     },
                     mainList.actions.refresh(),
-                    mainList.actions.add({ label: "新建单据", callback: () => { } }),
+                    mainList.actions.add({ label: "新建单据", callback: () => ({}) }),
+                    mainList.actions.remove({ label: "删除单据" }),
+                    {
+                        view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        click() { }
+                    },
+                    {
+                        view: "button", label: "撤销提交", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        click() { }
+                    }
                 ]
             },
             {
@@ -46,7 +55,24 @@ function builder() {
                                     body: mainForm,
                                 },
                                 { view: "resizer" },
-                                { gravity: 2, rows: [mxGrid] }
+                                {
+                                    gravity: 2,
+                                    rows: [
+                                        {
+                                            view: "toolbar", cols: [
+                                                {
+                                                    view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
+                                                    click() { }
+                                                },
+                                                {
+                                                    view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
+                                                    click() { }
+                                                },
+                                            ]
+                                        },
+                                        mxGrid
+                                    ]
+                                }
                             ]
                         },
                     }
