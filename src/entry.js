@@ -339,6 +339,7 @@ function onMenuSelect(item) {
                 module.builder(),
                 {
                     id: item.id,
+                    padding: { right: 4 },
                     css: { "border-left": "none", "border-top": "none" }
                 }
             ));

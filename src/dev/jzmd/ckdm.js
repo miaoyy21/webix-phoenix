@@ -21,7 +21,7 @@ function builder() {
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, width: 240 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true },
-            { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 120 },
+            { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 140 },
             {
                 id: "buttons",
                 width: 120,

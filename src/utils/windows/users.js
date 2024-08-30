@@ -147,7 +147,6 @@ webix.ui({
                             ]
                         },
                     },
-                    { view: "resizer" },
                     {
                         gravity: 2,
                         rows: [

@@ -10,7 +10,7 @@ function builder() {
                 view: "scrollview",
                 body: {
                     rows: [
-                        { view: "label", label: "<span style='margin-left:8px'></span>组织架构", height: 35 },
+                        { view: "label", label: "<span style='margin-left:8px'></span>组织架构", height: 38 },
                         {
                             id: tree_id,
                             view: "tree",

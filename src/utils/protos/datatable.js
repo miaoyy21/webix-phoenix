@@ -195,9 +195,6 @@ function datatable(options) {
                     this.showOverlay("无检索数据");
                 }
             },
-            onAfterSelect(selection, preserve) {
-                console.log("onAfterSelect 1", selection, preserve);
-            }
         },
         styles: {
             cellTextColor: function (row, col) { }
@@ -275,6 +272,7 @@ function datatable(options) {
     };
 
     // 扩展onClick事件
+    options["on"] = _.extend(_options["on"], options["on"]);
     options["onClick"] = _.extend(_options["onClick"], options["onClick"]);
 
     // 为数据单元格添加颜色样式
