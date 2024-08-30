@@ -109,13 +109,13 @@ function list(options) {
                     }
                 };
             },
-            remove(callback) {
-                /* callback :: function(){ return Array<String>|String } */
+            remove(opts) {
+                /* {label :: String, callback :: function(){ return Array<String>|String } }*/
                 return {
-                    view: "button", label: "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
+                    view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                     click() {
                         var list = $$(list_id);
-                        var id = callback ? callback() : list.getSelectedId(true);
+                        var id = opts["callback"] ? opts["callback"]() : list.getSelectedId(true);
 
                         // 支持批量删除
                         id = !_.isArray(id) ? [id] : id;

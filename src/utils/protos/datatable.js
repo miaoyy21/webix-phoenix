@@ -210,13 +210,13 @@ function datatable(options) {
                     }
                 };
             },
-            remove(callback) {
-                /* callback :: function(){ return Array<String>|String } */
+            remove(opts) {
+                /* {label:: String, callback :: function(){ return Array<String>|String } }*/
                 return {
-                    view: "button", label: "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
+                    view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                     click() {
                         var datatable = $$(datatable_id);
-                        var id = callback ? callback() : datatable.getSelectedId(true, true);
+                        var id = opts["callback"] ? opts["callback"]() : datatable.getSelectedId(true, true);
 
                         // 支持批量删除
                         id = !_.isArray(id) ? [id] : id;
