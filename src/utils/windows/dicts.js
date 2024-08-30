@@ -12,7 +12,6 @@ const instance = {
 
 // 刷新
 instance.reload = function () {
-
     // 转换成列表能识别的格式
     $$(instance.list_id).parse(utils.dicts[instance.options.kind], "json", true);
 }
@@ -43,7 +42,7 @@ webix.ui({
     width: 560,
     headHeight: 40,
     position: "center",
-    head: "角色选择",
+    head: "选择 数据字典",
     body: {
         paddingX: 12,
         rows: [
@@ -72,6 +71,7 @@ webix.ui({
 
 /*
     {
+        title       必须    标题
         kind        必须    数据字典分类
         checked     可选    已选角色ID，["role's id", ...] 或者 id1,id2,...
         callback    必须    点击确定的回调函数
@@ -98,7 +98,7 @@ export function dicts(options) {
     if (!instance.options.cache || _.size($$(instance.list_id).config.data) < 1) {
         instance.reload();
     }
-    $$(instance.list_id).setValue(instance.options.checked);
 
+    $$(instance.list_id).setValue(instance.options.checked);
     $$(instance.window_id).show();
 }

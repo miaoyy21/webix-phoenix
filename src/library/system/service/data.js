@@ -156,7 +156,7 @@ function builder() {
                         url: "/api/sys/tables?scope=SIMPLE",
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                            { id: "code_", header: { text: "数据库表", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 100 },
+                            { id: "code_", header: { text: "数据库表", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 160 },
                             { id: "name_", header: { text: "数据库表名称", css: { "text-align": "center" } }, editor: "text", sort: "text", minWidth: 160, fillspace: true },
                         ],
                         on: {

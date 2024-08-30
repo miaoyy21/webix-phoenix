@@ -146,6 +146,7 @@ function builder() {
                                                     }
 
                                                     utils.windows.dicts({
+                                                        title: "检验要求",
                                                         kind: "md_jyyq",
                                                         checked: checked,
                                                         callback(selected) {
@@ -278,7 +279,6 @@ function builder() {
                         click() {
                             open({
                                 "operation": "insert",
-                                "bylx": "无需报验",
                                 "xyzt": "在用",
                                 "create_user_name_": utils.users.getUserName(),
                                 "create_at_": utils.users.getDateTime(),

@@ -352,7 +352,7 @@ function builder() {
                 },
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                    { id: "code_", header: { text: "数据库表", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 100 },
+                    { id: "code_", header: { text: "数据库表", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 160 },
                     { id: "name_", header: { text: "数据库表名称", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 160 },
                     { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
                     { id: "sync_status_", header: { text: "同步状态", css: { "text-align": "center" } }, template: utils.icons.tables["sync_status"], css: { "text-align": "center" }, tooltip: (obj) => obj["sync_status_"] == "Creating" ? "创建中" : obj["sync_status_"] == "Changed" ? "已修改" : "已同步", sort: "text", width: 80 },
