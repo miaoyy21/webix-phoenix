@@ -10,7 +10,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
-            { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, fillspace: true },
+            { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, minWidth: 240, fillspace: true },
         ],
         on: {
             onAfterSelect(selection, preserve) {
@@ -40,7 +40,7 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
-            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, editor: "text", fillspace: true },
+            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, editor: "text", minWidth: 240, fillspace: true },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 140 },
             {
                 id: "buttons",
@@ -80,9 +80,8 @@ function builder() {
                         {
                             view: "toolbar",
                             cols: [
-                                kwGrid.actions.add(() => {
-                                    var item = $$(ckGrid.id).getSelectedItem();
-                                    return _.pick(item, "ckbh")
+                                kwGrid.actions.add({
+                                    callback: () => (_.pick($$(ckGrid.id).getSelectedItem(), "ckbh"))
                                 }),
                                 kwGrid.actions.refresh(),
                             ]

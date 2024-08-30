@@ -200,12 +200,12 @@ function datatable(options) {
             cellTextColor: function (row, col) { }
         },
         actions: {
-            add(callback) {
-                /* callback :: function(){ return Object } */
+            add(opts) {
+                /* {label :: String, callback :: function(){ return Object } }*/
                 return {
-                    view: "button", label: "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
+                    view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                     click() {
-                        var row = callback ? callback() : {};
+                        var row = opts["callback"] ? opts["callback"]() : {};
                         $$(datatable_id).add(row, 0);
                     }
                 };
