@@ -156,11 +156,15 @@ function builder() {
                         view: "button", label: "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                         click() {
                             open({
-                                "operation": "insert"
+                                "operation": "insert",
+                                "create_user_name_": utils.users.getUserName(),
+                                "create_at_": utils.users.getDateTime(),
                             });
                         }
                     },
                     datatable.actions.refresh(),
+                    {},
+                    datatable.actions.search("ckbh,ckmc,bgy"),
                 ]
             },
             datatable,

@@ -62,6 +62,8 @@ function builder() {
                 cols: [
                     datatable.actions.add(() => ({ "gyssx": "合格供方", "tybz": "0" })),
                     datatable.actions.refresh(),
+                    {},
+                    datatable.actions.search("khbh,khmc,gyssx,cpfw,sf,cs,dwdz,nsh,khyh,yhzh,lxr"),
                 ]
             },
             datatable,

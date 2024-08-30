@@ -1,6 +1,7 @@
 function builder() {
     var winId = utils.UUID();
     var formId = winId + "_form";
+    var searchId = utils.UUID();
     var pager = utils.protos.pager();
 
     var datatable = utils.protos.datatable({
@@ -286,6 +287,8 @@ function builder() {
                         }
                     },
                     datatable.actions.refresh(),
+                    {},
+                    datatable.actions.search("wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy"),
                 ]
             },
             datatable,

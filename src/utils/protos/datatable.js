@@ -267,6 +267,16 @@ function datatable(options) {
                         datatable.load(() => webix.ajax(datatable.config.url, params));
                     }
                 }
+            },
+            search(fields) {
+                var search = function () {
+                    $$(datatable_id).load(options.url + "&full_filter[" + fields + "]=" + this.getValue(), "json", () => { }, true)
+                }
+
+                return {
+                    view: "search", align: "center", placeholder: "请输入搜索内容", width: 240,
+                    on: { onEnter: search, onSearchIconClick: search }
+                }
             }
         },
     };
