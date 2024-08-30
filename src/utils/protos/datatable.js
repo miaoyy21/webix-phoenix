@@ -40,7 +40,7 @@ function datatable(options) {
             { id: "varchar_3_", header: { text: "Checkbox Editable", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "Yes", uncheckValue: "No", tooltip: false, css: { "text-align": "center" }, adjust: true, minWidth: 80 },
             {
                 id: "varchar_4_", header: { text: "Checkbox Readonly", css: { "text-align": "center" } }, template: function (obj, common, value, config) {
-                    if (value === config.checkValue) {
+                    if (value == config.checkValue) {
                         return "<span class='webix_icon phoenix_primary_icon mdi mdi-checkbox-marked' />"
                     }
 

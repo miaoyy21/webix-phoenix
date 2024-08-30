@@ -1,7 +1,6 @@
 function builder() {
     var winId = utils.UUID();
     var formId = winId + "_form";
-    var searchId = utils.UUID();
     var pager = utils.protos.pager();
 
     var datatable = utils.protos.datatable({
@@ -50,7 +49,7 @@ function builder() {
             },
         },
         styles: {
-            cellTextColor: function (row, col) { return row["xyzt"] === "禁用" ? "red" : "none" }
+            cellTextColor: function (row, col) { return row["xyzt"] == "禁用" ? "red" : "none" }
         },
         pager: pager.id
     });

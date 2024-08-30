@@ -50,7 +50,7 @@ function builder() {
             "khmc": webix.rules.isNotEmpty,
         },
         styles: {
-            cellTextColor: function (row, col) { return row["tybz"] === "1" ? "red" : "none" }
+            cellTextColor: function (row, col) { return row["tybz"] == "1" ? "red" : "none" }
         },
         pager: pager.id
     });

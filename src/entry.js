@@ -220,7 +220,7 @@ webix.ready(function () {
                             },
                             {
                                 view: "template",
-                                height: 30,
+                                height: 28,
                                 css: { "text-align": "center", "background": "#F8F9F9" },
                                 template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
                             }
