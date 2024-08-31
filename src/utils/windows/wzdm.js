@@ -14,7 +14,7 @@ const instance = {
     checked_id: "phoenix_utils_windows_wzdm_checked",
 
     // 状态设置
-    data: [],
+    allData: [],
     options: DefaultOptions,
 }
 
@@ -24,15 +24,15 @@ instance.reload = function (force) {
         var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_WZDM.query");
 
         // 根据条件进行数据筛选
-        var allData = _.filter(JSON.parse(request.responseText)["data"], (row) => instance.options.filter(row));
-
-        // 设置选中状态
-        $$(instance.grid_id).clearAll();
-
-        instance.data = _.map(allData, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["wzbh"] == obj["wzbh"]) >= 0 }));
+        instance.allData = JSON.parse(request.responseText)["data"];
     }
+    var data = _.filter(instance.allData, (row) => instance.options.filter(row));
 
-    $$(instance.grid_id).define("data", instance.data)
+    // 设置选中状态
+    $$(instance.grid_id).clearAll();
+
+    var newData = _.map(data, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["wzbh"] == obj["wzbh"]) >= 0 }));
+    $$(instance.grid_id).define("data", newData)
     $$(instance.grid_id).refresh();
 
     // 默认选中第1个可选用户

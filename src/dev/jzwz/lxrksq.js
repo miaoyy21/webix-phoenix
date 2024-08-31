@@ -124,23 +124,94 @@ function builder() {
 
     // 明细
     var mxGrid = utils.protos.datatable({
-        editable: false,
+        editable: true,
         drag: false,
         url: null,
+        leftSplit: 4,
+        rightSplit: 1,
         save: {
-            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.save",
+            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.save_lxrksq",
             updateFromResponse: true,
             trackMove: true,
             operationName: "operation",
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
-            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 160 },
-            { id: "htbh", header: { text: "采购合同号", css: { "text-align": "center" } }, width: 120 },
-            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 80 },
+            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            {
+                id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": "#d5f5e3" },
+                adjust: true, minWidth: 80
+            },
+            {
+                id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": "#d5f5e3" },
+                adjust: true, minWidth: 80
+            },
+            {
+                id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": "#d5f5e3" },
+                adjust: true, minWidth: 80
+            },
+            {
+                id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": "#d5f5e3" },
+                adjust: true, minWidth: 60
+            },
+            {
+                id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } },
+                format: (value) => utils.formats.number.format(value, 4),
+                editParse: (value) => utils.formats.number.editParse(value, 4),
+                editFormat: (value) => utils.formats.number.editFormat(value, 4),
+                css: { "text-align": "right" }, adjust: true, minWidth: 80
+            },
+            {
+                id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } },
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right" }, adjust: true, minWidth: 80
+            },
+            {
+                id: "taxje", header: { text: "税额", css: { "text-align": "center" } },
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right" }, adjust: true, minWidth: 80
+            },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            {
+                id: "buttons",
+                width: 80,
+                header: { text: "操作按钮", css: { "text-align": "center" } },
+                tooltip: false,
+                template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
+                                <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
+                            </div>`,
+            }
         ],
+        on: {
+
+        }
     });
 
 
@@ -204,6 +275,7 @@ function builder() {
                                                     view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
                                                     click() {
                                                         var values = $$(mxGrid.id).serialize(true);
+                                                        console.log(values)
 
                                                         // 选择供应商
                                                         utils.windows.wzdm({
@@ -214,7 +286,10 @@ function builder() {
                                                                 var rkdid = $$(mainGrid.id).getSelectedId(false, true);
                                                                 _.each(checked, (wzdm) => {
                                                                     var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                                                    $$(mxGrid.id).add(_.extend({}, data, { "wzrkd_id": rkdid, "zt": "0" }));
+                                                                    $$(mxGrid.id).add(_.extend({}, data, {
+                                                                        "wzrkd_id": rkdid, "zt": "0",
+                                                                        "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
+                                                                    }));
                                                                 });
 
                                                                 return true;

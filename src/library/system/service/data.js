@@ -228,7 +228,7 @@ function builder() {
                             operationName: "operation"
                         },
                         columns: [
-                            { id: "code_", header: { text: "服务编码", css: { "text-align": "center" } }, sort: "text", width: 80 },
+                            { id: "code_", header: { text: "服务编码", css: { "text-align": "center" } }, sort: "text", width: 100 },
                             { id: "name_", header: { text: "服务名称", css: { "text-align": "center" } }, sort: "text", width: 160 },
                             { id: "method_", header: { text: "方法", css: { "text-align": "center" } }, cssFormat: utils.formats.method, css: { "text-align": "center" }, width: 60 },
                             { id: "source_", header: { text: "服务脚本", css: { "text-align": "center" } }, minWidth: 320, fillspace: true },
