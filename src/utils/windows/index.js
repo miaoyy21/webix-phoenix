@@ -9,6 +9,8 @@ import { coding } from "./coding";
 import { gcdm } from "./gcdm";
 import { ckdm } from "./ckdm";
 import { khdm } from "./khdm";
+import { wzdm } from "./wzdm";
+
 var windows = {};
 
 windows.organization = organization;
@@ -22,5 +24,6 @@ windows.coding = coding;
 windows.gcdm = gcdm;
 windows.ckdm = ckdm;
 windows.khdm = khdm;
+windows.wzdm = wzdm;
 
 export { windows }

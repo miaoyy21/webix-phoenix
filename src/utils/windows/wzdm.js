@@ -3,32 +3,36 @@
 const DefaultOptions = { multiple: false, cache: true, checked: [], filter: (row) => true, callback: (select) => { } };
 
 const instance = {
-    window_id: "phoenix_utils_windows_gcdm",
+    window_id: "phoenix_utils_windows_wzdm",
 
-    filter_id: "phoenix_utils_windows_gcdm_filter",
-    filter_placeholder: "请输入项目编号或项目名称等",
+    filter_id: "phoenix_utils_windows_wzdm_filter",
+    filter_placeholder: "请输入物资编号、物资名称或规格型号等",
 
-    grid_id: "phoenix_utils_windows_gcdm_grid",
+    grid_id: "phoenix_utils_windows_wzdm_grid",
 
-    toolbar_checked_id: "phoenix_utils_windows_gcdm_toolbar_checked",
-    checked_id: "phoenix_utils_windows_gcdm_checked",
+    toolbar_checked_id: "phoenix_utils_windows_wzdm_toolbar_checked",
+    checked_id: "phoenix_utils_windows_wzdm_checked",
 
     // 状态设置
+    data: [],
     options: DefaultOptions,
 }
 
 // 刷新
-instance.reload = function () {
-    var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_GCDM.query");
+instance.reload = function (force) {
+    if (force) {
+        var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_WZDM.query");
 
-    // 根据条件进行数据筛选
-    var data = _.filter(JSON.parse(request.responseText)["data"], (row) => instance.options.filter(row));
+        // 根据条件进行数据筛选
+        var allData = _.filter(JSON.parse(request.responseText)["data"], (row) => instance.options.filter(row));
 
-    // 设置选中状态
-    $$(instance.grid_id).clearAll();
+        // 设置选中状态
+        $$(instance.grid_id).clearAll();
 
-    var rows = _.map(data, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["gcbh"] == obj["gcbh"]) >= 0 }));
-    $$(instance.grid_id).define("data", rows)
+        instance.data = _.map(allData, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["wzbh"] == obj["wzbh"]) >= 0 }));
+    }
+
+    $$(instance.grid_id).define("data", instance.data)
     $$(instance.grid_id).refresh();
 
     // 默认选中第1个可选用户
@@ -42,14 +46,15 @@ instance.reload = function () {
     }
 
     // 设置已选用户
-    $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "gcmc").join(","));
+    $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "wzbh").join(","));
 }
 
 // 过滤
 instance.filter = function () {
-    $$(instance.grid_id).filter((row) => ((row["gcbh"] || "") + "|" + (row["gcmc"] || "") + "|" + (row["cpxh"] || "")
-        + "|" + (row["xmlb"] || "") + "|" + (row["xmlx"] || "") + "|" + (row["xmsx"] || "")
-        + "|" + (row["xmfzr"] || "") + "|" + (row["xmzg"] || ""))
+    $$(instance.grid_id).filter((row) => ((row["wzbh"] || "") + "|" + (row["wzmc"] || "")
+        + "|" + (row["ggxh"] || "") + "|" + (row["sccjmc"] || "")
+        + "|" + (row["wzph"] || "") + "|" + (row["bzdh"] || "")
+        + "|" + (row["xyzt"] || ""))
         .indexOf($$(instance.filter_id).getValue()) >= 0);
 
     // 没有符合条件的数据
@@ -86,11 +91,11 @@ webix.ui({
     modal: true,
     close: true,
     move: true,
-    height: 420,
-    width: 480,
+    height: 480,
+    width: 640,
     headHeight: 38,
     position: "center",
-    head: "选择项目",
+    head: "选择物资",
     body: {
         paddingX: 12,
         rows: [
@@ -124,13 +129,19 @@ webix.ui({
                                     return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
                                 }, width: 50
                             },
-                            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 120 },
-                            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-                            { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 160 },
-                            { id: "xmlx", header: { text: "项目类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                            { id: "xmsx", header: { text: "项目属性", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                            { id: "xmfzr", header: { text: "项目负责人", css: { "text-align": "center" } }, width: 240 },
-                            { id: "xmzg", header: { text: "项目主管", css: { "text-align": "center" } }, width: 240 },
+                            { id: "xyzt", header: { text: "选用要求", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
+                            { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
+                            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                            { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
+                            { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 120 },
+                            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+                            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
                         ],
                         elementsConfig: { labelAlign: "right", clear: false },
                         on: {
@@ -157,10 +168,10 @@ webix.ui({
                                     instance.options.checked.push(row);
                                 } else {
                                     instance.options.checked =
-                                        _.reject(instance.options.checked, (user) => user["gcbh"] === row["gcbh"]);
+                                        _.reject(instance.options.checked, (user) => user["wzbh"] === row["wzbh"]);
                                 }
 
-                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "gcbh").join(","));
+                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "wzbh").join(","));
                             }
                         }
                     },
@@ -171,7 +182,7 @@ webix.ui({
                 view: "toolbar",
                 height: 38,
                 cols: [
-                    { id: instance.checked_id, view: "text", label: "已选项目", labelAlign: "right", readonly: true, placeholder: "请选择项目..." },
+                    { id: instance.checked_id, view: "text", label: "已选物资", labelAlign: "right", readonly: true, placeholder: "请选择物资..." },
                 ]
             },
             {
@@ -180,7 +191,7 @@ webix.ui({
                 height: 34,
                 cols: [
                     { width: 8 },
-                    { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload() },
+                    { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload(true) },
                     {},
                     { view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary", click: instance.ok },
                     { width: 8 }
@@ -196,11 +207,11 @@ webix.ui({
         multiple    可选    是否启用多选，默认单选
         cache       可选    是否开启缓存数据，默认开启
         filter      可选    筛选数据回调函数
-        checked     可选    已选用户ID，[{"gcbh":"项目编号","gcmc":"项目名称"}, ...]
+        checked     可选    已选用户ID，[{"wzbh":"物资编号"}, ...]
         callback    必须    点击确定的回调函数
     }
 */
-export function gcdm(options) {
+export function wzdm(options) {
 
     // 参数配置
     instance.options = _.extend({}, DefaultOptions, options);
@@ -209,7 +220,7 @@ export function gcdm(options) {
     if (_.isEmpty(instance.options.checked)) {
         instance.options.checked = [];
     } else if (!_.isArray(instance.options.checked)) {
-        console.error(`checked must be a Array, like [{"gcbh":"项目编号","gcmc":"项目名称"}, ...]`)
+        console.error(`checked must be a Array, like [{"wzbh":"物资编号"}, ...]`)
         return
     } else {
         instance.options.checked = _.reject(instance.options.checked, (o) => _.isEmpty(o.id));
@@ -235,19 +246,21 @@ export function gcdm(options) {
 
     // 如果未设置缓存，或者无数据，那么执行刷新
     if (!instance.options.cache || $$(instance.grid_id).count() < 1) {
-        instance.reload();
+        instance.reload(true);
     } else {
+        instance.reload(false);
+
         // 重新设置用户选中状态
         $$(instance.grid_id).eachRow(
             function (id) {
                 var row = this.getItem(id);
-                row.checked = _.findIndex(instance.options.checked, (obj) => row["gcbh"] == obj["gcbh"]) >= 0;
+                row.checked = _.findIndex(instance.options.checked, (obj) => row["wzbh"] == obj["wzbh"]) >= 0;
 
                 this.updateItem(id, row);
             }, true);
 
         // 设置已选用户
-        $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "gcmc").join(","));
+        $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "wzbh").join(","));
     }
 
     $$(instance.window_id).show();

@@ -202,7 +202,25 @@ function builder() {
                                             view: "toolbar", cols: [
                                                 {
                                                     view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
-                                                    click() { }
+                                                    click() {
+                                                        var values = $$(mxGrid.id).serialize(true);
+
+                                                        // 选择供应商
+                                                        utils.windows.wzdm({
+                                                            multiple: true,
+                                                            checked: [],
+                                                            filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(values, (value) => (value["wzbh"] == row["wzbh"])) < 0),
+                                                            callback(checked) {
+                                                                var rkdid = $$(mainGrid.id).getSelectedId(false, true);
+                                                                _.each(checked, (wzdm) => {
+                                                                    var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
+                                                                    $$(mxGrid.id).add(_.extend({}, data, { "wzrkd_id": rkdid, "zt": "0" }));
+                                                                });
+
+                                                                return true;
+                                                            }
+                                                        })
+                                                    }
                                                 },
                                                 {
                                                     view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
