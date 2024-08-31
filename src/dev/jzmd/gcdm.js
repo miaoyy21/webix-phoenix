@@ -22,7 +22,7 @@ function builder() {
             utils.protos.checkbox({ id: "wgbz", header: { text: "完工", css: { "text-align": "center" } } }),
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 120 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-            { id: "cpxh", header: { text: "产品类型", css: { "text-align": "center" } }, width: 160 },
+            { id: "cpxh", header: { text: "产品型号", css: { "text-align": "center" } }, width: 160 },
             { id: "sl", header: { text: "数量", css: { "text-align": "center" } }, width: 60 },
             { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 160 },
             { id: "xmlx", header: { text: "项目类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
