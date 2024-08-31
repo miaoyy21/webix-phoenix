@@ -193,6 +193,12 @@ function datatable(options) {
                 this.hideOverlay();
                 if (!this.count()) {
                     this.showOverlay("无检索数据");
+                    return;
+                }
+
+                var first = this.getFirstId();
+                if (this.config.select && first) {
+                    this.select(first);
                 }
             },
         },
@@ -202,6 +208,8 @@ function datatable(options) {
         actions: {
             add(opts) {
                 /* {label :: String, callback :: function(){ return Object } }*/
+                opts = opts || {};
+
                 return {
                     view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                     click() {
@@ -212,6 +220,8 @@ function datatable(options) {
             },
             remove(opts) {
                 /* {label:: String, callback :: function(){ return Array<String>|String } }*/
+                opts = opts || {};
+
                 return {
                     view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                     click() {
@@ -268,13 +278,13 @@ function datatable(options) {
                     }
                 }
             },
-            search(fields) {
+            search(fields, autoWidth) {
                 var search = function () {
                     $$(datatable_id).load(options.url + "&full_filter[" + fields + "]=" + this.getValue(), "json", () => { }, true)
                 }
 
                 return {
-                    view: "search", align: "center", placeholder: "请输入搜索内容", width: 240,
+                    view: "search", align: "center", placeholder: "请输入搜索内容", width: !autoWidth ? 240 : null,
                     on: { onEnter: search, onSearchIconClick: search }
                 }
             }

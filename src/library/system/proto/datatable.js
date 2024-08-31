@@ -7,7 +7,7 @@ function builder() {
             {
                 view: "toolbar",
                 cols: [
-                    datatable.actions.add(),
+                    datatable.actions.add({ callback: () => ({ "varchar_32_": _.uniqueId() }) }),
                     datatable.actions.remove(),
                     datatable.actions.refresh(),
                 ]

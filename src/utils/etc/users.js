@@ -29,6 +29,10 @@ users.getDepartName = function () {
     return utf8.decode(base64.decode(encoded));
 }
 
+users.getDate = function () {
+    return webix.Date.dateToStr("%Y-%m-%d")(new Date());
+}
+
 users.getDateTime = function () {
     return webix.Date.dateToStr("%Y-%m-%d %H:%i:%s")(new Date());
 }

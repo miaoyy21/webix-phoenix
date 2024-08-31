@@ -99,6 +99,8 @@ function list(options) {
         actions: {
             add(opts) {
                 /* {label :: String, callback :: function(){ return Object } }*/
+                opts = opts || {};
+
                 return {
                     view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                     click() {
@@ -111,6 +113,8 @@ function list(options) {
             },
             remove(opts) {
                 /* {label :: String, callback :: function(){ return Array<String>|String } }*/
+                opts = opts || {};
+
                 return {
                     view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                     click() {
