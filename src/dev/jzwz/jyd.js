@@ -1,0 +1,217 @@
+function builder() {
+    var winId = utils.UUID();
+
+    var form = utils.protos.form({
+        data: {},
+        rows: [
+            {
+                cols: [
+                    {
+                        name: "txmvalue", view: "search", label: "条形码", required: true,
+                        on: {
+                            onEnter() {
+                                console.log("onEnter", arguments);
+                            },
+                            onSearchIconClick() {
+                                console.log("onSearchIconClick", arguments);
+                                open();
+                            }
+                        }
+                    },
+                    {}, {}
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "ldbh", label: "入库单号", readonly: true },
+                    {},
+                    { view: "text", name: "zt", label: "状态", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "khmc", label: "供应商", readonly: true },
+                    { view: "text", name: "htbh", label: "采购合同号", readonly: true },
+                    { view: "text", name: "gcms", label: "项目名称", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "wzbh", label: "物资编号", readonly: true },
+                    { view: "text", name: "wzms", label: "物资描述", readonly: true },
+                    { view: "text", name: "jldw", label: "计量单位", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "sccjmc", label: "生产厂家", readonly: true },
+                    { view: "text", name: "clph", label: "材料批号", readonly: true },
+                    { view: "text", name: "scrq", label: "生产日期", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "jydd", label: "检验地点", placeholder: "请填写 检验地点 ..." },
+                    { view: "text", name: "bylx", label: "报验类型", readonly: true },
+                    { view: "text", name: "byyq", label: "检验要求", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "rksl", label: "交检数量", readonly: true },
+                    { view: "text", name: "hgsl", label: "合格数量", required: true, placeholder: "请填写 合格数量 ..." },
+                    { view: "text", name: "bhgsl", label: "不合格数量", required: true, placeholder: "请填写 不合格数量 ..." },
+                ]
+            },
+            { view: "textarea", name: "jynr", label: "检验内容", placeholder: "请输入检验内容 ..." },
+            { view: "textarea", name: "jyjl", label: "检验结论", placeholder: "请输入检验结论 ..." },
+            { view: "textarea", name: "bhgsm", label: "不合格说明", placeholder: "请输入不合格说明 ..." },
+            { view: "textarea", name: "jyry_bz", label: "检验员备注", placeholder: "请输入备注信息 ..." },
+            {
+                cols: [
+                    { view: "text", name: "create_user_name_", label: "采购员", readonly: true },
+                    { view: "text", name: "jyry", label: "检验员", readonly: true },
+                    { view: "text", name: "bgy", label: "保管员", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "tjrq", label: "提交日期", readonly: true },
+                    { view: "text", name: "jyrq", label: "检验日期", readonly: true },
+                    { view: "text", name: "rkrq", label: "入库日期", readonly: true },
+                ]
+            },
+        ],
+    });
+
+    function open() {
+        var dlgPager = utils.protos.pager();
+        console.log(dlgPager)
+
+        var dlgGrid = utils.protos.datatable({
+            editable: false,
+            drag: false,
+            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_jyd&pager=true",
+            leftSplit: 2,
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
+                { id: "khms", header: { text: "供应商名称", css: { "text-align": "center" } }, template: "[#!khbh#] #!khmc#", width: 180 },
+                { id: "gcms", header: { text: "项目名称", css: { "text-align": "center" } }, template: "[#!gcbh#] #!gcmc#", width: 180 },
+                { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+                { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                { id: "rksl", header: { text: "交检数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
+                { id: "jydd", header: { text: "检验地点", css: { "text-align": "center" } }, width: 80 },
+                { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
+                { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+                { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
+                { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
+                { id: "jynr", header: { text: "检验内容", css: { "text-align": "center" } }, width: 180 },
+                { id: "jyjl", header: { text: "检验结论", css: { "text-align": "center" } }, width: 180 },
+            ],
+            pager: dlgPager.id,
+        });
+
+        webix.ui({
+            id: winId,
+            view: "window",
+            close: true,
+            modal: true,
+            width: 720,
+            height: 480,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "选择物资入库单",
+            position: "center",
+            body: {
+                paddingX: 12,
+                rows: [
+                    {
+                        rows: [
+                            {
+                                view: "toolbar",
+                                height: 38,
+                                cols: [
+                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq", true),
+                                ]
+                            },
+                            dlgGrid,
+                            dlgPager
+                        ]
+                    },
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            { width: 8 },
+                            {},
+                            {
+                                view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
+                                click() {
+
+                                },
+                            },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
+    return {
+        rows: [
+            {
+                view: "toolbar",
+                cols: [
+                    {
+                        view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        click() {
+                            // var id = $$(mainGrid.id).getSelectedId(false, true);
+                            // webix.ajax()
+                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.commit", { "id": id })
+                            //     .then(
+                            //         (res) => {
+                            //             webix.message({ type: "success", text: "提交检验成功" });
+                            //             onAfterSelect(id);
+                            //         }
+                            //     );
+                        }
+                    },
+                    {
+                        view: "button", label: "撤销检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        click() {
+                            // var id = $$(mainGrid.id).getSelectedId(false, true);
+                            // webix.ajax()
+                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.unCommit", { "id": id })
+                            //     .then(
+                            //         (res) => {
+                            //             webix.message({ type: "success", text: "撤销提交成功" });
+                            //             onAfterSelect(id);
+                            //         }
+                            //     );
+                        }
+                    }
+                ]
+            },
+            {
+                view: "scrollview",
+                scroll: "y",
+                body: {
+                    cols: [
+                        { width: 120 },
+                        form,
+                        { width: 120 },
+                    ]
+                }
+            }
+        ],
+    };
+}
+
+export { builder };

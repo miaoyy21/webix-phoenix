@@ -178,7 +178,7 @@ function builder() {
         editable: true,
         drag: false,
         url: null,
-        leftSplit: 4,
+        leftSplit: 5,
         rightSplit: 1,
         save: {
             url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.save_lxrksq",
@@ -188,7 +188,8 @@ function builder() {
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 80 },
+            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
@@ -249,7 +250,15 @@ function builder() {
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
-            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            { id: "clph", header: { text: "材料批号", css: { "text-align": "center" } }, editor: "text", width: 120 },
+            {
+                id: "scrq", header: { text: "生产日期", css: { "text-align": "center" } }, editor: "date",
+                format: utils.formats.date.format,
+                editParse: utils.formats.date.editParse,
+                editFormat: utils.formats.date.editFormat,
+                css: { "text-align": "center" }, width: 80
+            },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", width: 180 },
             {
                 id: "buttons",
                 width: 80,
@@ -361,7 +370,7 @@ function builder() {
                 cols: [
                     {
                         view: "scrollview",
-                        width: 320,
+                        width: 240,
                         body: {
                             rows: [
                                 { view: "toolbar", cols: [mainGrid.actions.search("ldbh,htbh,khbh,khmc,gcbh,gcmc", true)] },
