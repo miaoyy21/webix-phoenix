@@ -97,7 +97,7 @@ function builder() {
                     {
                         id: item_grid_id,
                         view: "datatable",
-                        width: 360,
+                        width: 420,
                         css: "webix_data_border webix_header_border",
                         resizeColumn: true,
                         editable: true,
