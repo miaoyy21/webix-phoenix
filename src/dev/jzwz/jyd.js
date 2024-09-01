@@ -120,10 +120,10 @@ function builder() {
             view: "window",
             close: true,
             modal: true,
-            width: 720,
-            height: 480,
+            width: 680,
+            height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "选择物资入库单",
+            head: "选择待检及已检物资入库单",
             position: "center",
             body: {
                 paddingX: 12,
