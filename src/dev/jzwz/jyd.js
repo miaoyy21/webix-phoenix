@@ -1,5 +1,8 @@
+
 function builder() {
     var winId = utils.UUID();
+
+    const qUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_jyd";
 
     var form = utils.protos.form({
         data: {},
@@ -10,12 +13,33 @@ function builder() {
                         name: "txmvalue", view: "search", label: "条形码", required: true,
                         on: {
                             onEnter() {
-                                console.log("onEnter", arguments);
+                                var txmvalue = this.getValue();
+                                if (_.isEmpty(txmvalue)) return;
+
+                                webix.extend($$(form.id), webix.ProgressBar).showProgress();
+                                webix.ajax()
+                                    .get(qUrl, { "txmvalue": txmvalue })
+                                    .then(
+                                        (res) => {
+                                            $$(form.id).hideProgress();
+
+                                            var values = res.json()["data"];
+                                            var size = _.size(values);
+                                            if (size == 0) {
+                                                onLoad({ "txmvalue": txmvalue });
+                                                webix.message({ type: "error", text: "无效的条形码" });
+                                                return;
+                                            } else if (size > 1) {
+                                                onLoad({ "txmvalue": txmvalue });
+                                                webix.message({ type: "error", text: "【异常】检索到" + size + "个条形码" });
+                                                return;
+                                            } else {
+                                                onLoad(_.first(values));
+                                            }
+                                        }
+                                    );
                             },
-                            onSearchIconClick() {
-                                console.log("onSearchIconClick", arguments);
-                                open();
-                            }
+                            onSearchIconClick: open
                         }
                     },
                     {}, {}
@@ -25,14 +49,14 @@ function builder() {
                 cols: [
                     { view: "text", name: "ldbh", label: "入库单号", readonly: true },
                     {},
-                    { view: "text", name: "zt", label: "状态", readonly: true },
+                    { view: "richselect", name: "zt", label: "状态", options: utils.dicts["wz_rkzt"], readonly: true },
                 ]
             },
             {
                 cols: [
                     { view: "text", name: "khmc", label: "供应商", readonly: true },
                     { view: "text", name: "htbh", label: "采购合同号", readonly: true },
-                    { view: "text", name: "gcms", label: "项目名称", readonly: true },
+                    { view: "text", name: "gcmc", label: "项目名称", readonly: true },
                 ]
             },
             {
@@ -82,23 +106,34 @@ function builder() {
                 ]
             },
         ],
+        on: {
+            onChange() {
+                console.log("onchange", arguments);
+            }
+        }
     });
+
+    function onLoad(values) {
+        // 根据显示要求重新构建
+        values["wzms"] = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(values);
+        $$(form.id).setValues(values);
+    }
 
     function open() {
         var dlgPager = utils.protos.pager();
-        console.log(dlgPager)
 
         var dlgGrid = utils.protos.datatable({
             editable: false,
             drag: false,
-            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_jyd&pager=true",
-            leftSplit: 2,
+            url: qUrl + "&pager=true",
+            leftSplit: 3,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
-                { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                 { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
-                { id: "khms", header: { text: "供应商名称", css: { "text-align": "center" } }, template: "[#!khbh#] #!khmc#", width: 180 },
-                { id: "gcms", header: { text: "项目名称", css: { "text-align": "center" } }, template: "[#!gcbh#] #!gcmc#", width: 180 },
+                { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 180 },
+                { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
                 { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
@@ -151,7 +186,11 @@ function builder() {
                             {
                                 view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
                                 click() {
+                                    var values = $$(dlgGrid.id).getSelectedItem();
+                                    if (_.isEmpty(values)) return;
 
+                                    onLoad(values);
+                                    $$(winId).hide();
                                 },
                             },
                             { width: 8 }
@@ -170,8 +209,14 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        view: "button", label: "检验确认", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
                         click() {
+                            var values = $$(form.id).getValues();
+                            if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
+                                webix.message({ type: "error", text: "请输入或选择条形码" });
+                                return;
+                            }
+
                             // var id = $$(mainGrid.id).getSelectedId(false, true);
                             // webix.ajax()
                             //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.commit", { "id": id })
@@ -184,7 +229,7 @@ function builder() {
                         }
                     },
                     {
-                        view: "button", label: "撤销检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        view: "button", label: "撤销检验", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
                         click() {
                             // var id = $$(mainGrid.id).getSelectedId(false, true);
                             // webix.ajax()

@@ -229,9 +229,9 @@ function builder() {
                         },
                         columns: [
                             { id: "code_", header: { text: "服务编码", css: { "text-align": "center" } }, sort: "text", width: 100 },
-                            { id: "name_", header: { text: "服务名称", css: { "text-align": "center" } }, sort: "text", width: 160 },
+                            { id: "name_", header: { text: "服务名称", css: { "text-align": "center" } }, sort: "text", width: 240 },
                             { id: "method_", header: { text: "方法", css: { "text-align": "center" } }, cssFormat: utils.formats.method, css: { "text-align": "center" }, width: 60 },
-                            { id: "source_", header: { text: "服务脚本", css: { "text-align": "center" } }, minWidth: 320, fillspace: true },
+                            { id: "source_", header: { text: "服务脚本", css: { "text-align": "center" } }, minWidth: 160, fillspace: true },
                             { id: "timeout_", header: { text: "超时(秒)", css: { "text-align": "center" } }, width: 80, css: { "text-align": "right" } },
                             { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                             { id: "update_at_", header: { text: "修改时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },

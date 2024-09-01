@@ -1,5 +1,5 @@
 function builder() {
-    const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.self";
+    const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.query_self";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query";
 
     var btnCreate = utils.UUID();
@@ -351,7 +351,7 @@ function builder() {
                         }
                     },
                     {
-                        id: btnUnCommit, view: "button", label: "撤销提交", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        id: btnUnCommit, view: "button", label: "撤销提交", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
                         click() {
                             var id = $$(mainGrid.id).getSelectedId(false, true);
                             webix.ajax()
