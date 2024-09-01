@@ -176,9 +176,9 @@ function builder() {
             },
             {
                 id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } },
-                format: (value) => utils.formats.number.format(value, 4),
-                editParse: (value) => utils.formats.number.editParse(value, 4),
-                editFormat: (value) => utils.formats.number.editFormat(value, 4),
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
@@ -288,7 +288,7 @@ function builder() {
                                                                     var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
                                                                     $$(mxGrid.id).add(_.extend({}, data, {
                                                                         "wzrkd_id": rkdid, "zt": "0",
-                                                                        "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
+                                                                        "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
                                                                     }));
                                                                 });
 
