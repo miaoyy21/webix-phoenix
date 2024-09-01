@@ -4,6 +4,9 @@ function builder() {
 
     const qUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_jyd";
 
+    var btnCheck = utils.UUID();
+    var btnUnCheck = utils.UUID();
+
     var form = utils.protos.form({
         data: {},
         rows: [
@@ -82,9 +85,29 @@ function builder() {
             },
             {
                 cols: [
-                    { view: "text", name: "rksl", label: "交检数量", readonly: true },
-                    { view: "text", name: "hgsl", label: "合格数量", required: true, placeholder: "请填写 合格数量 ..." },
-                    { view: "text", name: "bhgsl", label: "不合格数量", required: true, placeholder: "请填写 不合格数量 ..." },
+                    { view: "text", name: "rksl", label: "交检数量", readonly: true, format: "1,111.00" },
+                    {
+                        view: "text", name: "hgsl", label: "合格数量", required: true, placeholder: "请填写 合格数量 ...", format: "1,111.00",
+                        on: {
+                            onChange(newValue) {
+                                var values = $$(form.id).getValues();
+
+                                var rksl = utils.formats.number.editParse(values["rksl"], 2);
+                                var hgsl = utils.formats.number.editParse(newValue, 2);
+                                var bhgsl = 0;
+                                if (hgsl > rksl) {
+                                    hgsl = rksl;
+                                    bhgsl = 0;
+                                    webix.message({ type: "error", text: "合格数量不能大于交检数量" });
+                                } else {
+                                    bhgsl = rksl - hgsl;
+                                }
+
+                                $$(form.id).setValues(_.extend(values, { "hgsl": hgsl, "bhgsl": bhgsl }));
+                            }
+                        }
+                    },
+                    { view: "text", name: "bhgsl", label: "不合格数量", readonly: true, placeholder: "根据合格数量计算 ...", format: "1,111.00" },
                 ]
             },
             { view: "textarea", name: "jynr", label: "检验内容", placeholder: "请输入检验内容 ..." },
@@ -106,17 +129,37 @@ function builder() {
                 ]
             },
         ],
-        on: {
-            onChange() {
-                console.log("onchange", arguments);
-            }
-        }
     });
 
     function onLoad(values) {
         // 根据显示要求重新构建
         values["wzms"] = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(values);
+
+        // 默认全部合格
+        values["hgsl"] = values["rksl"];
+        values["bhgsl"] = 0;
+        if (_.isEmpty(values["jyjl"])) {
+            values["jyjl"] = "合格";
+        }
+
         $$(form.id).setValues(values);
+
+        if (_.isEqual(values["zt"], "1")) {
+            $$(btnCheck).enable();
+            $$(btnUnCheck).disable();
+
+            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], false);
+        } else if (_.isEqual(values["zt"], "5")) {
+            $$(btnCheck).disable();
+            $$(btnUnCheck).enable();
+
+            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], true);
+        } else {
+            $$(btnCheck).disable();
+            $$(btnUnCheck).disable();
+
+            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], true);
+        }
     }
 
     function open() {
@@ -138,12 +181,12 @@ function builder() {
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
                 { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-                { id: "rksl", header: { text: "交检数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
+                { id: "rksl", header: { text: "交检数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
                 { id: "jydd", header: { text: "检验地点", css: { "text-align": "center" } }, width: 80 },
                 { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
                 { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
-                { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
-                { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, width: 80 },
+                { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
                 { id: "jynr", header: { text: "检验内容", css: { "text-align": "center" } }, width: 180 },
                 { id: "jyjl", header: { text: "检验结论", css: { "text-align": "center" } }, width: 180 },
             ],
@@ -209,7 +252,7 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "button", label: "检验确认", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        id: btnCheck, view: "button", label: "检验确认", disable: true, autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
                         click() {
                             var values = $$(form.id).getValues();
                             if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
@@ -217,29 +260,47 @@ function builder() {
                                 return;
                             }
 
-                            // var id = $$(mainGrid.id).getSelectedId(false, true);
-                            // webix.ajax()
-                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.commit", { "id": id })
-                            //     .then(
-                            //         (res) => {
-                            //             webix.message({ type: "success", text: "提交检验成功" });
-                            //             onAfterSelect(id);
-                            //         }
-                            //     );
+                            var rksl = utils.formats.number.editParse(values["rksl"], 2);
+                            var hgsl = utils.formats.number.editParse(values["hgsl"], 2);
+                            var bhgsl = utils.formats.number.editParse(values["bhgsl"], 2);
+                            if (rksl != hgsl + bhgsl) {
+                                webix.message({ type: "error", text: "请输入合格数量" });
+                                return;
+                            }
+
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.check", values)
+                                .then(
+                                    (res) => {
+                                        $$(form.id).setValues({});
+                                        webix.message({ type: "success", text: "检验确认成功" });
+
+                                        $$(btnCheck).enable();
+                                        $$(btnUnCheck).enable();
+                                    }
+                                );
                         }
                     },
                     {
-                        view: "button", label: "撤销检验", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        id: btnUnCheck, view: "button", label: "撤销检验", disable: true, autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
                         click() {
-                            // var id = $$(mainGrid.id).getSelectedId(false, true);
-                            // webix.ajax()
-                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.unCommit", { "id": id })
-                            //     .then(
-                            //         (res) => {
-                            //             webix.message({ type: "success", text: "撤销提交成功" });
-                            //             onAfterSelect(id);
-                            //         }
-                            //     );
+                            var values = $$(form.id).getValues();
+                            if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
+                                webix.message({ type: "error", text: "请输入或选择条形码" });
+                                return;
+                            }
+
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.unCheck", values)
+                                .then(
+                                    (res) => {
+                                        $$(form.id).setValues({});
+                                        webix.message({ type: "success", text: "撤销检验成功" });
+
+                                        $$(btnCheck).enable();
+                                        $$(btnUnCheck).enable();
+                                    }
+                                );
                         }
                     }
                 ]

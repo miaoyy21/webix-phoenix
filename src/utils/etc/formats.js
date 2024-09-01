@@ -77,6 +77,8 @@ formats.int = {
         });
     },
     editParse: function (value) {
+        if (_.isNumber(value)) return value;
+
         value = value.replace(/,/g, "");
 
         // 如果不是数值类型
@@ -111,6 +113,8 @@ formats.number = {
     editParse: function (value, size) {
         // console.log("editParse", typeof value, typeof size);
         // console.log("editParse", value, size);
+        if (_.isNumber(value)) return value;
+
         value = value.replace(/,/g, "");
 
         // 如果不是数值类型
@@ -138,6 +142,8 @@ formats.price = {
         return webix.Number.format(value, _.extend({}, webix.i18n, { decimalSize: size, prefix: "¥" }));
     },
     editParse: function (value, size) {
+        if (_.isNumber(value)) return value;
+
         value = value.replace(/,/g, "");
 
         // 如果不是数值类型
