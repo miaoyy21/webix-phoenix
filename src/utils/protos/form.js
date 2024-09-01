@@ -55,6 +55,22 @@ function form(options) {
                 { name: "datepicker_", view: "datepicker", label: "Datepicker", stringResult: true, format: utils.formats.date.format },
             ],
             elementsConfig: { labelAlign: "right", clear: false },
+            actions: {
+                required(fields, flag) {
+                    /*** {fields: String Array, flag: Bollean} ***/
+                    _.each(fields, (field) => {
+                        $$(form_id).elements[field].define("required", flag);
+                        $$(form_id).elements[field].refresh();
+                    })
+                },
+                readonly(fields, flag) {
+                    /*** {fields: String Array, flag: Bollean} ***/
+                    _.each(fields, (field) => {
+                        $$(form_id).elements[field].define("readonly", flag);
+                        $$(form_id).elements[field].refresh();
+                    })
+                }
+            }
         },
         options,
         { view: "form" }

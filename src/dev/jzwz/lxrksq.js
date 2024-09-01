@@ -1,8 +1,64 @@
 function builder() {
-    const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.bySelf";
+    const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.self";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query";
 
+    var btnCreate = utils.UUID();
+    var btnDelete = utils.UUID();
+    var btnCommit = utils.UUID();
+    var btnUnCommit = utils.UUID();
+    var btnMxWzdm = utils.UUID();
+    var btnMxImport = utils.UUID();
     var mainPager = utils.protos.pager();
+
+    function onAfterSelect(id) {
+        $$(mainForm.id).setValues($$(mainGrid.id).getItem(id));
+
+        $$(mxGrid.id).clearAll();
+        webix.ajax()
+            .get(mxUrl, { "wzrkd_id": id })
+            .then(
+                (res) => {
+                    var values = res.json();
+                    $$(mxGrid.id).define("data", values);
+
+                    if (_.findIndex(values["data"], (row) => (row["zt"] != "0")) >= 0) {
+                        $$(mxGrid.id).define("editable", false);
+                        $$(btnDelete).disable();
+                        $$(btnCommit).disable();
+
+                        if (_.findIndex(values["data"], (row) => (row["zt"] != "0" && row["zt"] != "1")) >= 0) {
+                            $$(btnUnCommit).disable();
+                        } else {
+                            $$(btnUnCommit).enable();
+                        }
+
+                        $$(btnMxWzdm).disable();
+                        $$(btnMxImport).disable();
+
+                        mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], false);
+                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
+
+                        if (_.findIndex(values["data"], (row) => (row["zt"] == "0" || row["zt"] == "1")) >= 0) {
+                            mxGrid.actions.hideColumn("buttons", false);
+                        } else {
+                            mxGrid.actions.hideColumn("buttons", true);
+                        }
+                    } else {
+                        $$(mxGrid.id).define("editable", true);
+                        $$(btnDelete).enable();
+                        $$(btnCommit).enable();
+                        $$(btnUnCommit).disable();
+                        $$(btnMxWzdm).enable();
+                        $$(btnMxImport).enable();
+
+                        mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], true);
+                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], false);
+
+                        mxGrid.actions.hideColumn("buttons", false);
+                    }
+                }
+            );
+    }
 
     // 列表
     var mainGrid = utils.protos.datatable({
@@ -25,12 +81,7 @@ function builder() {
         ],
         on: {
             onDataUpdate(id, newValues) { $$(mainForm.id).setValues(newValues) },
-            onAfterSelect(selection, preserve) {
-                $$(mainForm.id).setValues($$(mainGrid.id).getItem(selection.id));
-
-                $$(mxGrid.id).clearAll();
-                $$(mxGrid.id).define("url", mxUrl + "&wzrkd_id=" + selection.id);
-            }
+            onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
         },
         pager: mainPager.id,
     });
@@ -63,9 +114,9 @@ function builder() {
                         view: "search", name: "khbh", label: "供应商编号", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                var values = $$(mainForm.id).getValues();
+                                if (this.config.readonly) return;
 
-                                // 选择供应商
+                                var values = $$(mainForm.id).getValues();
                                 utils.windows.khdm({
                                     multiple: false,
                                     checked: !_.isEmpty(values["khbh"]) ? [_.pick(values, "khbh", "khmc")] : [],
@@ -75,7 +126,7 @@ function builder() {
                                         $$(mainForm.id).setValues(newValues);
                                         return true;
                                     }
-                                })
+                                });
                             }
                         }
                     },
@@ -89,9 +140,9 @@ function builder() {
                         view: "search", name: "gcbh", label: "项目编号", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                var values = $$(mainForm.id).getValues();
+                                if (this.config.readonly) return;
 
-                                // 选择供应商
+                                var values = $$(mainForm.id).getValues();
                                 utils.windows.gcdm({
                                     multiple: false,
                                     checked: !_.isEmpty(values["gcbh"]) ? [_.pick(values, "gcbh", "gcmc")] : [],
@@ -101,7 +152,7 @@ function builder() {
                                         $$(mainForm.id).setValues(newValues);
                                         return true;
                                     }
-                                })
+                                });
                             }
                         }
                     },
@@ -196,7 +247,7 @@ function builder() {
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
             {
@@ -204,16 +255,47 @@ function builder() {
                 width: 80,
                 header: { text: "操作按钮", css: { "text-align": "center" } },
                 tooltip: false,
-                template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
+                template() {
+                    return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
                                 <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
-                            </div>`,
+                            </div>`;
+                },
             }
         ],
         on: {
+            onItemClick(cell, e, node) {
+                var values = $$(mxGrid.id).getItem(cell["row"]);
+                if (!_.isEqual(values["zt"], "0")) {
+                    return;
+                }
 
+                if (_.isEqual(cell["column"], "ckmc")) {
+                    // 选择仓库
+                    var checked = !_.isEmpty(values["ckbh"]) ? [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }] : [];
+                    utils.windows.ckdm({
+                        multiple: false,
+                        checked: checked,
+                        callback(checked) {
+                            $$(mxGrid.id).updateItem(cell["row"], _.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }))
+                            return true;
+                        }
+                    })
+                } else if (_.isEqual(cell["column"], "byyq")) {
+                    // 选择检验要求
+                    var checked = !_.isEmpty(values["byyq"]) ? values["byyq"].split(",") : [];
+                    utils.windows.dicts({
+                        title: "检验要求",
+                        kind: "md_jyyq",
+                        checked: checked,
+                        callback(selected) {
+                            $$(mxGrid.id).updateItem(cell["row"], _.extend(values, { "byyq": _.pluck(selected, "id").join(",") }))
+                            return true;
+                        }
+                    })
+                }
+            }
         }
     });
-
 
     return {
         rows: [
@@ -226,19 +308,52 @@ function builder() {
                             onChange(newValue) {
                                 $$(mainGrid.id).clearAll();
                                 $$(mainGrid.id).define("url", mainUrl + "&wgbz=" + newValue);
+
+                                if (_.isEqual(newValue, "1")) {
+                                    $$(btnCreate).disable();
+                                    $$(btnCommit).disable();
+                                    $$(btnUnCommit).disable();
+
+                                    $$(btnDelete).disable();
+                                    $$(btnCommit).disable();
+                                    $$(btnMxWzdm).disable();
+                                    $$(btnMxImport).disable();
+                                } else {
+                                    $$(btnCreate).enable();
+                                }
                             }
                         }
                     },
                     mainGrid.actions.refresh(),
-                    mainGrid.actions.add({ label: "新建单据", callback: () => ({ "wgbz": "0", "rklx": "1", "kdrq": utils.users.getDate() }) }),
-                    mainGrid.actions.remove({ label: "删除单据" }),
+                    mainGrid.actions.add({ id: btnCreate, label: "新建单据", callback: () => ({ "wgbz": "0", "rklx": "1", "kdrq": utils.users.getDate() }) }),
+                    mainGrid.actions.remove({ id: btnDelete, label: "删除单据" }),
                     {
-                        view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
-                        click() { }
+                        id: btnCommit, view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        click() {
+                            var id = $$(mainGrid.id).getSelectedId(false, true);
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.commit", { "id": id })
+                                .then(
+                                    (res) => {
+                                        webix.message({ type: "success", text: "提交检验成功" });
+                                        onAfterSelect(id);
+                                    }
+                                );
+                        }
                     },
                     {
-                        view: "button", label: "撤销提交", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
-                        click() { }
+                        id: btnUnCommit, view: "button", label: "撤销提交", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        click() {
+                            var id = $$(mainGrid.id).getSelectedId(false, true);
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJ.unCommit", { "id": id })
+                                .then(
+                                    (res) => {
+                                        webix.message({ type: "success", text: "撤销提交成功" });
+                                        onAfterSelect(id);
+                                    }
+                                );
+                        }
                     }
                 ]
             },
@@ -272,7 +387,7 @@ function builder() {
                                         {
                                             view: "toolbar", cols: [
                                                 {
-                                                    view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
+                                                    id: btnMxWzdm, view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
                                                     click() {
                                                         var values = $$(mxGrid.id).serialize(true);
                                                         console.log(values)
@@ -298,7 +413,7 @@ function builder() {
                                                     }
                                                 },
                                                 {
-                                                    view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
+                                                    id: btnMxImport, view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
                                                     click() { }
                                                 },
                                             ]

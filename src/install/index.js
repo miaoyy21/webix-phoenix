@@ -44,10 +44,10 @@ webix.attachEvent("onAjaxError", function (xhr) {
             // 隐藏主界面
             $$(MAIN_PAGE_ID) && $$(MAIN_PAGE_ID).hide();
         } else {
-            webix.message({ type: "error", text: obj["error"] });
+            webix.message({ type: "error", text: obj["error"], expire: 6000 });
         }
     } catch (e) {
-        webix.message({ type: "error", text: xhr.responseText });
+        webix.message({ type: "error", text: xhr.responseText, expire: 6000 });
     }
 });
 

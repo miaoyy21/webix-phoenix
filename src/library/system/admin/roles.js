@@ -107,7 +107,7 @@ function builder() {
             { view: "resizer" },
             {
                 view: "scrollview",
-                width: 300,
+                width: 560,
                 body: {
                     rows: [
                         {

@@ -206,12 +206,23 @@ function datatable(options) {
             cellTextColor: function (row, col) { }
         },
         actions: {
+            hideColumn(column, hide) {
+                /* {column: String, hide: Boolean }*/
+                if (hide && $$(datatable_id).isColumnVisible(column)) {
+                    $$(datatable_id).hideColumn(column);
+                }
+
+                if (!hide && !$$(datatable_id).isColumnVisible(column)) {
+                    $$(datatable_id).showColumn(column);
+                }
+            },
             add(opts) {
-                /* {label :: String, callback :: function(){ return Object } }*/
+                /* {id: String, label: String, callback: function(){ return Object } }*/
                 opts = opts || {};
+                opts.id || utils.UUID();
 
                 return {
-                    view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
+                    id: opts["id"], view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                     click() {
                         var row = opts["callback"] ? opts["callback"]() : {};
                         $$(datatable_id).add(row, 0);
@@ -219,11 +230,12 @@ function datatable(options) {
                 };
             },
             remove(opts) {
-                /* {label:: String, callback :: function(){ return Array<String>|String } }*/
+                /* {id: String, label: String, callback: function(){ return Array<String>|String } }*/
                 opts = opts || {};
+                opts.id || utils.UUID();
 
                 return {
-                    view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
+                    id: opts["id"], view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                     click() {
                         var datatable = $$(datatable_id);
                         var id = opts["callback"] ? opts["callback"]() : datatable.getSelectedId(true, true);
