@@ -19,6 +19,7 @@ function builder() {
         utils.windows.kwdm({
             multiple: false,
             checked: checked,
+            filter: (row) => (row["bgy_id"].indexOf(utils.users.getUserId()) >= 0),
             callback(checked) {
                 $$(form.id).setValues(_.extend(values, _.pick(checked, "ckbh", "ckmc", "kwbh", "kwmc")));
                 return true;
