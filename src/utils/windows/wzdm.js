@@ -22,10 +22,10 @@ const instance = {
 instance.reload = function (force) {
     if (force) {
         var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_WZDM.query");
-
-        // 根据条件进行数据筛选
         instance.allData = JSON.parse(request.responseText)["data"];
     }
+
+    // 根据条件进行数据筛选
     var data = _.filter(instance.allData, (row) => instance.options.filter(row));
 
     // 设置选中状态

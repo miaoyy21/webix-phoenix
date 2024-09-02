@@ -14,15 +14,19 @@ const instance = {
     checked_id: "phoenix_utils_windows_ckdm_checked",
 
     // 状态设置
+    allData: [],
     options: DefaultOptions,
 }
 
 // 刷新
-instance.reload = function () {
-    var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_CKDM.query");
+instance.reload = function (force) {
+    if (force) {
+        var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_CKDM.query");
+        instance.allData = JSON.parse(request.responseText)["data"];
+    }
 
     // 根据条件进行数据筛选
-    var data = _.filter(JSON.parse(request.responseText)["data"], (row) => instance.options.filter(row));
+    var data = _.filter(instance.allData, (row) => instance.options.filter(row));
 
     // 设置选中状态
     $$(instance.grid_id).clearAll();
@@ -173,7 +177,7 @@ webix.ui({
                 height: 34,
                 cols: [
                     { width: 8 },
-                    { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload() },
+                    { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload(true) },
                     {},
                     { view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary", click: instance.ok },
                     { width: 8 }
@@ -228,8 +232,10 @@ export function ckdm(options) {
 
     // 如果未设置缓存，或者无数据，那么执行刷新
     if (!instance.options.cache || $$(instance.grid_id).count() < 1) {
-        instance.reload();
+        instance.reload(true);
     } else {
+        instance.reload(false);
+
         // 重新设置用户选中状态
         $$(instance.grid_id).eachRow(
             function (id) {
