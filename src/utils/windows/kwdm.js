@@ -3,15 +3,15 @@
 const DefaultOptions = { multiple: false, cache: true, checked: [], filter: (row) => true, callback: (select) => { } };
 
 const instance = {
-    window_id: "phoenix_utils_windows_ckdm",
+    window_id: "phoenix_utils_windows_kwdm",
 
-    filter_id: "phoenix_utils_windows_ckdm_filter",
-    filter_placeholder: "请输入仓库编号或仓库名称",
+    filter_id: "phoenix_utils_windows_kwdm_filter",
+    filter_placeholder: "请输入仓库编号、仓库名称、库位编号或库位名称",
 
-    grid_id: "phoenix_utils_windows_ckdm_grid",
+    grid_id: "phoenix_utils_windows_kwdm_grid",
 
-    toolbar_checked_id: "phoenix_utils_windows_ckdm_toolbar_checked",
-    checked_id: "phoenix_utils_windows_ckdm_checked",
+    toolbar_checked_id: "phoenix_utils_windows_kwdm_toolbar_checked",
+    checked_id: "phoenix_utils_windows_kwdm_checked",
 
     // 状态设置
     allData: [],
@@ -21,7 +21,7 @@ const instance = {
 // 刷新
 instance.reload = function (force) {
     if (force) {
-        var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_CKDM.query");
+        var request = webix.ajax().sync().get("/api/sys/data_service?service=JZMD_KWDM.query_full");
         instance.allData = JSON.parse(request.responseText)["data"];
     }
 
@@ -31,7 +31,7 @@ instance.reload = function (force) {
     // 设置选中状态
     $$(instance.grid_id).clearAll();
 
-    var rows = _.map(data, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["ckbh"] == obj["ckbh"]) >= 0 }));
+    var rows = _.map(data, (row) => _.extend(row, { "checked": _.findIndex(instance.options.checked, (obj) => row["ckbh"] == obj["ckbh"] && row["kwbh"] == obj["kwbh"]) >= 0 }));
     $$(instance.grid_id).define("data", rows)
     $$(instance.grid_id).refresh();
 
@@ -46,12 +46,12 @@ instance.reload = function (force) {
     }
 
     // 设置已选用户
-    $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "ckmc").join(","));
+    $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "kwmc").join(","));
 }
 
 // 过滤
 instance.filter = function () {
-    $$(instance.grid_id).filter((row) => ((row["ckbh"] || "") + "|" + (row["ckmc"] || "")).indexOf($$(instance.filter_id).getValue()) != -1);
+    $$(instance.grid_id).filter((row) => ((row["ckbh"] || "") + "|" + (row["ckmc"] || "") + (row["kwbh"] || "") + (row["kwmc"] || "")).indexOf($$(instance.filter_id).getValue()) >= 0);
 
     // 没有符合条件的数据
     if (!$$(instance.grid_id).count()) {
@@ -88,10 +88,10 @@ webix.ui({
     close: true,
     move: true,
     height: 420,
-    width: 480,
+    width: 520,
     headHeight: 38,
     position: "center",
-    head: "选择仓库",
+    head: "选择库位",
     body: {
         paddingX: 12,
         rows: [
@@ -127,6 +127,8 @@ webix.ui({
                             },
                             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "text", width: 80 },
                             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, sort: "text", width: 120 },
+                            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "text", width: 120 },
+                            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, sort: "text", width: 160 },
                             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, width: 360 },
                         ],
                         elementsConfig: { labelAlign: "right", clear: false },
@@ -154,10 +156,10 @@ webix.ui({
                                     instance.options.checked.push(row);
                                 } else {
                                     instance.options.checked =
-                                        _.reject(instance.options.checked, (user) => user["ckbh"] === row["ckbh"]);
+                                        _.reject(instance.options.checked, (user) => user["ckbh"] == row["ckbh"] && user["kwbh"] === row["kwbh"]);
                                 }
 
-                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "ckmc").join(","));
+                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "kwmc").join(","));
                             }
                         }
                     },
@@ -168,7 +170,7 @@ webix.ui({
                 view: "toolbar",
                 height: 38,
                 cols: [
-                    { id: instance.checked_id, view: "text", label: "已选仓库", labelAlign: "right", readonly: true, placeholder: "请选择仓库..." },
+                    { id: instance.checked_id, view: "text", label: "已选库位", labelAlign: "right", readonly: true, placeholder: "请选择库位..." },
                 ]
             },
             {
@@ -193,11 +195,11 @@ webix.ui({
         multiple    可选    是否启用多选，默认单选
         cache       可选    是否开启缓存数据，默认开启
         filter      可选    筛选数据回调函数
-        checked     可选    已选用户ID，[{"ckbh":"仓库编号","ckmc":"仓库名称"}, ...]
+        checked     可选    已选用户ID，[{"ckbh":"仓库编号","ckmc":"仓库名称","kwbh":"库位编号","kwmc":"库位名称"}, ...]
         callback    必须    点击确定的回调函数
     }
 */
-export function ckdm(options) {
+export function kwdm(options) {
 
     // 参数配置
     instance.options = _.extend({}, DefaultOptions, options);
@@ -206,7 +208,7 @@ export function ckdm(options) {
     if (_.isEmpty(instance.options.checked)) {
         instance.options.checked = [];
     } else if (!_.isArray(instance.options.checked)) {
-        console.error(`checked must be a Array, like [{"ckbh":"仓库编号","ckmc":"仓库名称"}, ...]`)
+        console.error(`checked must be a Array, like [{"ckbh":"仓库编号","ckmc":"仓库名称","kwbh":"库位编号","kwmc":"库位名称"}, ...]`)
         return
     } else {
         instance.options.checked = _.reject(instance.options.checked, (o) => _.isEmpty(o.id));
@@ -240,13 +242,13 @@ export function ckdm(options) {
         $$(instance.grid_id).eachRow(
             function (id) {
                 var row = this.getItem(id);
-                row.checked = _.findIndex(instance.options.checked, (obj) => row["ckbh"] == obj["ckbh"]) >= 0;
+                row.checked = _.findIndex(instance.options.checked, (obj) => row["ckbh"] == obj["ckbh"] && row["kwbh"] == obj["kwbh"]) >= 0;
 
                 this.updateItem(id, row);
             }, true);
 
         // 设置已选用户
-        $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "ckmc").join(","));
+        $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "kwmc").join(","));
     }
 
     $$(instance.window_id).show();

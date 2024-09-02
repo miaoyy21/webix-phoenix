@@ -14,8 +14,7 @@ function builder() {
         ],
         on: {
             onAfterSelect(selection, preserve) {
-                var row = this.getItem(selection.id);
-                var url = "/api/sys/data_service?service=JZMD_KWDM.query&ckbh=" + row["ckbh"];
+                var url = "/api/sys/data_service?service=JZMD_KWDM.query&ckdm_id=" + selection.id;
 
                 $$(kwGrid.id).define("url", url);
                 $$(kwGrid.id).refresh();
@@ -53,7 +52,7 @@ function builder() {
             }
         ],
         rules: {
-            "ckbh": webix.rules.isNotEmpty,
+            "ckdm_id": webix.rules.isNotEmpty,
             "kwbh": webix.rules.isNotEmpty,
             "kwmc": webix.rules.isNotEmpty,
         },
@@ -81,7 +80,7 @@ function builder() {
                             view: "toolbar",
                             cols: [
                                 kwGrid.actions.add({
-                                    callback: () => (_.pick($$(ckGrid.id).getSelectedItem(), "ckbh"))
+                                    callback: () => ({ "ckdm_id": $$(ckGrid.id).getSelectedId(false, true) })
                                 }),
                                 kwGrid.actions.refresh(),
                             ]

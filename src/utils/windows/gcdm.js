@@ -160,7 +160,7 @@ webix.ui({
                                         _.reject(instance.options.checked, (user) => user["gcbh"] === row["gcbh"]);
                                 }
 
-                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "gcbh").join(","));
+                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "gcmc").join(","));
                             }
                         }
                     },

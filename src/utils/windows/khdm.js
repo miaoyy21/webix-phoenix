@@ -156,7 +156,7 @@ webix.ui({
                                         _.reject(instance.options.checked, (user) => user["khbh"] === row["khbh"]);
                                 }
 
-                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "khbh").join(","));
+                                $$(instance.checked_id).setValue(_.pluck(instance.options.checked, "khmc").join(","));
                             }
                         }
                     },

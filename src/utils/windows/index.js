@@ -8,6 +8,7 @@ import { coding } from "./coding";
 
 import { gcdm } from "./gcdm";
 import { ckdm } from "./ckdm";
+import { kwdm } from "./kwdm";
 import { khdm } from "./khdm";
 import { wzdm } from "./wzdm";
 
@@ -23,6 +24,7 @@ windows.coding = coding;
 
 windows.gcdm = gcdm;
 windows.ckdm = ckdm;
+windows.kwdm = kwdm;
 windows.khdm = khdm;
 windows.wzdm = wzdm;
 

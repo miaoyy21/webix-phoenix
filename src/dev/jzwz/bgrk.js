@@ -7,6 +7,25 @@ function builder() {
     var btnFinish = utils.UUID();
     var btnUnFinish = utils.UUID();
 
+    function onSelectKwdm() {
+        var values = $$(form.id).getValues();
+
+        var checked = [];
+        if (!_.isEmpty(values["kwbh"])) {
+            checked = [_.pick(values, "ckbh", "ckmc", "kwbh", "kwmc")];
+        }
+
+        // 选择用户
+        utils.windows.kwdm({
+            multiple: false,
+            checked: checked,
+            callback(checked) {
+                $$(form.id).setValues(_.extend(values, _.pick(checked, "ckbh", "ckmc", "kwbh", "kwmc")));
+                return true;
+            }
+        })
+    }
+
     var form = utils.protos.form({
         data: {},
         rows: [
@@ -81,49 +100,11 @@ function builder() {
                 cols: [
                     {
                         view: "search", name: "ckmc", label: "仓库名称", required: true, readonly: true,
-                        on: {
-                            onSearchIconClick() {
-                                //     var values = $$(formId).getValues();
-
-                                //     var checked = [];
-                                //     if (!_.isEmpty(values["ckbh"])) {
-                                //         checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
-                                //     }
-
-                                //     // 选择用户
-                                //     utils.windows.ckdm({
-                                //         multiple: false,
-                                //         checked: checked,
-                                //         callback(checked) {
-                                //             $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
-                                //             return true;
-                                //         }
-                                //     })
-                            }
-                        }
+                        on: { onSearchIconClick: onSelectKwdm }
                     },
                     {
                         view: "search", name: "kwmc", label: "库位名称", required: true, readonly: true,
-                        on: {
-                            onSearchIconClick() {
-                                //     var values = $$(formId).getValues();
-
-                                //     var checked = [];
-                                //     if (!_.isEmpty(values["ckbh"])) {
-                                //         checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
-                                //     }
-
-                                //     // 选择用户
-                                //     utils.windows.ckdm({
-                                //         multiple: false,
-                                //         checked: checked,
-                                //         callback(checked) {
-                                //             $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
-                                //             return true;
-                                //         }
-                                //     })
-                            }
-                        }
+                        on: { onSearchIconClick: onSelectKwdm }
                     },
                     { view: "text", name: "sssl", label: "实收数量", required: true, placeholder: "请填写 实收数量 ...", format: "1,111.00" },
                 ]
