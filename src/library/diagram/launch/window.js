@@ -83,9 +83,9 @@ function open(options) {
                             data: [],
                             columns: [
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                                { id: "keyword_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 360 },
+                                { id: "keyword_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 280 },
                                 { id: "status_", header: { text: "流程状态", css: { "text-align": "center" } }, options: "/assets/flow_status.json", sort: "text", css: { "text-align": "center" }, width: 80 },
-                                { id: "status_text_", header: { text: "流程状态描述", css: { "text-align": "center" } }, sort: "text", width: 240 },
+                                { id: "status_text_", header: { text: "流程状态描述", css: { "text-align": "center" } }, sort: "text", width: 360 },
 
                                 { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                                 { id: "start_at_", header: { text: "启动时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
@@ -334,25 +334,27 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            if (!_.isEqual(values, newValues)) {
-                console.log("数据已发生变化，执行保存");
-                webix.ajax().post("/api/wf/flows", {
-                    "operation": options["operation"],
-                    "id": options["flow_id_"],
-                    "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(newValues),
-                    "diagram_id_": options["diagram_id_"],
-                }).then((res) => {
-                    var row = res.json();
-
-                    values = newValues;
-                    options["operation"] = "update";
-                    options["flow_id_"] = row["id"];
-
-                    webix.message({ type: "success", text: "保存成功" });
-                    refresh(options);
-                })
+            if (_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
+                webix.message({ type: "info", text: "没有修改数据！" });
+                return;
             }
+
+            webix.ajax().post("/api/wf/flows", {
+                "operation": options["operation"],
+                "id": options["flow_id_"],
+                "values_": JSON.stringify(newValues),
+                "keyword_": webix.template(options["keyword_"])(newValues),
+                "diagram_id_": options["diagram_id_"],
+            }).then((res) => {
+                var row = res.json();
+
+                values = newValues;
+                options["operation"] = "update";
+                options["flow_id_"] = row["id"];
+
+                webix.message({ type: "success", text: "保存成功" });
+                refresh(options);
+            })
         }
     };
 
@@ -463,18 +465,19 @@ function showUI(view, actions, options) {
                             model: options["model"],
                         },
                         { width: 24 },
+                        { width: 48 },
                         {
-                            width: 72,
+                            width: 160,
                             rows: [
-                                { height: 12 },
+                                { height: 20 },
                                 { css: { "background": "lightskyblue" }, height: 28, view: "template", template: "<div style='text-align: center'>已执行</div>", },
-                                { height: 12 },
+                                { height: 20 },
                                 { css: { "background": "lightgreen" }, height: 28, view: "template", template: "<div style='text-align: center'>执行中</div>", },
-                                { height: 12 },
+                                { height: 20 },
                                 { css: { "background": "orange" }, height: 28, view: "template", template: "<div style='text-align: center'>撤回</div>", },
-                                { height: 12 },
+                                { height: 20 },
                                 { css: { "background": "coral" }, height: 28, view: "template", template: "<div style='text-align: center'>驳回</div>", },
-                                { height: 12 },
+                                { height: 20 },
                                 { css: { "background": "lightgrey" }, height: 28, view: "template", template: "<div style='text-align: center'>挂起</div>", },
                                 {},
                             ]

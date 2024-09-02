@@ -410,7 +410,7 @@ function builder() {
                                                         var values = $$(mxGrid.id).serialize(true);
                                                         console.log(values)
 
-                                                        // 选择供应商
+                                                        // 选择物资代码
                                                         utils.windows.wzdm({
                                                             multiple: true,
                                                             checked: [],

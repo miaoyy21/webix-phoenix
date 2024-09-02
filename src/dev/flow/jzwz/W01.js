@@ -25,8 +25,9 @@ function defaultValues(options) {
 }
 
 function builder(options, values) {
+    console.log("xxx", arguments);
 
-    // 元素
+    // 表单
     var form = utils.protos.form({
         data: values,
         rows: [
@@ -96,7 +97,79 @@ function builder(options, values) {
 
 
     var mxPager = utils.protos.pager();
-    var mxGrid = utils.protos.datatable({ pager: mxPager.id });
+    var mxGrid = utils.protos.datatable({
+        editable: true,
+        url: null,
+        data: values["rows"],
+        leftSplit: 3,
+        rightSplit: 1,
+        columns: [
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            {
+                id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null,
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": !options["readonly"] ? "#d5f5e3" : null },
+                width: 80
+            },
+            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 180 },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null, fillspace: true },
+            {
+                id: "buttons",
+                width: 80,
+                header: { text: "操作按钮", css: { "text-align": "center" } },
+                tooltip: false,
+                template() {
+                    return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
+                                <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
+                            </div>`;
+                },
+            }
+        ],
+        on: {
+            onAfterRender() {
+                if (options["readonly"]) {
+                    mxGrid.actions.hideColumn("buttons", true);
+                } else {
+                    mxGrid.actions.hideColumn("buttons", false);
+                }
+            }
+        },
+        pager: mxPager.id
+    });
+
+    var btnWzdm = {
+        view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
+        click() {
+            var rows = $$(mxGrid.id).serialize(true);
+
+            // 选择物资代码
+            utils.windows.wzdm({
+                multiple: true,
+                checked: [],
+                filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(rows, (value) => (value["wzbh"] == row["wzbh"])) < 0),
+                callback(checked) {
+
+                    // wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz
+                    rows = _.union(rows,
+                        _.map(checked,
+                            (row) => (_.extend(
+                                _.pick(row, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "sccjmc", "jldw"),
+                                { "qls": 0 },
+                            )),
+                        ),
+                    );
+
+                    $$(mxGrid.id).define("data", rows);
+                    return true;
+                }
+            })
+        }
+    };
 
     // 请假单
     return {
@@ -114,15 +187,7 @@ function builder(options, values) {
                                 {
                                     gravity: 2,
                                     rows: [
-                                        {
-                                            view: "toolbar", cols: [
-                                                {
-                                                    view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
-                                                    click() {
-                                                    }
-                                                },
-                                            ]
-                                        },
+                                        { view: "toolbar", cols: [!options["readonly"] ? btnWzdm : { view: "label", label: "<span style='margin-left:8px'></span>物资领料清单", height: 38 }] },
                                         mxGrid,
                                         mxPager,
                                     ]
@@ -140,15 +205,24 @@ function builder(options, values) {
                 return;
             };
 
-            // 开始时间必须小于结束时间
+            // 领料明细
+            var rows = $$(mxGrid.id).serialize(true);
+            if (_.size(rows) < 1) {
+                webix.message({ type: "error", text: "请选择领料明细" });
+                return
+            }
+
+            // 是否输入请领数量
+            var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["qls"], 2) <= 0));
+            if (index >= 0) {
+                webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写请领数量！" });
+                return
+            }
+
             var values = $$(form.id).getValues();
-            // if (values["start_"] >= values["end_"]) {
-            //     webix.message({ type: "error", text: "结束时间必须大于开始时间" });
-            //     return;
-            // }
+            values["rows"] = rows
 
-
-            // values = _.extend(values, { "doc_": uploader.getValue() });
+            console.log(values);
             return values;
         },
     }
