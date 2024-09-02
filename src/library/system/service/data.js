@@ -248,19 +248,38 @@ function builder() {
                                         <button webix_tooltip="删除" type="button" class="btn_remove webix_icon_button" style="height:30px;width:30px;">
                                             <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"></span>
                                         </button>
+                                        <button webix_tooltip="复制至剪贴板" type="button" class="btn_copy webix_icon_button" style="height:30px;width:30px;">
+                                            <span class="phoenix_warning_icon mdi mdi-18px mdi-clipboard-text-multiple"></span>
+                                        </button>
                                     </div>`,
                             },
                         ],
                         onClick: {
                             btn_edit(e, item) {
-                                var row = this.getItem(item.row);
-                                open_window(row);
+                                open_window(this.getItem(item.row));
                             },
                             btn_remove(e, item) {
                                 var row = this.getItem(item.row);
                                 if (!row) return;
 
                                 utils.grid.remove($$(service_grid_id), row, "数据服务", "name_")
+                            },
+                            btn_copy(e, item) {
+                                var rowTable = $$(table_grid_id).getSelectedItem();
+                                var rowService = this.getItem(item.row);
+                                var text = "/api/sys/data_service?service=" + rowTable["code_"] + "." + rowService["code_"] + "";
+
+                                var copyFrom = document.createElement('textarea');
+                                copyFrom.setAttribute("style", "position:fixed;opacity:0;top:100px;left:100px;");
+                                copyFrom.value = text;
+                                document.body.appendChild(copyFrom);
+                                copyFrom.select();
+                                document.execCommand('copy');
+
+                                webix.message({ type: "info", text: "复制成功" });
+                                setTimeout(function () {
+                                    document.body.removeChild(copyFrom);
+                                }, 1500);
                             },
                         },
                         on: {
