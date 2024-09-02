@@ -322,7 +322,7 @@ function open(item, options, model) {
                             id: property,
                             view: "property",
                             scroll: "y",
-                            width: 300,
+                            width: 420,
                             nameWidth: 88,
                             tooltip: (element) => element.type === "label" ? element.label : "属性描述：" + (element.tooltip || element.label) + "<br/>当前值：" + element.value,
                             elements: diagramElements,

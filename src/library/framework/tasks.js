@@ -52,11 +52,11 @@ function builder() {
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                     { id: "diagram_name_", header: { text: "流程名称", css: { "text-align": "center" } }, sort: "text", width: 120 },
-                    { id: "keyword_text_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 240 },
+                    { id: "keyword_text_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 360 },
                     { id: "create_user_name_", header: { text: "发起者", css: { "text-align": "center" } }, sort: "text", css: { "text-align": "center" }, width: 80 },
                     { id: "name_", header: { text: "任务名称", css: { "text-align": "center" } }, sort: "text", css: { "text-align": "center" }, width: 100 },
                     { id: "task_status_", header: { text: "任务状态", css: { "text-align": "center" } }, options: taskStatus, sort: "text", css: { "text-align": "center" }, width: 100 },
-                    { id: "comment_", header: { text: "任务流转意见", css: { "text-align": "center" } }, width: 360 },
+                    { id: "comment_", header: { text: "任务流转意见", css: { "text-align": "center" } }, width: 240 },
                     { id: "activated_at_", header: { text: "任务激活时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                     { id: "executed_at_", header: { text: "任务执行时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
                     { id: "status_", header: { text: "流程状态", css: { "text-align": "center" } }, options: "/assets/flow_status.json", sort: "text", css: { "text-align": "center" }, width: 100 },
