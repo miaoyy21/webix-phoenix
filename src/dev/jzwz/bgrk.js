@@ -2,10 +2,10 @@
 function builder() {
     var winId = utils.UUID();
 
-    const qUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_jyd";
+    const qUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_bgrk";
 
-    var btnCheck = utils.UUID();
-    var btnUnCheck = utils.UUID();
+    var btnFinish = utils.UUID();
+    var btnUnFinish = utils.UUID();
 
     var form = utils.protos.form({
         data: {},
@@ -72,48 +72,69 @@ function builder() {
             {
                 cols: [
                     { view: "text", name: "sccjmc", label: "生产厂家", readonly: true },
-                    { view: "text", name: "clph", label: "材料批号", readonly: true },
-                    { view: "text", name: "scrq", label: "生产日期", readonly: true },
+                    { view: "text", name: "clph", label: "材料批号" },
+                    { view: "datepicker", name: "scrq", label: "生产日期", stringResult: true, format: utils.formats.date.format },
                 ]
             },
             {
                 cols: [
-                    { view: "text", name: "jydd", label: "检验地点", placeholder: "请填写 检验地点 ..." },
-                    { view: "text", name: "bylx", label: "报验类型", readonly: true },
-                    { view: "text", name: "byyq", label: "检验要求", readonly: true },
+                    { view: "text", name: "rksl", label: "入库数量", readonly: true, format: "1,111.00" },
+                    { view: "text", name: "hgsl", label: "合格数量", readonly: true, format: "1,111.00" },
+                    { view: "text", name: "bhgsl", label: "不合格数量", readonly: true, format: "1,111.00" },
                 ]
             },
             {
                 cols: [
-                    { view: "text", name: "rksl", label: "交检数量", readonly: true, format: "1,111.00" },
                     {
-                        view: "text", name: "hgsl", label: "合格数量", required: true, placeholder: "请填写 合格数量 ...", format: "1,111.00",
+                        view: "search", name: "ckmc", label: "仓库名称", required: true, readonly: true,
                         on: {
-                            onChange(newValue) {
-                                var values = $$(form.id).getValues();
+                            onSearchIconClick() {
+                                //     var values = $$(formId).getValues();
 
-                                var rksl = utils.formats.number.editParse(values["rksl"], 2);
-                                var hgsl = utils.formats.number.editParse(newValue, 2);
-                                var bhgsl = 0;
-                                if (hgsl > rksl) {
-                                    hgsl = rksl;
-                                    bhgsl = 0;
-                                    webix.message({ type: "error", text: "合格数量不能大于交检数量" });
-                                } else {
-                                    bhgsl = rksl - hgsl;
-                                }
+                                //     var checked = [];
+                                //     if (!_.isEmpty(values["ckbh"])) {
+                                //         checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
+                                //     }
 
-                                $$(form.id).setValues(_.extend(values, { "hgsl": hgsl, "bhgsl": bhgsl }));
+                                //     // 选择用户
+                                //     utils.windows.ckdm({
+                                //         multiple: false,
+                                //         checked: checked,
+                                //         callback(checked) {
+                                //             $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
+                                //             return true;
+                                //         }
+                                //     })
                             }
                         }
                     },
-                    { view: "text", name: "bhgsl", label: "不合格数量", readonly: true, placeholder: "根据合格数量计算 ...", format: "1,111.00" },
+                    {
+                        view: "search", name: "kwmc", label: "库位名称", required: true, readonly: true,
+                        on: {
+                            onSearchIconClick() {
+                                //     var values = $$(formId).getValues();
+
+                                //     var checked = [];
+                                //     if (!_.isEmpty(values["ckbh"])) {
+                                //         checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
+                                //     }
+
+                                //     // 选择用户
+                                //     utils.windows.ckdm({
+                                //         multiple: false,
+                                //         checked: checked,
+                                //         callback(checked) {
+                                //             $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
+                                //             return true;
+                                //         }
+                                //     })
+                            }
+                        }
+                    },
+                    { view: "text", name: "sssl", label: "实收数量", required: true, placeholder: "请填写 实收数量 ...", format: "1,111.00" },
                 ]
             },
-            { view: "textarea", name: "jynr", label: "检验内容", placeholder: "请输入检验内容 ..." },
-            { view: "textarea", name: "jyjl", label: "检验结论", placeholder: "请输入检验结论 ..." },
-            { view: "textarea", name: "bhgsm", label: "不合格说明", placeholder: "请输入不合格说明 ..." },
-            { view: "textarea", name: "jyry_bz", label: "检验员备注", placeholder: "请输入备注信息 ..." },
+            { view: "textarea", name: "bgy_bz", label: "保管员备注", placeholder: "请输入备注信息 ..." },
             {
                 cols: [
                     { view: "text", name: "create_user_name_", label: "采购员", readonly: true },
@@ -135,30 +156,28 @@ function builder() {
         // 根据显示要求重新构建
         values["wzms"] = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(values);
 
-        // 默认全部合格
-        values["hgsl"] = values["rksl"];
-        values["bhgsl"] = 0;
-        if (_.isEmpty(values["jyjl"])) {
-            values["jyjl"] = "合格";
+        // 默认实收数量等于合格数量
+        if (_.isEqual(values["zt"], "5")) {
+            values["sssl"] = values["hgsl"];
         }
 
         $$(form.id).setValues(values);
 
-        if (_.isEqual(values["zt"], "1")) {
-            $$(btnCheck).enable();
-            $$(btnUnCheck).disable();
+        if (_.isEqual(values["zt"], "5")) {
+            $$(btnFinish).enable();
+            $$(btnUnFinish).disable();
 
-            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], false);
-        } else if (_.isEqual(values["zt"], "5")) {
-            $$(btnCheck).disable();
-            $$(btnUnCheck).enable();
+            form.actions.readonly(["clph", "scrq", "ckmc", "kwmc", "sssl", "bgy_bz"], false);
+        } else if (_.isEqual(values["zt"], "9")) {
+            $$(btnFinish).disable();
+            $$(btnUnFinish).enable();
 
-            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], true);
+            form.actions.readonly(["clph", "scrq", "ckmc", "kwmc", "sssl", "bgy_bz"], true);
         } else {
-            $$(btnCheck).disable();
-            $$(btnUnCheck).disable();
+            $$(btnFinish).disable();
+            $$(btnUnFinish).disable();
 
-            form.actions.readonly(["jydd", "hgsl", "jynr", "jyjl", "bhgsm", "jyry_bz"], true);
+            form.actions.readonly(["clph", "scrq", "ckmc", "kwmc", "sssl", "bgy_bz"], true);
         }
     }
 
@@ -182,13 +201,15 @@ function builder() {
                 { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                 { id: "rksl", header: { text: "交检数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "jydd", header: { text: "检验地点", css: { "text-align": "center" } }, width: 80 },
-                { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
-                { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
                 { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
                 { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "jynr", header: { text: "检验内容", css: { "text-align": "center" } }, width: 180 },
-                { id: "jyjl", header: { text: "检验结论", css: { "text-align": "center" } }, width: 180 },
+                { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "tjrq", header: { text: "提交日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "create_user_name_", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "jyry", header: { text: "检验员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
             pager: dlgPager.id,
         });
@@ -212,7 +233,7 @@ function builder() {
                                 view: "toolbar",
                                 height: 38,
                                 cols: [
-                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq", true),
+                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,create_user_name_,jyry,bgy", true),
                                 ]
                             },
                             dlgGrid,
@@ -252,7 +273,7 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        id: btnCheck, view: "button", label: "检验确认", disable: true, autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
+                        id: btnFinish, view: "button", label: "入库确认", disable: true, autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
                         click() {
                             var values = $$(form.id).getValues();
                             if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
@@ -260,29 +281,28 @@ function builder() {
                                 return;
                             }
 
-                            var rksl = utils.formats.number.editParse(values["rksl"], 2);
                             var hgsl = utils.formats.number.editParse(values["hgsl"], 2);
-                            var bhgsl = utils.formats.number.editParse(values["bhgsl"], 2);
-                            if (rksl != hgsl + bhgsl) {
-                                webix.message({ type: "error", text: "请输入合格数量" });
+                            var sssl = utils.formats.number.editParse(values["sssl"], 2);
+                            if (hgsl != sssl) {
+                                webix.message({ type: "error", text: "输入的实收数量不等于合格数量" });
                                 return;
                             }
 
                             webix.ajax()
-                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.check", values)
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.finish", values)
                                 .then(
                                     (res) => {
                                         $$(form.id).setValues({});
-                                        webix.message({ type: "success", text: "检验确认成功" });
+                                        webix.message({ type: "success", text: "入库确认成功" });
 
-                                        $$(btnCheck).enable();
-                                        $$(btnUnCheck).enable();
+                                        $$(btnFinish).enable();
+                                        $$(btnUnFinish).enable();
                                     }
                                 );
                         }
                     },
                     {
-                        id: btnUnCheck, view: "button", label: "撤销检验", disable: true, autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
+                        id: btnUnFinish, view: "button", label: "撤销入库", disable: true, autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
                         click() {
                             var values = $$(form.id).getValues();
                             if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
@@ -291,14 +311,14 @@ function builder() {
                             }
 
                             webix.ajax()
-                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.unCheck", values)
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.unFinish", values)
                                 .then(
                                     (res) => {
                                         $$(form.id).setValues({});
-                                        webix.message({ type: "success", text: "撤销检验成功" });
+                                        webix.message({ type: "success", text: "撤销入库成功" });
 
-                                        $$(btnCheck).enable();
-                                        $$(btnUnCheck).enable();
+                                        $$(btnFinish).enable();
+                                        $$(btnUnFinish).enable();
                                     }
                                 );
                         }

@@ -136,12 +136,11 @@ function builder() {
         values["wzms"] = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(values);
 
         // 默认全部合格
-        values["hgsl"] = values["rksl"];
-        values["bhgsl"] = 0;
-        if (_.isEmpty(values["jyjl"])) {
+        if (_.isEqual(values["zt"], "1")) {
+            values["hgsl"] = values["rksl"];
+            values["bhgsl"] = 0;
             values["jyjl"] = "合格";
         }
-
         $$(form.id).setValues(values);
 
         if (_.isEqual(values["zt"], "1")) {
@@ -189,6 +188,12 @@ function builder() {
                 { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
                 { id: "jynr", header: { text: "检验内容", css: { "text-align": "center" } }, width: 180 },
                 { id: "jyjl", header: { text: "检验结论", css: { "text-align": "center" } }, width: 180 },
+                { id: "tjrq", header: { text: "提交日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "create_user_name_", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "jyry", header: { text: "检验员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
             pager: dlgPager.id,
         });
@@ -212,7 +217,7 @@ function builder() {
                                 view: "toolbar",
                                 height: 38,
                                 cols: [
-                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq", true),
+                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,create_user_name_,jyry,bgy", true),
                                 ]
                             },
                             dlgGrid,

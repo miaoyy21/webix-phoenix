@@ -220,6 +220,7 @@ function builder() {
                         resizeColumn: true,
                         tooltip: true,
                         rightSplit: 1,
+                        drag: "order",
                         data: [],
                         save: {
                             url: "/api/sys/data_service?method=ByTableId",
