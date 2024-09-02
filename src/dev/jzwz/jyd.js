@@ -200,7 +200,7 @@ function builder() {
             width: 680,
             height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "选择待检及已检物资入库单",
+            head: "选择物资待检或已检的入库单",
             position: "center",
             body: {
                 paddingX: 12,
