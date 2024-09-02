@@ -1,6 +1,6 @@
 import { system } from "../../library/system";
 import { diagram } from "../../library/diagram";
-import { flow } from "../../library/flow";
+import { flow } from "../../dev/flow";
 import { framework } from "../../library/framework";
 import { dev } from "../../dev";
 

@@ -305,7 +305,7 @@ function show(options) {
     var values = {};
     var mod = PHOENIX_FLOWS[options["diagram_code_"]];
     if (_.isUndefined(mod)) {
-        webix.message({ type: "error", text: "没有找到" + options["diagram_code_"] + "的注册表单：请在 @src/library/flow/index.js 中完成注册表单" });
+        webix.message({ type: "error", text: "没有找到" + options["diagram_code_"] + "的注册表单：请在 @src/dev/flow/index.js 中完成注册表单" });
         return;
     };
 
