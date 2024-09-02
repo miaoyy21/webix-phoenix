@@ -1,8 +1,23 @@
 function defaultValues(options) {
+    /*
+    rows：领料明细数据格式
+    { wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz }
+    */
+
     return {
-        "type_": "事假",
-        "start_": utils.formats.date.format(new Date()),
-        "end_": utils.formats.date.format(new Date()),
+        "ldbh": "",
+        "kdrq": utils.users.getDateTime(),
+        "cklx": "1",
+        "lly_id": utils.users.getUserId(),
+        "lly": utils.users.getUserName(),
+        "gcbh": "",
+        "gcmc": "",
+        "sqry_id": utils.users.getUserId(),
+        "sqry": utils.users.getUserName(),
+        "sqbm_id": utils.users.getDepartId(),
+        "sqbm": utils.users.getDepartName(),
+        "bz": "",
+        "rows": []
     };
 }
 
@@ -13,33 +28,73 @@ function builder(options, values) {
     var form = utils.protos.form({
         data: values,
         rows: [
-            { name: "type_", view: "combo", label: '请假类型', readonly: options["readonly"], options: ["事假", "病假", "年假", "调休", "婚假", "产假", "陪产假", "路途假", "其他"], required: true },
-            { name: "start_", view: "datepicker", label: "开始时间", readonly: options["readonly"], stringResult: true, required: true, format: utils.formats.date.format, on: { onChange: () => callback() } },
-            { name: "end_", view: "datepicker", label: "结束时间", readonly: options["readonly"], stringResult: true, required: true, format: utils.formats.date.format, on: { onChange: () => callback() } },
-            { name: "days_", view: "text", label: "请假时长(天)", readonly: true, required: true },
-            { name: "reason_", view: "textarea", label: "请假事由", readonly: options["readonly"], required: true, placeholder: "请输入明确的请假事由 ..." },
+            {
+                cols: [
+                    { view: "text", name: "ldbh", label: "领料单号", readonly: true, required: true },
+                    { view: "combo", name: "cklx", label: '出库类型', readonly: options["readonly"], options: utils.dicts["wz_cklx"], required: true },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {
+                        view: "search", name: "lly", label: "领料员", readonly: options["readonly"],
+                        on: {
+                            onSearchIconClick() {
+                                if (this.config.readonly) return;
+
+                                // var values = $$(mainForm.id).getValues();
+                                // utils.windows.gcdm({
+                                //     multiple: false,
+                                //     checked: !_.isEmpty(values["gcbh"]) ? [_.pick(values, "gcbh", "gcmc")] : [],
+                                //     filter: (row) => row["tybz"] != '1' && row["wgbz"] != '1',
+                                //     callback(checked) {
+                                //         var newValues = _.extend(values, _.pick(checked, "gcbh", "gcmc"));
+                                //         $$(mainForm.id).setValues(newValues);
+                                //         return true;
+                                //     }
+                                // });
+                            }
+                        }
+                    },
+                    {
+                        view: "search", name: "gcbh", label: "项目编号", readonly: options["readonly"], required: true,
+                        on: {
+                            onSearchIconClick() {
+                                if (this.config.readonly) return;
+
+                                // var values = $$(mainForm.id).getValues();
+                                // utils.windows.gcdm({
+                                //     multiple: false,
+                                //     checked: !_.isEmpty(values["gcbh"]) ? [_.pick(values, "gcbh", "gcmc")] : [],
+                                //     filter: (row) => row["tybz"] != '1' && row["wgbz"] != '1',
+                                //     callback(checked) {
+                                //         var newValues = _.extend(values, _.pick(checked, "gcbh", "gcmc"));
+                                //         $$(mainForm.id).setValues(newValues);
+                                //         return true;
+                                //     }
+                                // });
+                            }
+                        }
+                    },
+                    { view: "text", name: "gcmc", label: "项目名称", readonly: true },
+                ]
+            },
+            {
+                cols: [
+                    { view: "text", name: "sqry", label: "申请人员", readonly: true },
+                    { view: "text", name: "sqbm", label: "申请部门", readonly: true },
+                    { view: "text", name: "kdrq", label: "开单日期", readonly: true },
+                ]
+            },
+            { name: "bz", view: "textarea", label: "备注", readonly: options["readonly"], height: 60, placeholder: "请输入备注 ..." },
         ],
-        elementsConfig: { labelAlign: "right", labelWidth: 120, clear: false },
+        elementsConfig: { labelAlign: "right", clear: false },
     });
 
-    // 文档
-    var uploader = utils.protos.uploader({
-        label: "相关材料",
-        data: values["doc_"],
-        readonly: options["readonly"]
-    });
 
-    // 改变日期时触发
-    function callback() {
-        var values = $$(form.id).getValues();
-
-        var start = webix.i18n.dateFormatDate(values["start_"]);
-        var end = webix.i18n.dateFormatDate(values["end_"]);
-
-        values["days_"] = (end - start) / 1000 / 60 / 60 / 24;
-        $$(form.id).setValues(values);
-    }
-
+    var mxPager = utils.protos.pager();
+    var mxGrid = utils.protos.datatable({ pager: mxPager.id });
 
     // 请假单
     return {
@@ -50,7 +105,33 @@ function builder(options, values) {
                 body: {
                     cols: [
                         { width: 240 },
-                        { rows: [form, uploader] },
+                        {
+                            rows: [
+                                form,
+                                { view: "resizer" },
+                                {
+                                    gravity: 2,
+                                    rows: [
+                                        {
+                                            view: "toolbar", cols: [
+                                                {
+                                                    view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
+                                                    click() {
+                                                    }
+                                                },
+                                                {
+                                                    view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
+                                                    click() { }
+                                                },
+                                            ]
+                                        },
+
+                                    ]
+                                },
+                                mxGrid,
+                                mxPager,
+                            ]
+                        },
                         { width: 240 },
                     ]
                 }
@@ -62,15 +143,15 @@ function builder(options, values) {
                 return;
             };
 
-            // 开始时间必须小于结束时间
-            var values = $$(form.id).getValues();
-            if (values["start_"] >= values["end_"]) {
-                webix.message({ type: "error", text: "结束时间必须大于开始时间" });
-                return;
-            }
+            // // 开始时间必须小于结束时间
+            // var values = $$(form.id).getValues();
+            // if (values["start_"] >= values["end_"]) {
+            //     webix.message({ type: "error", text: "结束时间必须大于开始时间" });
+            //     return;
+            // }
 
 
-            values = _.extend(values, { "doc_": uploader.getValue() });
+            // values = _.extend(values, { "doc_": uploader.getValue() });
             return values;
         },
     }
