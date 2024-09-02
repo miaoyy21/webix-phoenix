@@ -110,7 +110,7 @@ webix.ready(function () {
                 var data = res.json();
 
                 var menus = _.map(
-                    _.sortBy(data["menus"], (o) => Number(o["order_"])), (d) => ({
+                    _.sortBy(data["menus"], (o) => Number(o["seq"])), (d) => ({
                         "id": d["id"],
                         "menu_": d["menu_"],
                         "value": d["name_"],
