@@ -23,7 +23,7 @@ function open(item, options, model) {
         { id: "name_", label: "流程名称", type: "text", tooltip: "流程的名称" },
         { id: "icon_", label: "[图标]", tooltip: "双击选择图标" },
         { id: "description_", label: "流程描述", type: "popup", popup: popup, height: 88, tooltip: "流程的描述信息" },
-        { id: "keyword_", label: "关键字", type: "popup", popup: popup, tooltip: "表单信息要素中有重要意义的信息要素。示例：物资编号 #code_#；物资名称 #name_#" },
+        { id: "keyword_", label: "关键字", type: "popup", popup: popup, tooltip: "表单信息要素中有重要意义的信息要素。示例：物资编号 #code_#；物资名称 #!name_#" },
         {
             id: "exceed_days_", label: "超时天数", type: "richselect",
             options: [
