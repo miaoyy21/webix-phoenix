@@ -60,8 +60,8 @@ function builder() {
 
                     { id: "params_", header: [{ text: "请求参数", css: { "text-align": "center" } }, { content: "serverFilter" }], width: 480 },
                     { id: "values_", header: [{ text: "表单数据", css: { "text-align": "center" } }, { content: "serverFilter" }], width: 480 },
-                    { id: "start_", header: { text: "请求时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "server", format: utils.formats["datetime"].format, width: 150 },
-                    { id: "end_", header: { text: "响应时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "server", format: utils.formats["datetime"].format, width: 150 },
+                    { id: "start_", header: { text: "请求时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, format: utils.formats.datetime.format, width: 150 },
+                    { id: "end_", header: { text: "响应时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, format: utils.formats.datetime.format, width: 150 },
                     { id: "duration_", header: { text: "耗时(毫秒)", css: { "text-align": "center" } }, css: { "text-align": "right" }, sort: "server", width: 100 },
                     {
                         id: "status_", header: [{ text: "响应结果", css: { "text-align": "center" } }, { content: "serverSelectFilter", options: [{ id: "success", value: "成功" }, { id: "error", value: "失败" }] }], css: { "text-align": "center" }, options: [{ id: "success", value: "成功" }, { id: "error", value: "失败" }], sort: "server", width: 100

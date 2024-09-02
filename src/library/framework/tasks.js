@@ -20,8 +20,17 @@ function builder() {
                         on: {
                             onChange(newValue) {
                                 $$(dtable).clearAll();
-                                $$(dtable).load(() => webix.ajax("/api/wf/flows?method=Tasks", { "status": newValue }));
+
+                                $$(dtable).define("url", "/api/wf/flows?method=Tasks&status=" + newValue);
                             }
+                        }
+                    },
+                    { width: 24 },
+                    {
+                        view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
+                        click() {
+                            $$(dtable).clearAll();
+                            $$(dtable).load($$(dtable).config.url);
                         }
                     },
                     {},

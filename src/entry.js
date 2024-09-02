@@ -245,6 +245,30 @@ webix.ready(function () {
     }
 });
 
+// 每隔10秒执行一次定时任务
+setInterval(() => {
+    try {
+        webix.ajax().get("api/sys?method=Sync")
+            .then((res) => {
+                var data = res.json();
+
+                // 待办数量
+                var oldTasks = $$(MAIN_PAGE_TASKS_ID).data.badge;
+
+                if (!_.isEqual(oldTasks, data["tasks"])) {
+                    $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
+                    $$(MAIN_PAGE_TASKS_ID).refresh();
+
+                    if (data["tasks"] > oldTasks) {
+                        webix.message({ type: "info", text: "你收到新的待办事项！" })
+                    }
+                }
+            });
+    } catch (e) {
+        console.log(e);
+    }
+}, 10000);
+
 /*****************************************************************************************************************/
 
 // 修改密码
