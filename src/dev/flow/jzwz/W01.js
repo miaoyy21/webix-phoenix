@@ -258,7 +258,7 @@ function builder(options, values) {
                 width: 80
             },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 180 },
-            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null, fillspace: true },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null, fillspace: true, minWidth: 240 },
             {
                 id: "buttons",
                 width: 80,
