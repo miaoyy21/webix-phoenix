@@ -72,7 +72,7 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
@@ -195,7 +195,7 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -381,7 +381,7 @@ function builder() {
                 cols: [
                     {
                         view: "scrollview",
-                        width: 240,
+                        width: 280,
                         body: {
                             rows: [
                                 { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },

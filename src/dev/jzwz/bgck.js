@@ -2,8 +2,6 @@ function builder() {
     const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.query_self";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query";
 
-    var btnCreate = utils.UUID();
-    var btnDelete = utils.UUID();
     var btnCommit = utils.UUID();
     var btnUnCommit = utils.UUID();
     var btnMxWzdm = utils.UUID();
@@ -23,7 +21,6 @@ function builder() {
 
                     if (_.findIndex(values["data"], (row) => (row["zt"] != "0")) >= 0) {
                         $$(mxGrid.id).define("editable", false);
-                        $$(btnDelete).disable();
                         $$(btnCommit).disable();
 
                         if (_.findIndex(values["data"], (row) => (row["zt"] != "0" && row["zt"] != "1")) >= 0) {
@@ -45,7 +42,6 @@ function builder() {
                         }
                     } else {
                         $$(mxGrid.id).define("editable", true);
-                        $$(btnDelete).enable();
                         $$(btnCommit).enable();
                         $$(btnUnCommit).disable();
                         $$(btnMxWzdm).enable();
@@ -72,7 +68,7 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
@@ -82,6 +78,14 @@ function builder() {
         on: {
             onDataUpdate(id, newValues) { $$(mainForm.id).setValues(newValues) },
             onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
+            onAfterLoad() {
+                if (this.count() < 1) {
+                    $$(mainForm.id).setValues({});
+                    mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
+
+                    $$(mxGrid.id).define("data", []);
+                }
+            }
         },
         pager: mainPager.id,
     });
@@ -187,7 +191,7 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -322,23 +326,17 @@ function builder() {
                                 $$(mainGrid.id).define("url", mainUrl + "&wgbz=" + newValue);
 
                                 if (_.isEqual(newValue, "1")) {
-                                    $$(btnCreate).disable();
                                     $$(btnCommit).disable();
                                     $$(btnUnCommit).disable();
 
-                                    $$(btnDelete).disable();
                                     $$(btnCommit).disable();
                                     $$(btnMxWzdm).disable();
                                     $$(btnMxImport).disable();
-                                } else {
-                                    $$(btnCreate).enable();
                                 }
                             }
                         }
                     },
                     mainGrid.actions.refresh(),
-                    mainGrid.actions.add({ id: btnCreate, label: "新建单据", callback: () => ({ "wgbz": "0", "rklx": "1", "kdrq": utils.users.getDate() }) }),
-                    mainGrid.actions.remove({ id: btnDelete, label: "删除单据" }),
                     {
                         id: btnCommit, view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
                         click() {
