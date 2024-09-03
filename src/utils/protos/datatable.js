@@ -219,7 +219,7 @@ function datatable(options) {
             add(opts) {
                 /* {id: String, label: String, callback: function(){ return Object } }*/
                 opts = opts || {};
-                opts.id || utils.UUID();
+                opts.id = opts.id || utils.UUID();
 
                 return {
                     id: opts["id"], view: "button", label: opts["label"] || "新增", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
@@ -232,7 +232,7 @@ function datatable(options) {
             remove(opts) {
                 /* {id: String, label: String, callback: function(){ return Array<String>|String } }*/
                 opts = opts || {};
-                opts.id || utils.UUID();
+                opts.id = opts.id || utils.UUID();
 
                 return {
                     id: opts["id"], view: "button", label: opts["label"] || "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
@@ -290,15 +290,43 @@ function datatable(options) {
                     }
                 }
             },
-            search(fields, autoWidth) {
+            search(opts) {
+                // 执行的是服务端检索
+                /* {id: String, placeholder: String, fields: String, autoWidth: Boolean }*/
+                opts = opts || {};
+                opts.id = opts.id || utils.UUID();
+
                 var search = function () {
-                    $$(datatable_id).load(options.url + "&full_filter[" + fields + "]=" + this.getValue(), "json", () => { }, true)
+                    $$(datatable_id).load(options.url + "&full_filter[" + opts["fields"] + "]=" + this.getValue(), "json", () => { }, true)
                 }
 
                 return {
-                    view: "search", align: "center", placeholder: "请输入搜索内容", width: !autoWidth ? 240 : null,
+                    id: opts.id, view: "search", align: "center", placeholder: opts["placeholder"] || "请输入搜索内容", width: !opts["autoWidth"] ? 240 : null,
                     on: { onEnter: search, onSearchIconClick: search }
                 }
+            },
+            filter(opts) {
+                // 执行的是客户端过滤
+                /* {id: String, placeholder: String, fields: String }*/
+                opts = opts || {};
+                opts.id = opts.id || utils.UUID();
+
+                return {
+                    id: opts.id, view: "text", placeholder: opts["placeholder"], clear: true, on: {
+                        onChange() {
+                            var fields = opts["fields"].split(",")
+                            $$(datatable_id).filter((row) => (_.values(_.pick(row, ...fields)).join("|").indexOf($$(opts.id).getValue()) >= 0));
+
+                            // 没有符合条件的数据
+                            if (!$$(datatable_id).count()) {
+                                $$(datatable_id).showOverlay("没有找到符合条件的数据");
+                            } else {
+                                $$(datatable_id).hideOverlay();
+                                $$(datatable_id).select($$(datatable_id).getFirstId());
+                            }
+                        }
+                    }
+                };
             }
         },
     };

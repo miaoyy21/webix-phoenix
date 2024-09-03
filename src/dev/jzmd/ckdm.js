@@ -164,7 +164,7 @@ function builder() {
                     },
                     datatable.actions.refresh(),
                     {},
-                    datatable.actions.search("ckbh,ckmc,bgy"),
+                    datatable.actions.search({ fields: "ckbh,ckmc,bgy" }),
                 ]
             },
             datatable,

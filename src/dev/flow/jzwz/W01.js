@@ -25,7 +25,125 @@ function defaultValues(options) {
 }
 
 function builder(options, values) {
+    var winId = utils.UUID();
     console.log("xxx", arguments);
+
+    var dlgData = []; // 只加载1次物资库存
+    function openWzye() {
+        // 多次选择，只加载1次数据
+        if (_.isEmpty(dlgData)) {
+            webix.ajax()
+                .get("/api/sys/data_service?service=JZWZ_WZYE.query_wzye")
+                .then((res) => {
+                    console.log("第1次加载：从服务器加载 ", _.size(dlgData));
+
+                    dlgData = res.json();
+                    $$(dlgGrid.id).define("data", dlgData);
+                });
+        } else {
+            console.log("第N次加载：已有数据，不再加载", _.size(dlgData));
+            setTimeout(() => {
+                $$(dlgGrid.id).define("data", dlgData);
+            }, 250);
+        }
+
+        var dlgPager = utils.protos.pager();
+        var dlgGrid = utils.protos.datatable({
+            editable: true,
+            drag: false,
+            url: null,
+            leftSplit: 3,
+            checkboxRefresh: true,
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                {
+                    id: "checked", header: { text: "选择", css: { "text-align": "center" } }, css: { "text-align": "center" },
+                    template(obj, common, value) {
+                        if (value) {
+                            return "<span class='webix_table_checkbox checked webix_icon phoenix_primary_icon mdi mdi-checkbox-marked' />";
+                        }
+
+                        return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
+                    }, checkValue: "1", uncheckValue: "0", width: 50
+                },
+                { id: "xyzt", header: { text: "选用要求", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+                { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                {
+                    id: "kcsl", header: { text: "库存数量", css: { "text-align": "center" } },
+                    format: (value) => utils.formats.number.format(value, 2),
+                    css: { "text-align": "right" }, adjust: true, minWidth: 80
+                },
+                {
+                    id: "dfsl", header: { text: "待发数量", css: { "text-align": "center" } },
+                    format: (value) => utils.formats.number.format(value, 2),
+                    css: { "text-align": "right" }, adjust: true, minWidth: 80
+                },
+                {
+                    id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: "text",
+                    format: (value) => utils.formats.number.format(value, 2),
+                    editParse: (value) => utils.formats.number.editParse(value, 2),
+                    editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                    css: { "text-align": "right", "background": "#d5f5e3" },
+                    adjust: true, minWidth: 60
+                },
+                { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            ],
+            pager: dlgPager.id,
+        });
+
+        webix.ui({
+            id: winId,
+            view: "window",
+            close: true,
+            modal: true,
+            width: 680,
+            height: 420,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "选择待领料的物资清单",
+            position: "center",
+            body: {
+                paddingX: 12,
+                rows: [
+                    {
+                        rows: [
+                            {
+                                view: "toolbar", height: 38, cols: [dlgGrid.actions.filter({ fields: "wzbh,wzmc,ggxh,wzph,bzdh,sccjmc", placeholder: "请输入物资编号、物资名称、规格型号等信息过滤" })]
+                            },
+                            dlgGrid,
+                            dlgPager
+                        ]
+                    },
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            { width: 8 },
+                            {},
+                            {
+                                view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
+                                click() {
+                                    var rows = $$(dlgGrid.id).serialize(true);
+
+                                    console.log(rows)
+
+
+                                    $$(winId).hide();
+                                },
+                            },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
 
     // 表单
     var form = utils.protos.form({
@@ -148,26 +266,27 @@ function builder(options, values) {
             var rows = $$(mxGrid.id).serialize(true);
 
             // 选择物资代码
-            utils.windows.wzdm({
-                multiple: true,
-                checked: [],
-                filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(rows, (value) => (value["wzbh"] == row["wzbh"])) < 0),
-                callback(checked) {
+            openWzye();
+            // utils.windows.wzdm({
+            //     multiple: true,
+            //     checked: [],
+            //     filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(rows, (value) => (value["wzbh"] == row["wzbh"])) < 0),
+            //     callback(checked) {
 
-                    // wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz
-                    rows = _.union(rows,
-                        _.map(checked,
-                            (row) => (_.extend(
-                                _.pick(row, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "sccjmc", "jldw"),
-                                { "qls": 0 },
-                            )),
-                        ),
-                    );
+            //         // wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz
+            //         rows = _.union(rows,
+            //             _.map(checked,
+            //                 (row) => (_.extend(
+            //                     _.pick(row, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "sccjmc", "jldw"),
+            //                     { "qls": 0 },
+            //                 )),
+            //             ),
+            //         );
 
-                    $$(mxGrid.id).define("data", rows);
-                    return true;
-                }
-            })
+            //         $$(mxGrid.id).define("data", rows);
+            //         return true;
+            //     }
+            // })
         }
     };
 

@@ -228,22 +228,16 @@ function builder() {
             {
                 id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
                 id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
                 id: "taxje", header: { text: "税额", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
@@ -382,7 +376,7 @@ function builder() {
                         width: 240,
                         body: {
                             rows: [
-                                { view: "toolbar", cols: [mainGrid.actions.search("ldbh,htbh,khbh,khmc,gcbh,gcmc", true)] },
+                                { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
                                 mainGrid,
                                 mainPager
                             ],

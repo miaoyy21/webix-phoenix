@@ -138,7 +138,6 @@ function builder() {
         }
 
         $$(form.id).setValues(values);
-
         if (_.isEqual(values["zt"], "5")) {
             $$(btnFinish).enable();
             $$(btnUnFinish).disable();
@@ -209,7 +208,7 @@ function builder() {
                                 view: "toolbar",
                                 height: 38,
                                 cols: [
-                                    dlgGrid.actions.search("txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,create_user_name_,jyry,bgy", true),
+                                    dlgGrid.actions.search({ fields: "txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,create_user_name_,jyry,bgy", autoWidth: true }),
                                 ]
                             },
                             dlgGrid,

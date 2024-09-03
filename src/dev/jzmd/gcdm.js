@@ -242,7 +242,7 @@ function builder() {
                     },
                     datatable.actions.refresh(),
                     {},
-                    datatable.actions.search("gcbh,gcmc,cpxh,xmlb,xmlx,xmsx,xmfzr,xmzg"),
+                    datatable.actions.search({ fields: "gcbh,gcmc,cpxh,xmlb,xmlx,xmsx,xmfzr,xmzg" }),
                 ]
             },
             datatable,

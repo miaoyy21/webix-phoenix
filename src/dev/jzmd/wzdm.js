@@ -287,7 +287,7 @@ function builder() {
                     },
                     datatable.actions.refresh(),
                     {},
-                    datatable.actions.search("wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy"),
+                    datatable.actions.search({ fields: "wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy" }),
                 ]
             },
             datatable,
