@@ -268,7 +268,7 @@ function builder() {
                         width: 360,
                         body: {
                             rows: [
-                                { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
+                                { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,gcbh,gcmc,sqry,sqbm,lly", autoWidth: true })] },
                                 mainGrid,
                                 mainPager
                             ],
@@ -284,7 +284,7 @@ function builder() {
                                 {
                                     gravity: 2,
                                     rows: [
-                                        { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 38 }] },
+                                        { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 28 }] },
                                         kcGrid,
                                         { cols: [{ width: 120 }, kcPager] }
                                     ]
