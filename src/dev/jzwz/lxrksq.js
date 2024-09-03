@@ -82,6 +82,14 @@ function builder() {
         on: {
             onDataUpdate(id, newValues) { $$(mainForm.id).setValues(newValues) },
             onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
+            onAfterLoad() {
+                if (this.count() < 1) {
+                    $$(mainForm.id).setValues({});
+                    mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
+
+                    $$(mxGrid.id).define("data", []);
+                }
+            }
         },
         pager: mainPager.id,
     });

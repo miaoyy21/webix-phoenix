@@ -143,6 +143,25 @@ function datatable(options) {
                 }
             });
 
+            // 加载前
+            this.attachEvent("onBeforeLoad", function () {
+                this.showOverlay("数据加载中...");
+            })
+
+            // 加载后
+            this.attachEvent("onAfterLoad", function () {
+                this.hideOverlay();
+                if (!this.count()) {
+                    this.showOverlay("无检索数据");
+                    return;
+                }
+
+                var first = this.getFirstId();
+                if (this.config.select && first) {
+                    this.select(first);
+                }
+            })
+
             this.attachEvent("onDataRequest", function (start, count, callback, url) {
                 console.log("onDataRequest", start, count, callback, url)
             })
@@ -186,21 +205,6 @@ function datatable(options) {
         },
         on: {
             "data->onStoreUpdated"() { this.data.each((obj, i) => { obj.index = i + 1 }) },
-            onBeforeLoad() {
-                this.showOverlay("数据加载中...");
-            },
-            onAfterLoad() {
-                this.hideOverlay();
-                if (!this.count()) {
-                    this.showOverlay("无检索数据");
-                    return;
-                }
-
-                var first = this.getFirstId();
-                if (this.config.select && first) {
-                    this.select(first);
-                }
-            },
         },
         styles: {
             cellTextColor: function (row, col) { }
