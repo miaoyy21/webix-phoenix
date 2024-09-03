@@ -1,7 +1,7 @@
 function defaultValues(options) {
     /*
     rows：领料明细数据格式
-    { wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz }
+    { wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,kcsl,qls,bz }
     */
 
     var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_lxc_ldbh" });
@@ -11,10 +11,10 @@ function defaultValues(options) {
         "ldbh": ldbh,
         "kdrq": utils.users.getDateTime(),
         "cklx": "1",
-        "lly_id": utils.users.getUserId(),
-        "lly": utils.users.getUserName(),
         "gcbh": "",
         "gcmc": "",
+        "lly_id": utils.users.getUserId(),
+        "lly": utils.users.getUserName(),
         "sqry_id": utils.users.getUserId(),
         "sqry": utils.users.getUserName(),
         "sqbm_id": utils.users.getDepartId(),
@@ -26,7 +26,6 @@ function defaultValues(options) {
 
 function builder(options, values) {
     var winId = utils.UUID();
-    console.log("xxx", arguments);
 
     var dlgData = []; // 只加载1次物资库存
     function openWzye() {
@@ -35,15 +34,15 @@ function builder(options, values) {
             webix.ajax()
                 .get("/api/sys/data_service?service=JZWZ_WZYE.query_wzye")
                 .then((res) => {
-                    console.log("第1次加载: 从服务器加载 ", _.size(dlgData));
+                    dlgData = res.json()["data"];
 
-                    dlgData = res.json();
-                    $$(dlgGrid.id).define("data", dlgData);
+                    console.log("第1次加载: 从服务器加载 ", _.size(dlgData));
+                    $$(dlgGrid.id).define("data", _.map(dlgData, (row) => _.extend(row, { "checked": "0", "qls": 0 })));
                 });
         } else {
             console.log("第N次加载: 已有数据，不再加载", _.size(dlgData));
             setTimeout(() => {
-                $$(dlgGrid.id).define("data", dlgData);
+                $$(dlgGrid.id).define("data", _.map(dlgData, (row) => _.extend(row, { "checked": "0", "qls": 0 })));
             }, 250);
         }
 
@@ -53,18 +52,11 @@ function builder(options, values) {
             drag: false,
             url: null,
             leftSplit: 3,
-            checkboxRefresh: true,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 {
                     id: "checked", header: { text: "选择", css: { "text-align": "center" } }, css: { "text-align": "center" },
-                    template(obj, common, value) {
-                        if (value) {
-                            return "<span class='webix_table_checkbox checked webix_icon phoenix_primary_icon mdi mdi-checkbox-marked' />";
-                        }
-
-                        return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
-                    }, checkValue: "1", uncheckValue: "0", width: 50
+                    options: utils.dicts["checked"], adjust: true, width: 50
                 },
                 { id: "xyzt", header: { text: "选用要求", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -76,22 +68,36 @@ function builder(options, values) {
                     css: { "text-align": "right" }, adjust: true, minWidth: 80
                 },
                 {
-                    id: "dfsl", header: { text: "待发数量", css: { "text-align": "center" } },
-                    format: (value) => utils.formats.number.format(value, 2),
-                    css: { "text-align": "right" }, adjust: true, minWidth: 80
-                },
-                {
                     id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: "text",
                     format: (value) => utils.formats.number.format(value, 2),
                     editParse: (value) => utils.formats.number.editParse(value, 2),
                     editFormat: (value) => utils.formats.number.editFormat(value, 2),
                     css: { "text-align": "right", "background": "#d5f5e3" },
-                    adjust: true, minWidth: 60
+                    adjust: true, minWidth: 80
+                },
+                {
+                    id: "dfsl", header: { text: "待发数量", css: { "text-align": "center" } },
+                    format: (value) => utils.formats.number.format(value, 2),
+                    css: { "text-align": "right" }, adjust: true, minWidth: 80
                 },
                 { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
                 { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
+            on: {
+                onDataUpdate(id, data, old) {
+                    var kcsl = utils.formats.number.editParse(data["kcsl"], 2) || 0;
+                    var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
+
+                    if (qls > kcsl) {
+                        webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
+                        data["qls"] = kcsl;
+                        return;
+                    }
+
+                    data["checked"] = qls > 0 ? "1" : "0";
+                }
+            },
             pager: dlgPager.id,
         });
 
@@ -127,10 +133,26 @@ function builder(options, values) {
                             {
                                 view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
                                 click() {
-                                    var rows = $$(dlgGrid.id).serialize(true);
+                                    // 停止编辑状态
+                                    $$(dlgGrid.id).editStop();
 
-                                    console.log(rows)
+                                    var values = _.filter($$(dlgGrid.id).serialize(true), (row) => (row["checked"] == "1"));
+                                    if (_.size(values) < 1) {
+                                        webix.message({ type: "danger", text: "请选择待领物资！" });
+                                        return;
+                                    }
 
+                                    var rows = $$(mxGrid.id).serialize(true);
+                                    _.each(values, (value) => {
+                                        var has = _.findIndex(rows, (row) => row["wzbh"] == value["wzbh"]);
+                                        if (has >= 0) {
+                                            webix.message({ type: "info", text: value["wzbh"] + "已在待领清单中，自动忽略！" });
+                                            return
+                                        }
+
+                                        var row = _.pick(value, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "sccjmc", "jldw", "kcsl", "qls");
+                                        $$(mxGrid.id).add(row);
+                                    })
 
                                     $$(winId).hide();
                                 },
@@ -226,6 +248,7 @@ function builder(options, values) {
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "kcsl", header: { text: "库存数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
             {
                 id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null,
                 format: (value) => utils.formats.number.format(value, 2),
@@ -249,6 +272,16 @@ function builder(options, values) {
             }
         ],
         on: {
+            onDataUpdate(id, data, old) {
+                var kcsl = utils.formats.number.editParse(data["kcsl"], 2) || 0;
+                var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
+
+                if (qls > kcsl) {
+                    webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
+                    data["qls"] = kcsl;
+                    return;
+                }
+            },
             onAfterRender() {
                 if (options["readonly"]) {
                     mxGrid.actions.hideColumn("buttons", true);
@@ -260,34 +293,10 @@ function builder(options, values) {
         pager: mxPager.id
     });
 
+    // 选择物资按钮
     var btnWzdm = {
         view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
-        click() {
-            var rows = $$(mxGrid.id).serialize(true);
-
-            // 选择物资代码
-            openWzye();
-            // utils.windows.wzdm({
-            //     multiple: true,
-            //     checked: [],
-            //     filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(rows, (value) => (value["wzbh"] == row["wzbh"])) < 0),
-            //     callback(checked) {
-
-            //         // wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,qls,bz
-            //         rows = _.union(rows,
-            //             _.map(checked,
-            //                 (row) => (_.extend(
-            //                     _.pick(row, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "sccjmc", "jldw"),
-            //                     { "qls": 0 },
-            //                 )),
-            //             ),
-            //         );
-
-            //         $$(mxGrid.id).define("data", rows);
-            //         return true;
-            //     }
-            // })
-        }
+        click: openWzye
     };
 
     // 请假单
@@ -338,8 +347,15 @@ function builder(options, values) {
                 return
             }
 
+            // 请领数量是否大于库存数量
+            var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["qls"], 2) > utils.formats.number.editParse(row["kcsl"], 2)));
+            if (index >= 0) {
+                webix.message({ type: "error", text: "第" + (index + 1) + "行：请领数量大于库存数量！" });
+                return
+            }
+
             var values = $$(form.id).getValues();
-            values["rows"] = rows
+            values["rows"] = rows;
 
             console.log(values);
             return values;
