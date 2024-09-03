@@ -35,13 +35,13 @@ function builder(options, values) {
             webix.ajax()
                 .get("/api/sys/data_service?service=JZWZ_WZYE.query_wzye")
                 .then((res) => {
-                    console.log("第1次加载：从服务器加载 ", _.size(dlgData));
+                    console.log("第1次加载: 从服务器加载 ", _.size(dlgData));
 
                     dlgData = res.json();
                     $$(dlgGrid.id).define("data", dlgData);
                 });
         } else {
-            console.log("第N次加载：已有数据，不再加载", _.size(dlgData));
+            console.log("第N次加载: 已有数据，不再加载", _.size(dlgData));
             setTimeout(() => {
                 $$(dlgGrid.id).define("data", dlgData);
             }, 250);
