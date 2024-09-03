@@ -335,7 +335,6 @@ function builder() {
                                     $$(btnUnCommit).disable();
 
                                     $$(btnDelete).disable();
-                                    $$(btnCommit).disable();
                                     $$(btnMxWzdm).disable();
                                     $$(btnMxImport).disable();
                                 } else {
