@@ -1,19 +1,16 @@
 function builder() {
-    const mainUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJ.query_self";
-    const mxUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query";
+    const mainUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJ.query";
+    const mxUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query";
 
     var btnCommit = utils.UUID();
     var btnUnCommit = utils.UUID();
-    var btnMxWzdm = utils.UUID();
-    var btnMxImport = utils.UUID();
-    var mainPager = utils.protos.pager();
 
     function onAfterSelect(id) {
-        $$(mainForm.id).setValues($$(mainGrid.id).getItem(id));
-
         $$(mxGrid.id).clearAll();
+
+        // 重新加载数据
         webix.ajax()
-            .get(mxUrl, { "wzrkd_id": id })
+            .get(mxUrl, { "sq_id": id })
             .then(
                 (res) => {
                     var values = res.json();
@@ -29,12 +26,6 @@ function builder() {
                             $$(btnUnCommit).enable();
                         }
 
-                        $$(btnMxWzdm).disable();
-                        $$(btnMxImport).disable();
-
-                        mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], false);
-                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
-
                         if (_.findIndex(values["data"], (row) => (row["zt"] == "0" || row["zt"] == "1")) >= 0) {
                             mxGrid.actions.hideColumn("buttons", false);
                         } else {
@@ -44,11 +35,6 @@ function builder() {
                         $$(mxGrid.id).define("editable", true);
                         $$(btnCommit).enable();
                         $$(btnUnCommit).disable();
-                        $$(btnMxWzdm).enable();
-                        $$(btnMxImport).enable();
-
-                        mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], true);
-                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], false);
 
                         mxGrid.actions.hideColumn("buttons", false);
                     }
@@ -56,33 +42,35 @@ function builder() {
             );
     }
 
-    // 列表
+    /********** 出库单列表 **********/
+    var mainPager = utils.protos.pager();
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
         url: mainUrl + "&wgbz=0",
         save: {
-            url: "/api/sys/data_service?service=JZWZ_WZRKDWJ.save",
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJ.save",
             updateFromResponse: true,
             trackMove: true,
             operationName: "operation",
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-            { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
+            { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-            { id: "htbh", header: { text: "采购合同号", css: { "text-align": "center" } }, width: 120 },
-            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "sqry", header: { text: "申请部门", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
+            { id: "bmld", header: { text: "审批人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bmld_shrq", header: { text: "审批日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
         ],
         on: {
-            onDataUpdate(id, newValues) { $$(mainForm.id).setValues(newValues) },
             onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
             onAfterLoad() {
                 if (this.count() < 1) {
-                    $$(mainForm.id).setValues({});
-                    mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
-
                     $$(mxGrid.id).define("data", []);
                 }
             }
@@ -90,110 +78,22 @@ function builder() {
         pager: mainPager.id,
     });
 
-    function onMainFormChange() {
-        var oldValues = $$(mainGrid.id).getSelectedItem();
-        var newValues = $$(mainForm.id).getValues();
-
-        if (_.isEqual(
-            _.pick(oldValues, (value, key) => !_.isEmpty(value) && key != "id"),
-            _.pick(newValues, (value, key) => !_.isEmpty(value) && key != "id"),
-        ) || !_.isEqual(oldValues.id, newValues.id)) { return }
-
-        $$(mainGrid.id).updateItem(oldValues.id, newValues);
-    }
-
-    // 表单
-    var mainForm = utils.protos.form({
-        rows: [
-            {
-                cols: [
-                    { view: "richselect", name: "rklx", label: "入库类型", options: utils.dicts["wz_lxr_rklx"], required: true, placeholder: "请选择入库类型..." },
-                    { view: "text", name: "ldbh", label: "入库单号", readonly: true },
-                    { view: "text", name: "kdrq", label: "开单日期", readonly: true },
-                ]
-            },
-            {
-                cols: [
-                    {
-                        view: "search", name: "khbh", label: "供应商编号", readonly: true, required: true,
-                        on: {
-                            onSearchIconClick() {
-                                if (this.config.readonly) return;
-
-                                var values = $$(mainForm.id).getValues();
-                                utils.windows.khdm({
-                                    multiple: false,
-                                    checked: !_.isEmpty(values["khbh"]) ? [_.pick(values, "khbh", "khmc")] : [],
-                                    filter: (row) => row["tybz"] != '1',
-                                    callback(checked) {
-                                        var newValues = _.extend(values, _.pick(checked, "khbh", "khmc"));
-                                        $$(mainForm.id).setValues(newValues);
-                                        return true;
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    { view: "text", name: "khmc", gravity: 2, label: "供应商名称", readonly: true },
-                ]
-            },
-            {
-                cols: [
-                    { view: "text", name: "htbh", label: "合同号", required: true },
-                    {
-                        view: "search", name: "gcbh", label: "项目编号", readonly: true, required: true,
-                        on: {
-                            onSearchIconClick() {
-                                if (this.config.readonly) return;
-
-                                var values = $$(mainForm.id).getValues();
-                                utils.windows.gcdm({
-                                    multiple: false,
-                                    checked: !_.isEmpty(values["gcbh"]) ? [_.pick(values, "gcbh", "gcmc")] : [],
-                                    filter: (row) => row["tybz"] != '1' && row["wgbz"] != '1',
-                                    callback(checked) {
-                                        var newValues = _.extend(values, _.pick(checked, "gcbh", "gcmc"));
-                                        $$(mainForm.id).setValues(newValues);
-                                        return true;
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    { view: "text", name: "gcmc", label: "项目名称", readonly: true },
-                ]
-            },
-            { view: "textarea", name: "bz", label: "备注", placeholder: "请输入备注 ..." },
-            {
-                cols: [
-                    { view: "text", name: "create_user_name_", label: "编制人员", readonly: true },
-                    { view: "datepicker", name: "create_at_", label: "编制日期", readonly: true, stringResult: true, format: "%Y-%m-%d %H:%i:%s" },
-                ]
-            },
-        ],
-        on: {
-            onChange: onMainFormChange,
-            onValues: onMainFormChange
-        }
-    });
-
-    // 明细
+    /********** 出库单明细 **********/
     var mxGrid = utils.protos.datatable({
         editable: true,
         drag: false,
         url: null,
-        leftSplit: 5,
-        rightSplit: 1,
+        leftSplit: 4,
+        rightSplit: 0,
         save: {
-            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.save_lxrksq",
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.save",
             updateFromResponse: true,
             trackMove: true,
             operationName: "operation",
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
+            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -266,51 +166,47 @@ function builder() {
             { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+        ],
+    });
+
+
+    /********** 可发库存明细 **********/
+    var kcPager = utils.protos.pager();
+    var kcGrid = utils.protos.datatable({
+        editable: true,
+        url: "/api/sys/data_service?service=JZWZ_WZYE.query_wzye",
+        leftSplit: 3,
+        rightSplit: 0,
+        columns: [
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "kcsl", header: { text: "库存数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
             {
-                id: "buttons",
-                width: 80,
-                header: { text: "操作按钮", css: { "text-align": "center" } },
-                tooltip: false,
-                template() {
-                    return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
-                                <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
-                            </div>`;
-                },
-            }
+                id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right", "background": "#d5f5e3" },
+                width: 80
+            },
+            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 180 },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", fillspace: true, minWidth: 240 },
         ],
         on: {
-            onItemClick(cell, e, node) {
-                var values = $$(mxGrid.id).getItem(cell["row"]);
-                if (!_.isEqual(values["zt"], "0")) {
-                    return;
-                }
+            onDataUpdate(id, data, old) {
+                // var kcsl = utils.formats.number.editParse(data["kcsl"], 2) || 0;
+                // var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
 
-                if (_.isEqual(cell["column"], "ckmc")) {
-                    // 选择仓库
-                    var checked = !_.isEmpty(values["ckbh"]) ? [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }] : [];
-                    utils.windows.ckdm({
-                        multiple: false,
-                        checked: checked,
-                        callback(checked) {
-                            $$(mxGrid.id).updateItem(cell["row"], _.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }))
-                            return true;
-                        }
-                    })
-                } else if (_.isEqual(cell["column"], "byyq")) {
-                    // 选择检验要求
-                    var checked = !_.isEmpty(values["byyq"]) ? values["byyq"].split(",") : [];
-                    utils.windows.dicts({
-                        title: "检验要求",
-                        kind: "md_jyyq",
-                        checked: checked,
-                        callback(selected) {
-                            $$(mxGrid.id).updateItem(cell["row"], _.extend(values, { "byyq": _.pluck(selected, "id").join(",") }))
-                            return true;
-                        }
-                    })
-                }
-            }
-        }
+                // if (qls > kcsl) {
+                //     webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
+                //     data["qls"] = kcsl;
+                //     return;
+                // }
+            },
+        },
+        pager: kcPager.id
     });
 
     return {
@@ -330,8 +226,6 @@ function builder() {
                                     $$(btnUnCommit).disable();
 
                                     $$(btnCommit).disable();
-                                    $$(btnMxWzdm).disable();
-                                    $$(btnMxImport).disable();
                                 }
                             }
                         }
@@ -371,7 +265,7 @@ function builder() {
                 cols: [
                     {
                         view: "scrollview",
-                        width: 240,
+                        width: 360,
                         body: {
                             rows: [
                                 { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
@@ -385,50 +279,14 @@ function builder() {
                         view: "scrollview",
                         body: {
                             rows: [
-                                {
-                                    view: "scrollview",
-                                    gravity: 1,
-                                    body: mainForm,
-                                },
+                                { gravity: 2, rows: [mxGrid] },
                                 { view: "resizer" },
                                 {
                                     gravity: 2,
                                     rows: [
-                                        {
-                                            view: "toolbar", cols: [
-                                                {
-                                                    id: btnMxWzdm, view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
-                                                    click() {
-                                                        var values = $$(mxGrid.id).serialize(true);
-                                                        console.log(values)
-
-                                                        // 选择物资代码
-                                                        utils.windows.wzdm({
-                                                            multiple: true,
-                                                            checked: [],
-                                                            filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(values, (value) => (value["wzbh"] == row["wzbh"])) < 0),
-                                                            callback(checked) {
-                                                                var rkdid = $$(mainGrid.id).getSelectedId(false, true);
-                                                                _.each(checked, (wzdm) => {
-                                                                    var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                                                    $$(mxGrid.id).add(_.extend({}, data, {
-                                                                        "wzrkd_id": rkdid, "zt": "0",
-                                                                        "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
-                                                                    }));
-                                                                });
-
-                                                                return true;
-                                                            }
-                                                        })
-                                                    }
-                                                },
-                                                {
-                                                    id: btnMxImport, view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
-                                                    click() { }
-                                                },
-                                            ]
-                                        },
-                                        mxGrid
+                                        { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 38 }] },
+                                        kcGrid,
+                                        { cols: [{ width: 120 }, kcPager] }
                                     ]
                                 }
                             ]
