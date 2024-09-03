@@ -101,7 +101,7 @@ function builder() {
             { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
             { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right", "background": "#d6eaf8" }, format: "1,111.00", width: 80 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
-            { id: "llrq", header: { text: "出库日期", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, css: { "text-align": "center" }, width: 140 },
+            { id: "llrq", header: { text: "领料日期", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, css: { "text-align": "center" }, width: 140 },
             { id: "bgy", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
         ],
