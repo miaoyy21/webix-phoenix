@@ -2,11 +2,13 @@ function builder() {
     const mainUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJ.query_bgck";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query";
     const kcUrl = "/api/sys/data_service?service=JZWZ_WZYE.query_self";
+    const sfUrl = "/api/sys/data_service?service=JZWZ_WZCK.query_yeck";
 
     var btnAuto = utils.UUID();
     var btnCommit = utils.UUID();
     var btnUnCommit = utils.UUID();
 
+    var djzt = "0"; // 单据状态：0: 待出库   1: 已出库
     var allSfData = {}; // 本次实发 Map{ "领料单明细ID": Map["库存ID"] "实发数量" };
 
     // 列表选择事件
@@ -15,7 +17,7 @@ function builder() {
 
         // 重新加载
         webix.ajax()
-            .get(mxUrl, { "sq_id": id })
+            .get(mxUrl, { "sq_id": id, "zt": djzt })
             .then(
                 (res) => {
                     var values = res.json();
@@ -55,16 +57,22 @@ function builder() {
 
         // 重新加载数据
         webix.ajax()
-            .get(kcUrl, { "wzbh": row["wzbh"] })
+            .get(djzt == "0" ? kcUrl + "&wzbh=" + row["wzbh"] : sfUrl + "&sqmx_id=" + id)
             .then(
                 (res) => {
                     var values = res.json()["data"];
-                    var newValues = _.map(values, (value) => {
-                        var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0)) || 0;
-                        return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
-                    });
+                    if (djzt == "0") {
+                        values = _.map(values, (value) => {
+                            var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0)) || 0;
+                            return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
+                        });
 
-                    $$(kcGrid.id).define("data", newValues);
+                        $$(kcGrid.id).define("editable", true);
+                    } else {
+                        $$(kcGrid.id).define("editable", false);
+                    }
+
+                    $$(kcGrid.id).define("data", values);
                 }
             );
     }
@@ -84,9 +92,9 @@ function builder() {
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqbm", header: { text: "申请部门", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
-            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
+            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "bmld", header: { text: "审批人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "bmld_shrq", header: { text: "审批日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
+            { id: "bmld_shrq", header: { text: "审批日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
         ],
         on: {
@@ -105,21 +113,22 @@ function builder() {
         editable: false,
         drag: false,
         url: null,
-        leftSplit: 4,
+        leftSplit: 5,
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-            { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
+            // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
+            { id: "llrq", hidden: true, header: { text: "领料日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            // { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
-            // { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
-            { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right", "background": "#d6eaf8" }, format: "1,111.00", width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+            { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right", "background": "#d6eaf8" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
-            { id: "llrq", header: { text: "领料日期", css: { "text-align": "center" } }, format: utils.formats["datetime"].format, css: { "text-align": "center" }, width: 140 },
-            { id: "bgy", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
+            { id: "lly", hidden: true, header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bgy", hidden: true, header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true, minWidth: 240 },
         ],
         on: {
             onAfterSelect: (selection, preserve) => onAfterSelectMx(selection.id),
@@ -138,7 +147,7 @@ function builder() {
         editable: true,
         drag: false,
         url: null,
-        leftSplit: 3,
+        leftSplit: 4,
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -146,12 +155,12 @@ function builder() {
                 id: "checked", header: { text: "✓", css: { "text-align": "center" } }, css: { "text-align": "center" },
                 options: utils.dicts["checked"], adjust: true, width: 40
             },
-            { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
-            // { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-            // { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
+            { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
-            // { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-            { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             {
                 id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 2),
@@ -172,6 +181,8 @@ function builder() {
         ],
         on: {
             onDataUpdate(id, kcData, old) {
+                if (djzt == "1") return;
+
                 var mxData = $$(mxGrid.id).getSelectedItem();
                 console.log(mxData, mxData["qls"]);
                 var qls = utils.formats.number.editParse(mxData["qls"], 2) || 0;
@@ -200,7 +211,7 @@ function builder() {
 
                 allSfData[mxData["id"]][id] = sfs;
 
-                mxData["sfs"] = sumSfs + sfs;
+                mxData["sfs"] = (sumSfs + sfs).toFixed(2);
                 kcData["sfs"] = sfs;
                 kcData["checked"] = sfs > 0 ? "1" : "0";
                 $$(mxGrid.id).updateItem(mxData["id"], mxData);
@@ -221,27 +232,43 @@ function builder() {
                                 $$(mainGrid.id).clearAll();
                                 $$(mainGrid.id).define("url", mainUrl + "&djzt=" + newValue);
 
+                                djzt = newValue;
                                 if (_.isEqual(newValue, "1")) {
+                                    $$(btnAuto).disable();
                                     $$(btnCommit).disable();
                                     $$(btnUnCommit).enable();
+
+                                    mxGrid.actions.hideColumn("llrq", false);
+                                    mxGrid.actions.hideColumn("bgy", false);
+                                    mxGrid.actions.hideColumn("lly", false);
+
+                                    kcGrid.actions.hideColumn("kcsl", true);
+                                    kcGrid.actions.hideColumn("checked", true);
                                 } else {
+                                    $$(btnAuto).enable();
                                     $$(btnCommit).enable();
                                     $$(btnUnCommit).disable();
+
+                                    mxGrid.actions.hideColumn("llrq", true);
+                                    mxGrid.actions.hideColumn("bgy", true);
+                                    mxGrid.actions.hideColumn("lly", true);
+
+                                    kcGrid.actions.hideColumn("kcsl", false);
+                                    kcGrid.actions.hideColumn("checked", false);
                                 }
                             }
                         }
                     },
                     mainGrid.actions.refresh(),
+                    { width: 24 },
                     {
-                        id: btnAuto, view: "button", label: "自动销账", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-calculator",
+                        id: btnAuto, view: "button", label: "自动销账", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-calculator",
                         click() {
                             var id = $$(mainGrid.id).getSelectedId(false, true);
                             webix.ajax()
                                 .get("/api/sys/data_service?service=JZWZ_WZLLSQWJ.auto", { "id": id })
                                 .then(
                                     (res) => {
-                                        console.log("销账数据返回 => ", res.json());
-
                                         allSfData = res.json();
                                         webix.message({ type: "success", text: "自动销账成功，请进行出库确认！" });
 
@@ -253,7 +280,7 @@ function builder() {
                                                 sumSfs = _.reduce(_.values(allSfData[value["id"]]), function (total, sfs) { return total + sfs; }, 0)
                                             }
 
-                                            value["sfs"] = sumSfs;
+                                            value["sfs"] = sumSfs.toFixed(2);
                                             $$(mxGrid.id).updateItem(value["id"], value);
                                         })
 
@@ -267,29 +294,36 @@ function builder() {
                     {
                         id: btnCommit, view: "button", label: "出库确认", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
                         click() {
-                            // var id = $$(mainGrid.id).getSelectedId(false, true);
-                            // webix.ajax()
-                            //     .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.commit", { "id": id })
-                            //     .then(
-                            //         (res) => {
-                            //             webix.message({ type: "success", text: "提交检验成功" });
-                            //             onAfterSelect(id);
-                            //         }
-                            //     );
+                            var total = 0;
+                            _.each(allSfData, (sfData) => { _.map(sfData, (sfs) => { total = total + sfs }) });
+                            if (total <= 0) {
+                                webix.message({ type: "error", text: "请根据库存填写实发数量或使用自动销账进行发料！" })
+                                return;
+                            }
+
+                            var id = $$(mainGrid.id).getSelectedId(false, true);
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.commit", { "id": id, "allSfData": allSfData })
+                                .then(
+                                    (res) => {
+                                        webix.message({ type: "success", text: "出库确认成功" });
+                                        onAfterSelectMain(id);
+                                    }
+                                );
                         }
                     },
                     {
                         id: btnUnCommit, view: "button", label: "撤销出库", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
                         click() {
-                            // var id = $$(mainGrid.id).getSelectedId(false, true);
-                            // webix.ajax()
-                            //     .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": id })
-                            //     .then(
-                            //         (res) => {
-                            //             webix.message({ type: "success", text: "撤销提交成功" });
-                            //             onAfterSelect(id);
-                            //         }
-                            //     );
+                            var id = $$(mainGrid.id).getSelectedId(false, true);
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": id })
+                                .then(
+                                    (res) => {
+                                        webix.message({ type: "success", text: "撤销出库成功" });
+                                        onAfterSelectMain(id);
+                                    }
+                                );
                         }
                     }
                 ]

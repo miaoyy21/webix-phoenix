@@ -344,6 +344,7 @@ function builder() {
                         }
                     },
                     mainGrid.actions.refresh(),
+                    { width: 24 },
                     mainGrid.actions.add({ id: btnCreate, label: "新建单据", callback: () => ({ "wgbz": "0", "rklx": "1", "kdrq": utils.users.getDate() }) }),
                     mainGrid.actions.remove({ id: btnDelete, label: "删除单据" }),
                     {
