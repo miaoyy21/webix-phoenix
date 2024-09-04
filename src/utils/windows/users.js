@@ -2,7 +2,7 @@
 import { icons } from "../etc/icons";
 
 // 默认状态
-const DefaultOptions = { multiple: false, cache: true, checked: [], filter: (departId, userId) => true, callback: (select) => { } };
+const DefaultOptions = { title: "选择用户", multiple: false, cache: true, checked: [], filter: (departId, userId) => true, callback: (select) => { } };
 
 const instance = {
     window_id: "phoenix_utils_windows_users",
@@ -91,7 +91,7 @@ instance.ok = function () {
     }
 }
 
-webix.ui({
+var win = webix.ui({
     id: instance.window_id,
     view: "window",
     modal: true,
@@ -101,7 +101,7 @@ webix.ui({
     width: 720,
     headHeight: 40,
     position: "center",
-    head: "用户选择",
+    head: instance.options["title"],
     body: {
         paddingX: 12,
         rows: [
@@ -257,6 +257,7 @@ export function users(options) {
 
     // 参数配置
     instance.options = _.extend({}, DefaultOptions, options);
+    console.log(instance.options);
 
     // 返回数组格式
     if (_.isEmpty(instance.options.checked)) {

@@ -301,15 +301,28 @@ function builder() {
                                 return;
                             }
 
-                            var id = $$(mainGrid.id).getSelectedId(false, true);
-                            webix.ajax()
-                                .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.commit", { "id": id, "allSfData": allSfData })
-                                .then(
-                                    (res) => {
-                                        webix.message({ type: "success", text: "出库确认成功" });
-                                        onAfterSelectMain(id);
-                                    }
-                                );
+                            // 选择领料员
+                            var values = $$(mainGrid.id).getSelectedItem(false, true);
+                            if (_.isEmpty(values)) return;
+
+                            utils.windows.users({
+                                title: "请选择领料员",
+                                multiple: false,
+                                checked: !_.isEmpty(values["lly_id"]) ? [{ "id": values["lly_id"], "user_name_": values["lly"] }] : [],
+                                callback(checked) {
+                                    webix.ajax()
+                                        .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.commit",
+                                            { "id": values["id"], "lly_id": checked["id"], "lly": checked["user_name_"], "allSfData": allSfData },
+                                        ).then(
+                                            (res) => {
+                                                webix.message({ type: "success", text: "出库确认成功" });
+                                                onAfterSelectMain(values["id"]);
+                                            }
+                                        );
+
+                                    return true;
+                                }
+                            })
                         }
                     },
                     {
