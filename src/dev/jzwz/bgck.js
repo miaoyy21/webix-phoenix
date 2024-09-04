@@ -234,11 +234,13 @@ function builder() {
                         view: "richselect", options: [{ id: "0", value: "待出库" }, { id: "1", value: "已出库" }], width: 120, value: "0", labelAlign: "center",
                         on: {
                             onChange(newValue) {
-                                $$(mainGrid.id).clearAll();
-                                $$(mainGrid.id).define("url", mainUrl + "&djzt=" + newValue);
-
                                 djzt = newValue;
-                                if (_.isEqual(newValue, "1")) {
+                                console.log(mainUrl + "&djzt=" + djzt);
+
+                                $$(mainGrid.id).clearAll();
+                                $$(mainGrid.id).define("url", mainUrl + "&djzt=" + djzt);
+
+                                if (_.isEqual(djzt, "1")) {
                                     $$(btnAuto).disable();
                                     $$(btnCommit).disable();
 

@@ -301,7 +301,8 @@ function datatable(options) {
                 opts.id = opts.id || utils.UUID();
 
                 var search = function () {
-                    $$(datatable_id).load(options.url + "&full_filter[" + opts["fields"] + "]=" + this.getValue(), "json", () => { }, true)
+                    var url = $$(datatable_id).config.url;
+                    $$(datatable_id).load(url + "&full_filter[" + opts["fields"] + "]=" + this.getValue(), "json", () => { }, true)
                 }
 
                 return {
