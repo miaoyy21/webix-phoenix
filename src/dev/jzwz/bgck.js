@@ -96,7 +96,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
-            { id: "llrq", hidden: true, header: { text: "领料日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
+            { id: "llrq", hidden: true, header: { text: "出库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -130,14 +130,17 @@ function builder() {
         onClick: {
             button_unCommit: function (e, item) {
                 var row = this.getItem(item.row);
-                webix.ajax()
-                    .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": row["id"] })
-                    .then(
-                        (res) => {
-                            webix.message({ type: "success", text: "撤销出库成功" });
-                            onAfterSelectMain(row["sq_id"]);
-                        }
-                    );
+                webix.message({ type: "confirm-error", title: "系统提示", text: "是否撤销物资【" + row["wzbh"] + "】的出库记录？" })
+                    .then(function (res) {
+                        webix.ajax()
+                            .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": row["id"] })
+                            .then(
+                                (res) => {
+                                    webix.message({ type: "success", text: "撤销出库成功" });
+                                    onAfterSelectMain(row["sq_id"]);
+                                }
+                            );
+                    });
             },
         },
     });
@@ -318,6 +321,8 @@ function builder() {
                                         ).then(
                                             (res) => {
                                                 webix.message({ type: "success", text: "出库确认成功" });
+
+                                                allSfData = {};
                                                 onAfterSelectMain(values["id"]);
                                             }
                                         );
@@ -337,8 +342,7 @@ function builder() {
                         body: {
                             rows: [
                                 { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,gcbh,gcmc,sqry,sqbm,lly", autoWidth: true })] },
-                                mainGrid,
-                                mainPager
+                                mainGrid, mainPager
                             ],
                         },
                     },
@@ -353,8 +357,7 @@ function builder() {
                                     gravity: 2,
                                     rows: [
                                         { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 28 }] },
-                                        kcGrid,
-                                        { cols: [{ width: 120 }, kcPager] }
+                                        kcGrid, kcPager
                                     ]
                                 }
                             ]
