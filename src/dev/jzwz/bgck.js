@@ -6,7 +6,6 @@ function builder() {
 
     var btnAuto = utils.UUID();
     var btnCommit = utils.UUID();
-    var btnUnCommit = utils.UUID();
 
     var djzt = "0"; // 单据状态：0: 待出库   1: 已出库
     var allSfData = {}; // 本次实发 Map{ "领料单明细ID": Map["库存ID"] "实发数量" };
@@ -24,28 +23,6 @@ function builder() {
                     $$(mxGrid.id).define("data", values);
 
                     allSfData = {}; // 清空本次实发
-                    if (_.findIndex(values["data"], (row) => (row["zt"] != "0")) >= 0) {
-                        $$(mxGrid.id).define("editable", false);
-                        $$(btnCommit).disable();
-
-                        if (_.findIndex(values["data"], (row) => (row["zt"] != "0" && row["zt"] != "1")) >= 0) {
-                            $$(btnUnCommit).disable();
-                        } else {
-                            $$(btnUnCommit).enable();
-                        }
-
-                        if (_.findIndex(values["data"], (row) => (row["zt"] == "0" || row["zt"] == "1")) >= 0) {
-                            mxGrid.actions.hideColumn("buttons", false);
-                        } else {
-                            mxGrid.actions.hideColumn("buttons", true);
-                        }
-                    } else {
-                        $$(mxGrid.id).define("editable", true);
-                        $$(btnCommit).enable();
-                        $$(btnUnCommit).disable();
-
-                        mxGrid.actions.hideColumn("buttons", false);
-                    }
                 }
             );
     }
@@ -114,7 +91,7 @@ function builder() {
         drag: false,
         url: null,
         leftSplit: 5,
-        rightSplit: 0,
+        rightSplit: 1,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
@@ -129,6 +106,18 @@ function builder() {
             { id: "lly", hidden: true, header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bgy", hidden: true, header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true, minWidth: 240 },
+            {
+                id: "buttons",
+                hidden: true,
+                width: 80,
+                header: { text: "操作按钮", css: { "text-align": "center" } },
+                tooltip: false,
+                template() {
+                    return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
+                                <button webix_tooltip="撤销出库" type="button" class="button_unCommit webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-comment-remove"/> </button>
+                            </div>`;
+                },
+            }
         ],
         on: {
             onAfterSelect: (selection, preserve) => onAfterSelectMx(selection.id),
@@ -137,6 +126,19 @@ function builder() {
                     $$(kcGrid.id).define("data", []);
                 }
             }
+        },
+        onClick: {
+            button_unCommit: function (e, item) {
+                var row = this.getItem(item.row);
+                webix.ajax()
+                    .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": row["id"] })
+                    .then(
+                        (res) => {
+                            webix.message({ type: "success", text: "撤销出库成功" });
+                            onAfterSelectMain(row["sq_id"]);
+                        }
+                    );
+            },
         },
     });
 
@@ -236,22 +238,22 @@ function builder() {
                                 if (_.isEqual(newValue, "1")) {
                                     $$(btnAuto).disable();
                                     $$(btnCommit).disable();
-                                    $$(btnUnCommit).enable();
 
                                     mxGrid.actions.hideColumn("llrq", false);
                                     mxGrid.actions.hideColumn("bgy", false);
                                     mxGrid.actions.hideColumn("lly", false);
+                                    mxGrid.actions.hideColumn("buttons", false);
 
                                     kcGrid.actions.hideColumn("kcsl", true);
                                     kcGrid.actions.hideColumn("checked", true);
                                 } else {
                                     $$(btnAuto).enable();
                                     $$(btnCommit).enable();
-                                    $$(btnUnCommit).disable();
 
                                     mxGrid.actions.hideColumn("llrq", true);
                                     mxGrid.actions.hideColumn("bgy", true);
                                     mxGrid.actions.hideColumn("lly", true);
+                                    mxGrid.actions.hideColumn("buttons", true);
 
                                     kcGrid.actions.hideColumn("kcsl", false);
                                     kcGrid.actions.hideColumn("checked", false);
@@ -325,20 +327,6 @@ function builder() {
                             })
                         }
                     },
-                    {
-                        id: btnUnCommit, view: "button", label: "撤销出库", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-comment-remove",
-                        click() {
-                            var id = $$(mainGrid.id).getSelectedId(false, true);
-                            webix.ajax()
-                                .post("/api/sys/data_service?service=JZWZ_WZLLSQWJ.unCommit", { "id": id })
-                                .then(
-                                    (res) => {
-                                        webix.message({ type: "success", text: "撤销出库成功" });
-                                        onAfterSelectMain(id);
-                                    }
-                                );
-                        }
-                    }
                 ]
             },
             {
