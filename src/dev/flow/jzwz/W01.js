@@ -90,7 +90,7 @@ function builder(options, values) {
                     var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
 
                     if (qls > kcsl) {
-                        webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
+                        webix.message({ type: "info", text: "请领数量不能大于库存数量！" });
                         data["qls"] = kcsl;
                         return;
                     }
@@ -138,7 +138,7 @@ function builder(options, values) {
 
                                     var values = _.filter($$(dlgGrid.id).serialize(true), (row) => (row["checked"] == "1"));
                                     if (_.size(values) < 1) {
-                                        webix.message({ type: "danger", text: "请选择待领物资！" });
+                                        webix.message({ type: "error", text: "请选择待领物资！" });
                                         return;
                                     }
 
@@ -277,7 +277,7 @@ function builder(options, values) {
                 var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
 
                 if (qls > kcsl) {
-                    webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
+                    webix.message({ type: "info", text: "请领数量不能大于库存数量！" });
                     data["qls"] = kcsl;
                     return;
                 }

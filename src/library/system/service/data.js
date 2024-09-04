@@ -64,7 +64,7 @@ function builder() {
                             },
                             {},
                             {
-                                view: "button", label: "确定", autowidth: true, css: "webix_primary",
+                                view: "button", label: "临时保存", autowidth: true, css: "webix_primary",
                                 click() {
                                     if (!$$(form_id).validate()) return;
 
@@ -90,7 +90,6 @@ function builder() {
                                                     $$(service_grid_id).updateItem(values["id"], row);
                                                 }
 
-                                                $$(window_id).close();
                                                 webix.message({ type: "success", text: "保存成功" });
                                             });
                                         })

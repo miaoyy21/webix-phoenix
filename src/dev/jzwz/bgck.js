@@ -7,11 +7,13 @@ function builder() {
     var btnCommit = utils.UUID();
     var btnUnCommit = utils.UUID();
 
+    var allSfData = {}; // 本次实发 Map{ "领料单明细ID": Map["库存ID"] "实发数量" };
+
     // 列表选择事件
     function onAfterSelectMain(id) {
         $$(mxGrid.id).clearAll();
 
-        // 重新加载数据
+        // 重新加载
         webix.ajax()
             .get(mxUrl, { "sq_id": id })
             .then(
@@ -19,6 +21,7 @@ function builder() {
                     var values = res.json();
                     $$(mxGrid.id).define("data", values);
 
+                    allSfData = {}; // 清空本次实发
                     if (_.findIndex(values["data"], (row) => (row["zt"] != "0")) >= 0) {
                         $$(mxGrid.id).define("editable", false);
                         $$(btnCommit).disable();
@@ -50,14 +53,18 @@ function builder() {
         var row = $$(mxGrid.id).getItem(id);
         $$(kcGrid.id).clearAll();
 
-
         // 重新加载数据
         webix.ajax()
             .get(kcUrl, { "wzbh": row["wzbh"] })
             .then(
                 (res) => {
-                    var values = res.json();
-                    $$(kcGrid.id).define("data", values);
+                    var values = res.json()["data"];
+                    var newValues = _.map(values, (value) => {
+                        var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0)) || 0;
+                        return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
+                    });
+
+                    $$(kcGrid.id).define("data", newValues);
                 }
             );
     }
@@ -68,16 +75,11 @@ function builder() {
         editable: false,
         drag: false,
         url: mainUrl + "&djzt=0",
-        save: {
-            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJ.save",
-            updateFromResponse: true,
-            trackMove: true,
-            operationName: "operation",
-        },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -107,10 +109,11 @@ function builder() {
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+            { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
-            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            // { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+            // { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
             { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right", "background": "#d6eaf8" }, format: "1,111.00", width: 80 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
@@ -133,8 +136,9 @@ function builder() {
     var kcPager = utils.protos.pager();
     var kcGrid = utils.protos.datatable({
         editable: true,
+        drag: false,
         url: null,
-        leftSplit: 4,
+        leftSplit: 3,
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -142,31 +146,64 @@ function builder() {
                 id: "checked", header: { text: "✓", css: { "text-align": "center" } }, css: { "text-align": "center" },
                 options: utils.dicts["checked"], adjust: true, width: 40
             },
-            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
-            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "kcsl", header: { text: "库存数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
+            { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
+            // { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            // { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
+            // { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: "1,111.00", width: 80 },
             {
-                id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, editor: "text",
+                id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),
                 css: { "text-align": "right", "background": "#d5f5e3" },
                 width: 80
             },
+            { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
+            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 180 },
-            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", fillspace: true, minWidth: 240 },
+            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true, minWidth: 240 },
         ],
         on: {
-            onDataUpdate(id, data, old) {
-                // var kcsl = utils.formats.number.editParse(data["kcsl"], 2) || 0;
-                // var qls = utils.formats.number.editParse(data["qls"], 2) || 0;
+            onDataUpdate(id, kcData, old) {
+                var mxData = $$(mxGrid.id).getSelectedItem();
+                console.log(mxData, mxData["qls"]);
+                var qls = utils.formats.number.editParse(mxData["qls"], 2) || 0;
 
-                // if (qls > kcsl) {
-                //     webix.message({ type: "danger", text: "请领数量不能大于库存数量！" });
-                //     data["qls"] = kcsl;
-                //     return;
-                // }
+                // 除去本条记录的总实发数量
+                var sumSfs = 0;
+                if (_.has(allSfData, mxData["id"])) {
+                    var sumData = _.reject(allSfData[mxData["id"]], (v, k) => (k == id));
+                    sumSfs = _.reduce(_.values(sumData), function (total, sfs) { return total + sfs; }, 0)
+                } else {
+                    allSfData[mxData["id"]] = {};
+                }
+
+
+                var kcsl = utils.formats.number.editParse(kcData["kcsl"], 2) || 0;
+                var sfs = utils.formats.number.editParse(kcData["sfs"], 2) || 0;
+                if (sfs > kcsl) {
+                    webix.message({ type: "info", text: "实发数量不能大于库存数量！" });
+                    sfs = kcsl;
+                }
+
+                if (sumSfs + sfs > qls) {
+                    webix.message({ type: "info", text: "实发数量总和不能大于请领数量！" });
+                    sfs = qls - sumSfs;
+                }
+
+                allSfData[mxData["id"]][id] = sfs;
+
+                mxData["sfs"] = sumSfs + sfs;
+                kcData["sfs"] = sfs;
+                kcData["checked"] = sfs > 0 ? "1" : "0";
+                $$(mxGrid.id).updateItem(mxData["id"], mxData);
             },
         },
         pager: kcPager.id
@@ -198,7 +235,33 @@ function builder() {
                     {
                         id: btnAuto, view: "button", label: "自动销账", autowidth: true, css: "webix_secondary", type: "icon", icon: "mdi mdi-18px mdi-calculator",
                         click() {
-                            console.log("自动销账");
+                            var id = $$(mainGrid.id).getSelectedId(false, true);
+                            webix.ajax()
+                                .get("/api/sys/data_service?service=JZWZ_WZLLSQWJ.auto", { "id": id })
+                                .then(
+                                    (res) => {
+                                        console.log("销账数据返回 => ", res.json());
+
+                                        allSfData = res.json();
+                                        webix.message({ type: "success", text: "自动销账成功，请进行出库确认！" });
+
+                                        // 刷新明细
+                                        var mxValues = $$(mxGrid.id).serialize(true);
+                                        _.each(mxValues, (value) => {
+                                            var sumSfs = 0;
+                                            if (_.has(allSfData, value["id"])) {
+                                                sumSfs = _.reduce(_.values(allSfData[value["id"]]), function (total, sfs) { return total + sfs; }, 0)
+                                            }
+
+                                            value["sfs"] = sumSfs;
+                                            $$(mxGrid.id).updateItem(value["id"], value);
+                                        })
+
+                                        // 刷新选中的领料明细的库存
+                                        var mxId = $$(mxGrid.id).getSelectedId(false, true);
+                                        if (mxId) onAfterSelectMx(mxId);
+                                    }
+                                );
                         }
                     },
                     {
@@ -235,7 +298,7 @@ function builder() {
                 cols: [
                     {
                         view: "scrollview",
-                        width: 360,
+                        width: 320,
                         body: {
                             rows: [
                                 { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,gcbh,gcmc,sqry,sqbm,lly", autoWidth: true })] },

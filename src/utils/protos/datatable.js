@@ -364,6 +364,9 @@ function datatable(options) {
         })
     }
 
+    // 如果用户未提供保存的配置，那么默认就是不需要提交服务端
+    options["save"] = options["save"] || {};
+
     return _.extend(_options, options, { view: "datatable" });
 }
 
