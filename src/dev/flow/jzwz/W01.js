@@ -55,8 +55,8 @@ function builder(options, values) {
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 {
-                    id: "checked", header: { text: "选择", css: { "text-align": "center" } }, css: { "text-align": "center" },
-                    options: utils.dicts["checked"], adjust: true, width: 50
+                    id: "checked", header: { text: "✓", css: { "text-align": "center" } }, css: { "text-align": "center" },
+                    options: utils.dicts["checked"], adjust: true, width: 40
                 },
                 { id: "xyzt", header: { text: "选用要求", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -299,7 +299,7 @@ function builder(options, values) {
         click: openWzye
     };
 
-    // 请假单
+    // 返回表单UI
     return {
         show() {
             return {

@@ -1,12 +1,14 @@
 function builder() {
     const mainUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJ.query_bgck";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query";
+    const kcUrl = "/api/sys/data_service?service=JZWZ_WZYE.query_self";
 
     var btnAuto = utils.UUID();
     var btnCommit = utils.UUID();
     var btnUnCommit = utils.UUID();
 
-    function onAfterSelect(id) {
+    // 列表选择事件
+    function onAfterSelectMain(id) {
         $$(mxGrid.id).clearAll();
 
         // 重新加载数据
@@ -43,6 +45,23 @@ function builder() {
             );
     }
 
+    // 明细选择事件
+    function onAfterSelectMx(id) {
+        var row = $$(mxGrid.id).getItem(id);
+        $$(kcGrid.id).clearAll();
+
+
+        // 重新加载数据
+        webix.ajax()
+            .get(kcUrl, { "wzbh": row["wzbh"] })
+            .then(
+                (res) => {
+                    var values = res.json();
+                    $$(kcGrid.id).define("data", values);
+                }
+            );
+    }
+
     /********** 出库单列表 **********/
     var mainPager = utils.protos.pager();
     var mainGrid = utils.protos.datatable({
@@ -69,7 +88,7 @@ function builder() {
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
         ],
         on: {
-            onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
+            onAfterSelect: (selection, preserve) => onAfterSelectMain(selection.id),
             onAfterLoad() {
                 if (this.count() < 1) {
                     $$(mxGrid.id).define("data", []);
@@ -86,12 +105,6 @@ function builder() {
         url: null,
         leftSplit: 4,
         rightSplit: 0,
-        save: {
-            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.save",
-            updateFromResponse: true,
-            trackMove: true,
-            operationName: "operation",
-        },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
@@ -105,6 +118,14 @@ function builder() {
             { id: "bgy", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
         ],
+        on: {
+            onAfterSelect: (selection, preserve) => onAfterSelectMx(selection.id),
+            onAfterLoad() {
+                if (this.count() < 1) {
+                    $$(kcGrid.id).define("data", []);
+                }
+            }
+        },
     });
 
 
@@ -112,11 +133,15 @@ function builder() {
     var kcPager = utils.protos.pager();
     var kcGrid = utils.protos.datatable({
         editable: true,
-        url: "/api/sys/data_service?service=JZWZ_WZYE.query_wzye",
-        leftSplit: 3,
+        url: null,
+        leftSplit: 4,
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            {
+                id: "checked", header: { text: "✓", css: { "text-align": "center" } }, css: { "text-align": "center" },
+                options: utils.dicts["checked"], adjust: true, width: 40
+            },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
