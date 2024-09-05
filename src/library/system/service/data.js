@@ -10,6 +10,7 @@ function builder() {
             view: "window",
             fullscreen: true,
             close: true,
+            move: true,
             head: "数据服务",
             position: "center",
             body: {

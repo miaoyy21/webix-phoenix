@@ -26,6 +26,7 @@ window.form = function (options) {
             position: "center",
             close: true,
             modal: true,
+            move: true,
             width: 480,
             height: 360,
             callback(value) {

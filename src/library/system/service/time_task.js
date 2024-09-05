@@ -11,6 +11,7 @@ function builder() {
             view: "window",
             close: true,
             modal: true,
+            move: true,
             width: 800,
             height: 640,
             animate: { type: "flip", subtype: "vertical" },

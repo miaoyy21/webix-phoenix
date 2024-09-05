@@ -1,5 +1,6 @@
 function builder() {
     var winId = utils.UUID();
+    var winImportId = utils.UUID();
     var formId = winId + "_form";
     var pager = utils.protos.pager();
 
@@ -54,12 +55,14 @@ function builder() {
         pager: pager.id
     });
 
+    /******************************************* 打开编辑窗口 *******************************************/
     function open(options) {
         webix.ui({
             id: winId,
             view: "window",
             close: true,
             modal: true,
+            move: true,
             width: 600,
             height: 450,
             animate: { type: "flip", subtype: "vertical" },
@@ -269,6 +272,150 @@ function builder() {
         }).show();
     }
 
+    /************************************************** 上传数据匹配 **************************************************/
+    function openImport(id) {
+
+        // webix.ajax()
+        //     .post("/api/sys/docs?method=Download", { "id": id }).
+        //     then(
+        //         (res) => {
+        //             console.log("res  ====>  ", res);
+        //         }
+        //     );
+
+        webix.ui({
+            id: winImportId,
+            view: "window",
+            close: true,
+            modal: true,
+            move: true,
+            width: 720,
+            height: 420,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "物资导入匹配",
+            position: "center",
+            body: {
+                rows: [
+                    utils.protos.datatable({
+                        datatype: "excel",
+                        hidden: true,
+                        autoConfig: true,
+                        url: "binary->/api/sys/docs?method=Download&id=" + id,
+                        columns: [],
+                        on: {
+                            onAfterLoad() {
+                                var data = this.serialize(true);
+
+                                // 获取表头
+                                var aliasName = {}; // 表格列名 : 数据库列名
+                                _.map(_.first(data), (name, alias) => {
+                                    switch (name) {
+                                        case "物资名称":
+                                            aliasName[alias] = "wzmc";
+                                            break;
+                                        case "规格型号":
+                                        case "型号规格":
+                                            aliasName[alias] = "ggxh";
+                                            break;
+                                        case "计量单位":
+                                        case "单位":
+                                            aliasName[alias] = "jldw";
+                                            break;
+                                        case "牌号":
+                                        case "材料牌号":
+                                        case "物资牌号":
+                                            aliasName[alias] = "wzph";
+                                            break;
+                                        case "代号":
+                                        case "标准代号":
+                                            aliasName[alias] = "bzdh";
+                                            break;
+                                        case "生产厂家":
+                                            aliasName[alias] = "sccjmc";
+                                            break;
+                                        case "报验类型":
+                                            aliasName[alias] = "bylx";
+                                            break;
+                                        case "报验要求":
+                                        case "检验要求":
+                                            aliasName[alias] = "byyq";
+                                            break;
+                                        case "仓库":
+                                        case "仓库名称":
+                                            aliasName[alias] = "ckmc";
+                                            break;
+                                        case "采购员":
+                                            aliasName[alias] = "cgy";
+                                            break;
+                                        case "备注":
+                                            aliasName[alias] = "bz";
+                                            break;
+                                        default:
+                                    }
+                                })
+
+                                var newData = [];
+                                _.each(data.slice(1), (row, index) => {
+                                    var newRow = {};
+                                    _.each(row, (value, column) => {
+                                        if (_.has(aliasName, column)) {
+                                            newRow[_.get(aliasName, column)] = value;
+                                        }
+                                    })
+
+                                    newData.push(newRow);
+                                })
+
+                                $$(winImportId + "_import").define("data", newData);
+                            }
+                        }
+                    }),
+                    utils.protos.datatable({
+                        id: winImportId + "_import",
+                        url: null,
+                        leftSplit: 0,
+                        rightSplit: 0,
+                        data: [],
+                        columns: [
+                            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                            { id: "result", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 160 },
+                            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
+                            { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
+                            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                            { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
+                            { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 120 },
+                            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+                            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
+                        ],
+                    }),
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            {},
+                            {
+                                view: "button", width: 80, label: "匹配", css: "webix_primary",
+                                click() {
+                                }
+                            },
+                            { width: 8 },
+                            { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winImportId).hide() },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
     return {
         rows: [
             {
@@ -287,6 +434,20 @@ function builder() {
                     },
                     datatable.actions.refresh(),
                     {},
+                    {
+                        view: "uploader",
+                        value: "上传",
+                        inputWidth: 120,
+                        apiOnly: true,
+                        accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
+                        multiple: false,
+                        upload: "/api/sys/docs?method=Upload",
+                        on: {
+                            onUploadComplete(response) {
+                                openImport(response["value"]);
+                            }
+                        }
+                    },
                     datatable.actions.search({ fields: "wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy" }),
                 ]
             },

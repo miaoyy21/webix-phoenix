@@ -47,6 +47,7 @@ function builder() {
             view: "window",
             close: true,
             modal: true,
+            move: true,
             width: 520,
             height: 390,
             animate: { type: "flip", subtype: "vertical" },

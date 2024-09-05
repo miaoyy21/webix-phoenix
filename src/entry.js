@@ -278,6 +278,7 @@ function change_password() {
         view: "window",
         modal: true,
         close: true,
+        move: true,
         height: 420,
         width: 360,
         headHeight: 40,
