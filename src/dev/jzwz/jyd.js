@@ -163,6 +163,7 @@ function builder() {
             drag: false,
             url: qUrl + "&pager=true",
             leftSplit: 3,
+            rightSplit: 0,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
