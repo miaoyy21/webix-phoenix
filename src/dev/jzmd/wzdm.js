@@ -306,7 +306,6 @@ function builder() {
                         docId: docId,
                         mapping: mapping,
                         onData(data) {
-                            console.log(data);
                             webix.ajax()
                                 .post("/api/sys/data_service?service=JZMD_WZDM.match", { data: data })
                                 .then(
@@ -319,35 +318,40 @@ function builder() {
                                 );
                         }
                     }),
-                    utils.protos.datatable({
-                        id: winImportId + "_import",
-                        editable: false,
-                        drag: false,
-                        sort: false,
-                        url: null,
-                        leftSplit: 0,
-                        rightSplit: 0,
-                        data: [],
-                        columns: [
-                            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
-                            utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
-                            { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
-                            { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
-                            { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
-                            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-                            { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
-                            { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 120 },
-                            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
-                            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                            { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                            { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
-                            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
-                        ],
-                        styles: {
-                            cellTextColor: function (row, col) { return row["flag"] == "0" ? "red" : "none" }
-                        },
-                    }),
+                    {
+                        paddingX: 8,
+                        cols: [
+                            utils.protos.datatable({
+                                id: winImportId + "_import",
+                                editable: false,
+                                drag: false,
+                                sort: false,
+                                url: null,
+                                leftSplit: 0,
+                                rightSplit: 0,
+                                data: [],
+                                columns: [
+                                    { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                                    utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
+                                    { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
+                                    { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
+                                    { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
+                                    { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                                    { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
+                                    { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 120 },
+                                    { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                                    { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                                    { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                                    { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                                    { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+                                    { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
+                                ],
+                                styles: {
+                                    cellTextColor: function (row, col) { return row["flag"] == "0" ? "red" : "none" }
+                                },
+                            })
+                        ]
+                    },
                     {
                         view: "toolbar",
                         borderless: true,
