@@ -8,7 +8,6 @@ function builder() {
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
-        footer: true,
         url: null,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
