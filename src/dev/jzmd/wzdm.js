@@ -417,7 +417,7 @@ function builder() {
                     },
                     datatable.actions.refresh(),
                     { width: 24 },
-                    utils.protos.importExcelButton({ onImport(docId) { openImport(docId) } }),
+                    utils.protos.importExcelButton({ onImport: openImport }),
                     {},
                     datatable.actions.search({ fields: "wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy" }),
                 ]

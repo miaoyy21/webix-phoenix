@@ -317,6 +317,11 @@ function builder() {
         }
     });
 
+    /************************* 物资清单导入 *************************/
+    function openImport(docId) {
+
+    }
+
     return {
         rows: [
             {
@@ -432,10 +437,7 @@ function builder() {
                                                         })
                                                     }
                                                 },
-                                                {
-                                                    id: btnMxImport, view: "button", label: "物资导入", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-database-import",
-                                                    click() { }
-                                                },
+                                                utils.protos.importExcelButton({ id: btnMxImport, label: "物资导入", onImport: openImport }),
                                             ]
                                         },
                                         mxGrid

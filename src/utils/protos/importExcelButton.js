@@ -1,13 +1,16 @@
 function importExcelButton(options) {
-    options = options || {
+    options = _.extend({
+        id: utils.UUID(),
+        label: "Excel导入",
         onImport(docId) {
             // 文档ID
         }
-    };
+    }, options);
 
     return {
+        id: options["id"],
         view: "uploader",
-        label: "Excel导入",
+        label: options["label"],
         type: "icon",
         icon: "mdi mdi-18px mdi-microsoft-excel",
         inputWidth: 100,

@@ -1,12 +1,13 @@
 function importExcel(options) {
-    options = options || {
-        docId: "xxxxxx",
+    options = _.extend({
+        id: utils.UUID(),
+        docId: "*******",
         mapping: { "字段名": ["备选列名1", "备选列名2"] || "列名" },
         onData(data) { }
-    };
+    }, options);
 
     return {
-        id: utils.UUID(),
+        id: options["id"],
         view: "datatable",
         datatype: "excel",
         hidden: true,
