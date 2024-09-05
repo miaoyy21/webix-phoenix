@@ -273,21 +273,8 @@ function builder() {
     }
 
     /************************************************** 上传数据匹配 **************************************************/
-    function openImport(id) {
-        // 导入字段映射
-        var mapping = {
-            "wzmc": "物资名称",
-            "ggxh": ["规格型号", "型号规格", "型号"],
-            "jldw": ["计量单位", "单位"],
-            "wzph": ["物资牌号", "材料牌号", "牌号"],
-            "bzdh": ["标准代号", "代号"],
-            "sccjmc": "生产厂家",
-            "bylx": "报验类型",
-            "byyq": ["报验要求", "检验要求"],
-            "ckmc": ["仓库名称", "仓库"],
-            "cgy": "采购员",
-            "bz": "备注"
-        }
+    function openImport(docId) {
+        console.log(docId);
 
         webix.ui({
             id: winImportId,
@@ -302,17 +289,48 @@ function builder() {
             position: "center",
             body: {
                 rows: [
-                    utils.protos.importExcel({ docId: id, mapping: mapping, onData(data) { $$(winImportId + "_import").define("data", data) } }),
+                    utils.protos.importExcel({
+                        docId: docId,
+                        mapping: {
+                            "wzmc": "物资名称",
+                            "ggxh": ["规格型号", "型号规格", "型号"],
+                            "jldw": ["计量单位", "单位"],
+                            "wzph": ["物资牌号", "材料牌号", "牌号"],
+                            "bzdh": ["标准代号", "代号"],
+                            "sccjmc": "生产厂家",
+                            "bylx": "报验类型",
+                            "byyq": ["报验要求", "检验要求"],
+                            "ckmc": ["仓库名称", "仓库"],
+                            "cgy": "采购员",
+                            "bz": "备注"
+                        },
+                        onData(data) {
+                            console.log(data);
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZMD_WZDM.match", { data: data })
+                                .then(
+                                    (res) => {
+                                        console.log(res.json());
+
+                                        $$(winImportId + "_import").define("data", res.json());
+                                        $$(winImportId + "_import").hideOverlay();
+                                    }
+                                );
+                        }
+                    }),
                     utils.protos.datatable({
                         id: winImportId + "_import",
+                        editable: false,
+                        drag: false,
+                        sort: false,
                         url: null,
                         leftSplit: 0,
                         rightSplit: 0,
                         data: [],
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-                            { id: "result", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 160 },
-                            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                            utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
+                            { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
                             { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
                             { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
                             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -325,6 +343,9 @@ function builder() {
                             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
                             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
                         ],
+                        styles: {
+                            cellTextColor: function (row, col) { return row["flag"] == "0" ? "red" : "none" }
+                        },
                     }),
                     {
                         view: "toolbar",
@@ -333,7 +354,12 @@ function builder() {
                         cols: [
                             {},
                             {
-                                view: "button", width: 80, label: "匹配", css: "webix_primary",
+                                view: "button", width: 80, label: "匹配", css: "webix_secondary",
+                                click() {
+                                }
+                            },
+                            {
+                                view: "button", width: 80, label: "确认", css: "webix_primary",
                                 click() {
                                 }
                             },
@@ -345,7 +371,10 @@ function builder() {
                     { height: 8 }
                 ]
             },
-            on: { onHide() { this.close() } }
+            on: {
+                onShow() { $$(winImportId + "_import").showOverlay("正在匹配清单 ...") },
+                onHide() { this.close() }
+            }
         }).show();
     }
 
@@ -374,10 +403,10 @@ function builder() {
                         apiOnly: true,
                         accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
                         multiple: false,
-                        upload: "/api/sys/docs?method=Upload",
+                        upload: "/api/sys/docs?method=Import",
                         on: {
-                            onUploadComplete(response) {
-                                openImport(response["value"]);
+                            onUploadComplete(res) {
+                                openImport(res["value"]);
                             }
                         }
                     },

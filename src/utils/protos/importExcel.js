@@ -17,17 +17,16 @@ function importExcel(options) {
             onAfterLoad() {
                 var data = this.serialize(true);
 
-
                 // 获取表头
                 var aliasName = {}; // 表格列名 : 数据库列名
                 _.map(_.first(data), (name, alias) => {
-                    var findKey = _.findKey(options["mapping"], (v, k) => {
-                        if (_.isString(v)) {
-                            return v == name;
+                    var findKey = _.findKey(options["mapping"], (s, k) => {
+                        if (_.isString(s)) {
+                            return s == name;
                         }
 
 
-                        return _.findIndex(v, (v0) => v0 == name) >= 0;
+                        return _.findIndex(s, (v0) => v0 == name) >= 0;
                     });
 
                     if (findKey) {
@@ -36,18 +35,22 @@ function importExcel(options) {
                 })
 
                 var newData = [];
-                _.each(data.slice(1), (row, index) => {
+                // console.log("aliasName  data[1:] => ", aliasName, data.slice(1));
+
+                newData = _.map(data.slice(1), (row, index) => {
                     var newRow = {};
-                    _.each(row, (value, column) => {
-                        if (_.has(aliasName, column)) {
-                            newRow[_.get(aliasName, column)] = value;
+                    _.mapObject(row, (val, col) => {
+                        if (_.has(aliasName, col)) {
+                            newRow[_.get(aliasName, col)] = val.toString();
                         }
                     })
 
-                    newData.push(newRow);
+                    return newRow;
                 })
 
-                options["onData"](newData);
+                setTimeout(function () {
+                    options["onData"](newData);
+                }, 500)
             }
         }
     };
