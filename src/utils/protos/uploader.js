@@ -71,7 +71,7 @@ function uploader(options) {
                                 onItemClick(id, e, node) {
                                     var item = $$(list_id).getItem(id);
 
-                                    webix.ajax().response("blob").post("/api/sys/docs?method=Download", { id: id }, function (text, data) {
+                                    webix.ajax().response("blob").get("/api/sys/docs?method=Download", { id: id }, function (text, data) {
                                         webix.html.download(data, item ? item["name"] : id);
                                     });
                                 }

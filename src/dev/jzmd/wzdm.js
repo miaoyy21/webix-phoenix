@@ -274,14 +274,20 @@ function builder() {
 
     /************************************************** 上传数据匹配 **************************************************/
     function openImport(id) {
-
-        // webix.ajax()
-        //     .post("/api/sys/docs?method=Download", { "id": id }).
-        //     then(
-        //         (res) => {
-        //             console.log("res  ====>  ", res);
-        //         }
-        //     );
+        // 导入字段映射
+        var mapping = {
+            "wzmc": "物资名称",
+            "ggxh": ["规格型号", "型号规格", "型号"],
+            "jldw": ["计量单位", "单位"],
+            "wzph": ["物资牌号", "材料牌号", "牌号"],
+            "bzdh": ["标准代号", "代号"],
+            "sccjmc": "生产厂家",
+            "bylx": "报验类型",
+            "byyq": ["报验要求", "检验要求"],
+            "ckmc": ["仓库名称", "仓库"],
+            "cgy": "采购员",
+            "bz": "备注"
+        }
 
         webix.ui({
             id: winImportId,
@@ -292,84 +298,11 @@ function builder() {
             width: 720,
             height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "物资导入匹配",
+            head: "物资匹配导入",
             position: "center",
             body: {
                 rows: [
-                    utils.protos.datatable({
-                        datatype: "excel",
-                        hidden: true,
-                        autoConfig: true,
-                        url: "binary->/api/sys/docs?method=Download&id=" + id,
-                        columns: [],
-                        on: {
-                            onAfterLoad() {
-                                var data = this.serialize(true);
-
-                                // 获取表头
-                                var aliasName = {}; // 表格列名 : 数据库列名
-                                _.map(_.first(data), (name, alias) => {
-                                    switch (name) {
-                                        case "物资名称":
-                                            aliasName[alias] = "wzmc";
-                                            break;
-                                        case "规格型号":
-                                        case "型号规格":
-                                            aliasName[alias] = "ggxh";
-                                            break;
-                                        case "计量单位":
-                                        case "单位":
-                                            aliasName[alias] = "jldw";
-                                            break;
-                                        case "牌号":
-                                        case "材料牌号":
-                                        case "物资牌号":
-                                            aliasName[alias] = "wzph";
-                                            break;
-                                        case "代号":
-                                        case "标准代号":
-                                            aliasName[alias] = "bzdh";
-                                            break;
-                                        case "生产厂家":
-                                            aliasName[alias] = "sccjmc";
-                                            break;
-                                        case "报验类型":
-                                            aliasName[alias] = "bylx";
-                                            break;
-                                        case "报验要求":
-                                        case "检验要求":
-                                            aliasName[alias] = "byyq";
-                                            break;
-                                        case "仓库":
-                                        case "仓库名称":
-                                            aliasName[alias] = "ckmc";
-                                            break;
-                                        case "采购员":
-                                            aliasName[alias] = "cgy";
-                                            break;
-                                        case "备注":
-                                            aliasName[alias] = "bz";
-                                            break;
-                                        default:
-                                    }
-                                })
-
-                                var newData = [];
-                                _.each(data.slice(1), (row, index) => {
-                                    var newRow = {};
-                                    _.each(row, (value, column) => {
-                                        if (_.has(aliasName, column)) {
-                                            newRow[_.get(aliasName, column)] = value;
-                                        }
-                                    })
-
-                                    newData.push(newRow);
-                                })
-
-                                $$(winImportId + "_import").define("data", newData);
-                            }
-                        }
-                    }),
+                    utils.protos.importExcel({ docId: id, mapping: mapping, onData(data) { $$(winImportId + "_import").define("data", data) } }),
                     utils.protos.datatable({
                         id: winImportId + "_import",
                         url: null,
