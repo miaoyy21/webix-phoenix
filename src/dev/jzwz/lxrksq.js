@@ -420,7 +420,7 @@ function builder() {
                                     var data = _.filter(allData, (row) => (row["flag"] == "1"));
                                     var rkdid = $$(mainGrid.id).getSelectedId(false, true);
                                     if (_.size(data) < 1 || _.isEmpty(rkdid)) {
-                                        webix.message({ type: "error", text: "没有可导入的物资" });
+                                        webix.message({ type: "error", text: "没有可导入的采购物资记录！" });
                                         return;
                                     }
 
@@ -565,6 +565,7 @@ function builder() {
                                                         })
                                                     }
                                                 },
+                                                { width: 24 },
                                                 utils.protos.importExcelButton({ id: btnMxImport, label: "物资导入", onImport: openImport }),
                                             ]
                                         },
