@@ -5,11 +5,12 @@ function builder() {
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
-        url: mainUrl + "&zt=1",
+        url: mainUrl + "&jyzt=0",
         leftSplit: 5,
         rightSplit: 0,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+            { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -44,11 +45,11 @@ function builder() {
                         gravity: 2,
                         cols: [
                             {
-                                view: "richselect", label: "状态：", labelAlign: "right", labelWidth: 60, options: [{ id: "1", value: "待检" }, { id: "5", value: "已检" }, { id: "9", value: "入库" }], value: "1", width: 160,
+                                view: "richselect", label: "状态：", labelAlign: "right", labelWidth: 60, options: [{ id: "0", value: "待检" }, { id: "1", value: "已检" }], value: "0", width: 160,
                                 on: {
                                     onChange(newValue) {
                                         $$(mainGrid.id).clearAll();
-                                        $$(mainGrid.id).define("url", mainUrl + "&zt=" + newValue);
+                                        $$(mainGrid.id).define("url", mainUrl + "&jyzt=" + newValue);
                                     }
                                 }
                             },
