@@ -204,7 +204,7 @@ webix.ready(function () {
                                 options: [
                                     { id: HOME_PAGE_ID, value: "<span style='font-size:12px'>首页</span>" }
                                 ],
-                                optionWidth: 120,
+                                optionWidth: 140,
                                 height: 30,
                                 on: {
                                     onOptionRemove(id) { $$(VIEWS_ID).removeView(id) },

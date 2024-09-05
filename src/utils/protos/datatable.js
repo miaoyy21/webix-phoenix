@@ -308,7 +308,7 @@ function datatable(options) {
                 return {
                     id: opts.id, view: "search", label: opts["label"] || "", labelAlign: "right", align: "center", placeholder: opts["placeholder"] || "请输入搜索内容", width: !opts["autoWidth"] ? 240 : null,
                     on: { onEnter: search, onSearchIconClick: search }
-                }
+                };
             },
             filter(opts) {
                 // 执行的是客户端过滤

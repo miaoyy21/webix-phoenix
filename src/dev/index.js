@@ -12,5 +12,6 @@ dev.dev_jzwz_bgrk = require("./jzwz/bgrk.js");
 dev.dev_jzwz_bgck = require("./jzwz/bgck.js");
 
 dev.dev_jzwz_q_kctz = require("./jzwz/q_kctz.js");
+dev.dev_jzwz_q_kctz_quick = require("./jzwz/q_kctz_quick.js");
 
 export { dev }
