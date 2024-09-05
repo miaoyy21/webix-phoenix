@@ -310,8 +310,6 @@ function builder() {
                                 .post("/api/sys/data_service?service=JZMD_WZDM.match", { data: data })
                                 .then(
                                     (res) => {
-                                        console.log(res.json());
-
                                         $$(winImportId + "_import").define("data", res.json());
                                         $$(winImportId + "_import").hideOverlay();
                                     }
@@ -359,23 +357,20 @@ function builder() {
                         cols: [
                             {},
                             {
-                                view: "button", width: 80, label: "确认", css: "webix_primary",
+                                view: "button", width: 80, label: "导入", css: "webix_primary",
                                 click() {
                                     var allData = $$(winImportId + "_import").serialize(true);
 
                                     var data = _.filter(allData, (row) => (row["flag"] == "1"));
                                     if (_.size(data) < 1) {
-                                        webix.message({ type: "error", text: "没有可导入的物资" });
+                                        webix.message({ type: "error", text: "没有可导入的物资！" });
                                         return;
                                     }
 
                                     for (let i = 0; i < _.size(data); i++) {
                                         var newRow = _.pick(data[i], ..._.keys(mapping));
 
-                                        utils.grid.add($$(datatable.id), _.extend(newRow, {
-                                            "operation": "insert",
-                                            "xyzt": "在用",
-                                        }));
+                                        utils.grid.add($$(datatable.id), _.extend(newRow, { "xyzt": "在用" }));
                                     }
 
                                     setTimeout(() => {

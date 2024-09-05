@@ -8,6 +8,7 @@ function builder() {
     var btnUnCommit = utils.UUID();
     var btnMxWzdm = utils.UUID();
     var btnMxImport = utils.UUID();
+    var winImportId = utils.UUID();
     var mainPager = utils.protos.pager();
 
     function onAfterSelect(id) {
@@ -319,7 +320,134 @@ function builder() {
 
     /************************* 物资清单导入 *************************/
     function openImport(docId) {
+        // 导入字段映射
+        var mapping = {
+            "wzmc": "物资名称",
+            "ggxh": ["规格型号", "型号规格", "型号"],
+            "rksl": ["入库数量", "到货数量"],
+            "cgjehs": ["含税金额", "金额"],
+            "taxrate": "税率",
+        };
 
+        webix.ui({
+            id: winImportId,
+            view: "window",
+            close: true,
+            modal: true,
+            move: true,
+            width: 720,
+            height: 420,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "零星入库物资清单导入",
+            position: "center",
+            body: {
+                rows: [
+                    utils.protos.importExcel({
+                        docId: docId,
+                        mapping: mapping,
+                        onData(data) {
+                            webix.ajax()
+                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.import", { data: data })
+                                .then(
+                                    (res) => {
+                                        console.log(res.json());
+
+                                        $$(winImportId + "_import").define("data", res.json());
+
+                                        $$(winImportId + "_import").hideOverlay();
+                                        $$(winImportId + "_import").refresh();
+                                    }
+                                );
+                        }
+                    }),
+                    {
+                        paddingX: 8,
+                        cols: [
+                            utils.protos.datatable({
+                                id: winImportId + "_import",
+                                editable: false,
+                                drag: false,
+                                sort: false,
+                                url: null,
+                                leftSplit: 0,
+                                rightSplit: 0,
+                                data: [],
+                                columns: [
+                                    // wzrkd_id, zt
+                                    // "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc"
+                                    // rksl, cgdjhs, cgjehs, taxrate, cgdj, cgje, taxje
+                                    { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                                    utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
+                                    { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
+                                    { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
+                                    {
+                                        id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } },
+                                        template(row) {
+                                            var text = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(row);
+                                            return row["flag"] == "1" ? text : "<span style='color:red'>" + text + "</span>";
+                                        }, width: 160
+                                    },
+                                    { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                                    { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 60 },
+                                    { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                ],
+                                styles: {
+                                    cellTextColor: function (row, col) { return row["flag"] == "0" ? "red" : "none" }
+                                },
+                            })
+                        ]
+                    },
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            {
+                                view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
+                                click() { webix.toExcel($$(winImportId + "_import"), { spans: true, styles: true }) }
+                            },
+                            {},
+                            {
+                                view: "button", width: 80, label: "导入", css: "webix_primary",
+                                click() {
+                                    var allData = $$(winImportId + "_import").serialize(true);
+
+                                    var data = _.filter(allData, (row) => (row["flag"] == "1"));
+                                    var rkdid = $$(mainGrid.id).getSelectedId(false, true);
+                                    if (_.size(data) < 1 || _.isEmpty(rkdid)) {
+                                        webix.message({ type: "error", text: "没有可导入的物资" });
+                                        return;
+                                    }
+
+                                    for (let i = 0; i < _.size(data); i++) {
+                                        var newRow = _.pick(data, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
+                                        utils.grid.add($$(datatable.id), _.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
+                                    }
+
+                                    setTimeout(() => {
+                                        webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
+                                        $$(winImportId).hide();
+                                    }, 500)
+                                }
+                            },
+                            { width: 8 },
+                            { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winImportId).hide() },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: {
+                onShow() { $$(winImportId + "_import").showOverlay("正在导入采购物资清单 ...") },
+                onHide() { this.close() }
+            }
+        }).show();
     }
 
     return {
