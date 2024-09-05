@@ -31,34 +31,44 @@ function builder() {
         rows: [
             {
                 view: "toolbar", cols: [
-                    { id: txtWzbh, view: "text", width: 240, label: "物资编号：", labelAlign: "right", placeholder: "可输入物资编号" },
-                    { id: txtWzms, view: "text", width: 420, label: "物资名称/型号/牌号/代号：", labelAlign: "right", labelWidth: 180, placeholder: "可输入物资名称/型号/牌号/代号" },
                     {
-                        view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
-                        click() {
-                            var wzbh = $$(txtWzbh).getValue();
-                            var wzms = $$(txtWzms).getValue();
+                        gravity: 2,
+                        cols: [
+                            { id: txtWzbh, view: "text", width: 240, label: "物资编号：", labelAlign: "right", placeholder: "可输入物资编号" },
+                            { id: txtWzms, view: "text", label: "物资名称/型号/牌号/代号：", labelAlign: "right", labelWidth: 180, placeholder: "可输入物资名称/型号/牌号/代号" },
+                        ]
+                    },
+                    {
+                        cols: [
+                            {
+                                view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
+                                click() {
+                                    var wzbh = $$(txtWzbh).getValue();
+                                    var wzms = $$(txtWzms).getValue();
 
-                            if (_.isEmpty(wzbh) && _.isEmpty(wzms)) {
-                                webix.message({ type: "info", text: "请输入物资编号或物资名称/型号/牌号/代号进行检索" });
-                                return
-                            }
-
-                            webix.ajax()
-                                .get(mainUrl + "&filter[wzbh]=" + wzbh + "&full_filter[wzmc,ggxh,wzph,bzdh]=" + wzms)
-                                .then(
-                                    (res) => {
-                                        var values = res.json()["data"];
-                                        $$(mainGrid.id).define("data", values);
+                                    if (_.isEmpty(wzbh) && _.isEmpty(wzms)) {
+                                        webix.message({ type: "info", text: "请输入物资编号或物资名称/型号/牌号/代号进行检索" });
+                                        return
                                     }
-                                );
-                        }
-                    },
-                    {},
-                    {
-                        view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
-                        click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
-                    },
+
+                                    $$(mainGrid.id).clearAll();
+                                    webix.ajax()
+                                        .get(mainUrl + "&filter[wzbh]=" + wzbh + "&full_filter[wzmc,ggxh,wzph,bzdh]=" + wzms)
+                                        .then(
+                                            (res) => {
+                                                var values = res.json()["data"];
+                                                $$(mainGrid.id).define("data", values);
+                                            }
+                                        );
+                                }
+                            },
+                            {},
+                            {
+                                view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
+                                click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
+                            },
+                        ]
+                    }
                 ]
             },
             mainGrid, mainPager,
