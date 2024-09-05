@@ -274,7 +274,20 @@ function builder() {
 
     /************************************************** 上传数据匹配 **************************************************/
     function openImport(docId) {
-        console.log(docId);
+        // 导入字段映射
+        var mapping = {
+            "wzmc": "物资名称",
+            "ggxh": ["规格型号", "型号规格", "型号"],
+            "jldw": ["计量单位", "单位"],
+            "wzph": ["物资牌号", "材料牌号", "牌号"],
+            "bzdh": ["标准代号", "代号"],
+            "sccjmc": "生产厂家",
+            "bylx": "报验类型",
+            "byyq": ["报验要求", "检验要求"],
+            "ckmc": ["仓库名称", "仓库"],
+            "cgy": "采购员",
+            "bz": "备注"
+        };
 
         webix.ui({
             id: winImportId,
@@ -291,19 +304,7 @@ function builder() {
                 rows: [
                     utils.protos.importExcel({
                         docId: docId,
-                        mapping: {
-                            "wzmc": "物资名称",
-                            "ggxh": ["规格型号", "型号规格", "型号"],
-                            "jldw": ["计量单位", "单位"],
-                            "wzph": ["物资牌号", "材料牌号", "牌号"],
-                            "bzdh": ["标准代号", "代号"],
-                            "sccjmc": "生产厂家",
-                            "bylx": "报验类型",
-                            "byyq": ["报验要求", "检验要求"],
-                            "ckmc": ["仓库名称", "仓库"],
-                            "cgy": "采购员",
-                            "bz": "备注"
-                        },
+                        mapping: mapping,
                         onData(data) {
                             console.log(data);
                             webix.ajax()
@@ -328,7 +329,7 @@ function builder() {
                         rightSplit: 0,
                         data: [],
                         columns: [
-                            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                             utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
                             { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
                             { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
@@ -354,13 +355,29 @@ function builder() {
                         cols: [
                             {},
                             {
-                                view: "button", width: 80, label: "匹配", css: "webix_secondary",
-                                click() {
-                                }
-                            },
-                            {
                                 view: "button", width: 80, label: "确认", css: "webix_primary",
                                 click() {
+                                    var allData = $$(winImportId + "_import").serialize(true);
+
+                                    var data = _.filter(allData, (row) => (row["flag"] == "1"));
+                                    if (_.size(data) < 1) {
+                                        webix.message({ type: "error", text: "没有可导入的物资" });
+                                        return;
+                                    }
+
+                                    for (let i = 0; i < _.size(data); i++) {
+                                        var newRow = _.pick(data[i], ..._.keys(mapping));
+
+                                        utils.grid.add($$(datatable.id), _.extend(newRow, {
+                                            "operation": "insert",
+                                            "xyzt": "在用",
+                                        }));
+                                    }
+
+                                    setTimeout(() => {
+                                        webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
+                                        $$(winImportId).hide();
+                                    }, 500)
                                 }
                             },
                             { width: 8 },
@@ -395,21 +412,9 @@ function builder() {
                         }
                     },
                     datatable.actions.refresh(),
+                    { width: 24 },
+                    utils.protos.importExcelButton({ onImport(docId) { openImport(docId) } }),
                     {},
-                    {
-                        view: "uploader",
-                        value: "上传",
-                        inputWidth: 120,
-                        apiOnly: true,
-                        accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
-                        multiple: false,
-                        upload: "/api/sys/docs?method=Import",
-                        on: {
-                            onUploadComplete(res) {
-                                openImport(res["value"]);
-                            }
-                        }
-                    },
                     datatable.actions.search({ fields: "wzbh,wzmc,ggxh,xyzt,sccjmc,bylx,byyq,ckmc,cgy" }),
                 ]
             },
