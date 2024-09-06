@@ -115,7 +115,10 @@ function builder() {
                                     _.delay(reload, 250, deptId);
                                 }
 
-                                $$(winId).hide();
+                                _.delay(() => {
+                                    webix.message({ type: "success", "text": "保存成功" });
+                                    $$(winId).hide();
+                                }, 250);
                             }
                         },
                         { width: 8 },

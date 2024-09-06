@@ -236,7 +236,7 @@ function builder() {
             },
             {
                 id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } },
-                format: (value) => utils.formats.number.format(value, 2),
+                format: (value) => utils.formats.number.format(value, 4),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {

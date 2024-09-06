@@ -64,7 +64,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
-            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 180 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -284,7 +284,7 @@ function builder() {
                                         _.each(mxValues, (value) => {
                                             var sumSfs = 0;
                                             if (_.has(allSfData, value["id"])) {
-                                                sumSfs = _.reduce(_.values(allSfData[value["id"]]), function (total, sfs) { return total + sfs; }, 0)
+                                                sumSfs = _.reduce(_.values(allSfData[value["id"]]), function (total, sfs) { return total + (utils.formats.number.editParse(sfs, 2) || 0); }, 0)
                                             }
 
                                             value["sfs"] = sumSfs.toFixed(2);
