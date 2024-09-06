@@ -1,128 +1,134 @@
 function builder() {
+    var winId = utils.UUID();
     var fullscreen_id = utils.UUID();
 
     var tree_id = utils.UUID();
     var grid_id = utils.UUID();
     var pager_id = utils.UUID();
     var search_id = utils.UUID();
-    var sidemenu_id = utils.UUID();
-    var form_id = utils.UUID();
 
-    // 滑动菜单弹出界面
-    webix.ui({
-        id: sidemenu_id,
-        view: "sidemenu",
-        width: 400,
-        position: "right",
-        modal: true,
-        // escHide: true, // TODO :: 无法解决radio控件值改变后，自动关闭的问题
-        body: {
-            paddingY: 12,
-            type: "inline",
-            borderless: true,
-            rows: [
-                { view: "template", borderless: true, template: "用户编辑", type: "header" },
-                {
-                    view: "scrollview",
-                    scroll: "y",
-                    borderless: true,
-                    body: {
-                        id: form_id,
-                        view: "form",
-                        rows: [
-                            { view: "text", name: "user_code_", label: "工号", required: true },
-                            { view: "text", name: "user_name_", label: "用户名", required: true },
-                            { view: "text", name: "account_id_", label: "登录名", required: true },
-                            {
-                                view: "search", name: "depart_name_", label: "部门名称", readonly: true, required: true, clear: false,
-                                on: {
-                                    onSearchIconClick() {
-                                        utils.windows.departs({
-                                            checked: $$(form_id).getValues()["depart_id_"],
-                                            callback(checked) {
-                                                $$(form_id).setValues({
-                                                    "depart_id_": checked["id"],
-                                                    "depart_name_": checked["name_"]
-                                                }, true);
+    function open(options) {
+        webix.ui({
+            id: winId,
+            view: "window",
+            close: true,
+            modal: true,
+            move: true,
+            width: 580,
+            height: 420,
+            animate: { type: "flip", subtype: "vertical" },
+            head: (options["operation"] == "insert" ? "添加" : "修改") + "用户",
+            position: "center",
+            body: {
+                rows: [{
+                    id: winId + "_form",
+                    view: "form",
+                    data: options,
+                    css: { "margin-right": "120px" },
+                    rows: [
+                        {
+                            cols: [
+                                { view: "text", name: "user_code_", label: "工号", required: true },
+                                { view: "text", name: "user_name_", label: "用户名", required: true },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "text", name: "account_id_", label: "登录名", required: true },
+                                { view: "radio", name: "sex_", label: "性别", options: utils.dicts["user_sex"] },
+                            ]
+                        },
+                        {
+                            cols: [
 
-                                                return true;
-                                            }
-                                        })
-                                    }
-                                }
-                            },
-                            { view: "checkbox", name: "is_depart_leader_", label: "部门领导", checkValue: "Yes", uncheckValue: "No" },
-                            { view: "radio", name: "sex_", label: "性别", options: utils.dicts["user_sex"] },
-                            { view: "radio", name: "valid_", label: "用户状态", options: utils.dicts["user_valid"] },
-                            {
-                                view: "radio", name: "classification_", label: "用户密级", options: utils.dicts["user_classification"],
-                                on: {
-                                    onBeforeRender() {
-                                        if (PHOENIX_SETTING["classification_enable"] === "Yes") {
-                                            this.show();
-                                        } else {
-                                            this.hide();
+                                {
+                                    view: "search", name: "depart_name_", label: "部门名称", readonly: true, required: true, clear: false,
+                                    on: {
+                                        onSearchIconClick() {
+                                            utils.windows.departs({
+                                                checked: $$(winId + "_form").getValues()["depart_id_"],
+                                                callback(checked) {
+                                                    $$(winId + "_form").setValues({
+                                                        "depart_id_": checked["id"],
+                                                        "depart_name_": checked["name_"]
+                                                    }, true);
+
+                                                    return true;
+                                                }
+                                            })
                                         }
                                     }
+                                },
+                                { view: "checkbox", name: "is_depart_leader_", label: "部门领导", checkValue: "Yes", uncheckValue: "No" },
+                            ]
+                        },
+                        { view: "radio", name: "valid_", label: "用户状态", options: utils.dicts["user_valid"] },
+                        {
+                            view: "radio", name: "classification_", label: "用户密级", options: utils.dicts["user_classification"],
+                            on: {
+                                onBeforeRender() {
+                                    if (PHOENIX_SETTING["classification_enable"] === "Yes") {
+                                        this.show();
+                                    } else {
+                                        this.hide();
+                                    }
                                 }
-                            },
-                            { view: "text", name: "telephone_", label: "联系电话" },
-                            { view: "text", name: "email_", label: "邮箱" },
-                            { view: "datepicker", name: "birth_", label: "出生日期", clear: false, format: utils.formats["date"].format },
-                            { view: "textarea", name: "description_", label: "描述", height: 120 },
-                        ],
-                        elementsConfig: { labelAlign: "right", clear: true }
-                    },
+                            }
+                        },
+                        {
+                            cols: [
+                                { view: "text", name: "telephone_", label: "联系电话" },
+                                { view: "text", name: "email_", label: "邮箱" },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "datepicker", name: "birth_", label: "出生日期", clear: false, format: utils.formats["date"].format },
+                                {}
+                            ]
+                        },
+                        { view: "textarea", name: "description_", label: "描述" },
+                    ],
+                    elementsConfig: { labelAlign: "right", clear: false },
                 },
                 {
                     view: "toolbar",
                     borderless: true,
+                    height: 34,
                     cols: [
-                        { gravity: 2 },
+                        {},
                         {
-                            view: "button", width: 100, value: "保存", css: "webix_primary", click() {
-                                if ($$(form_id).validate()) {
-                                    var value = $$(form_id).getValues();
+                            view: "button", width: 80, label: "保存", css: "webix_primary",
+                            click() {
+                                if (!$$(winId + "_form").validate()) return;
 
-                                    // Operation
-                                    value["operation"] = value.$add ? "insert" : "update";
-
-                                    var request = webix.ajax().sync().post("/api/sys/users", value);
-                                    var response = JSON.parse(request.responseText);
-                                    if (response["status"] === "error") return;
-
-                                    webix.dp(grid_id).ignore(
-                                        function () {
-                                            if (value.$add) {
-                                                utils.grid.add($$(grid_id), _.extend(value, response));
-                                                delete value.$add;
-                                            } else {
-                                                $$(grid_id).updateItem(value.id, value);
-                                            }
-
-                                            $$(sidemenu_id).hide();
-
-                                            // 改变部门
-                                            var depart_id = $$(tree_id).getSelectedId();
-                                            if (depart_id !== value["depart_id_"]) {
-                                                reload(depart_id);
-                                            }
-                                        }
-                                    );
+                                var value = $$(winId + "_form").getValues();
+                                if (_.isEqual(value["operation"], "insert")) {
+                                    utils.grid.add($$(grid_id), value);
+                                } else {
+                                    $$(grid_id).updateItem(value.id, value);
                                 }
+
+                                // 改变部门
+                                var deptId = $$(tree_id).getSelectedId();
+                                if (deptId !== value["depart_id_"]) {
+                                    _.delay(reload, 250, deptId);
+                                }
+
+                                $$(winId).hide();
                             }
                         },
-                        {},
-                        { view: "button", width: 100, value: "取消", css: "webix_transparent ", click: () => $$(sidemenu_id).hide() },
-                        { gravity: 2 },
+                        { width: 8 },
+                        { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winId).hide() },
+                        { width: 8 }
                     ]
-                }
-            ]
-        },
-    });
-
-    // 全局注册滑动菜单
-    PHOENIX_SIDE_MENUS.push(sidemenu_id);
+                },
+                { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
 
     // 刷新列表
     function reload(id) {
@@ -214,6 +220,7 @@ function builder() {
                                 }
 
                                 this.select(this.getFirstId());
+                                this.openAll();
                             },
                             onAfterSelect: (id) => reload(id),
                         }
@@ -234,26 +241,24 @@ function builder() {
                                     var item = $$(tree_id).getSelectedItem();
                                     if (!item) return;
 
-                                    var row = { $add: true, "depart_id_": item["id"], "depart_name_": item["name_"], "is_depart_leader_": "No", "sex_": 'Unknown', "valid_": 'Disable', "classification_": "0" };
-                                    if ($$(sidemenu_id).config.hidden) {
-                                        $$(sidemenu_id).show();
-                                    }
-
-                                    $$(form_id).clearValidation();
-                                    $$(form_id).setValues(row);
+                                    open({
+                                        "operation": "insert",
+                                        "depart_id_": item["id"],
+                                        "depart_name_": item["name_"],
+                                        "is_depart_leader_": "No",
+                                        "sex_": 'Unknown',
+                                        "valid_": 'Disable',
+                                        "classification_": "0"
+                                    });
                                 }
                             },
                             {
                                 view: "button", label: "编辑", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-pencil",
                                 click() {
-                                    if ($$(sidemenu_id).config.hidden) {
-                                        var row = $$(grid_id).getSelectedItem();
-                                        if (!row) return;
+                                    var row = $$(grid_id).getSelectedItem();
+                                    if (!row) return;
 
-                                        $$(form_id).clearValidation();
-                                        $$(form_id).setValues(row);
-                                        $$(sidemenu_id).show();
-                                    }
+                                    open(_.extend(row, { "operation": "update" }));
                                 }
                             },
                             {
@@ -391,14 +396,6 @@ function builder() {
                 ]
             }
         ],
-        on: {
-            onDestruct() {
-                $$(sidemenu_id).destructor();
-
-                // 移除注册侧边栏滑动菜单
-                PHOENIX_SIDE_MENUS = _.without(PHOENIX_SIDE_MENUS, sidemenu_id);
-            }
-        }
     };
 }
 

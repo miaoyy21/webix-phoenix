@@ -94,7 +94,7 @@ webix.ui({
     width: 480,
     headHeight: 40,
     position: "center",
-    head: "选择部门对话框",
+    head: "选择部门",
     body: {
         paddingX: 12,
         cols: [

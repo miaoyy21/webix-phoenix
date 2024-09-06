@@ -44,9 +44,9 @@ function builder() {
 
                             var item = $$(tree_id).getSelectedItem();
                             if (!item) {
-                                $$(tree_id).select($$(tree_id).add({ "code_": utils.UUID(), "name_": "<部门名称>", "valid_": "Effective" }, 0));
+                                $$(tree_id).select($$(tree_id).add({ "code_": "*", "name_": "<部门名称>", "valid_": "Effective" }, 0));
                             } else {
-                                $$(tree_id).select($$(tree_id).add({ "code_": utils.UUID(), "name_": "<部门名称>", "valid_": "Effective" }, 0, item.$parent));
+                                $$(tree_id).select($$(tree_id).add({ "code_": "*", "name_": "<部门名称>", "valid_": "Effective" }, 0, item.$parent));
                             }
                         }
                     },
@@ -63,7 +63,7 @@ function builder() {
                                 return;
                             }
 
-                            var id = $$(tree_id).add({ "code_": utils.UUID(), "name_": "<部门名称>", "valid_": "Effective" }, 0, item.id);
+                            var id = $$(tree_id).add({ "code_": "*", "name_": "<部门名称>", "valid_": "Effective" }, 0, item.id);
                             $$(tree_id).select(id);
                             $$(tree_id).open(item.id);
                         }
@@ -114,6 +114,7 @@ function builder() {
                         on: {
                             onAfterLoad() {
                                 this.select(this.getFirstId());
+                                this.openAll();
                             }
                         }
                     },

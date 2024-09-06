@@ -89,14 +89,18 @@ function builder() {
                                     }
 
                                     webix.ajax("/api/sys/role_menus", { "role_id": row.id })
-                                        .then((data) => {
-                                            $$(tree_id).define("data", utils.tree.buildTree(webix.copy(menus)))
+                                        .then((res) => {
+                                            var data = utils.tree.buildTree(webix.copy(menus));
+                                            $$(tree_id).define("data", data);
                                             $$(tree_id).refresh();
 
-                                            _.map(data.json(), (menu) => $$(tree_id).checkItem(menu["menu_id_"]))
-                                            $$(tree_id).openAll();
+                                            _.map(res.json(), (menu) => $$(tree_id).checkItem(menu["menu_id_"]));
 
                                             webix.extend($$(tree_id), webix.ProgressBar).hideProgress();
+
+                                            // 自动打开用户的系统菜单
+                                            var userMenus = _.filter(data, (row) => row["name_"].indexOf("主数据") >= 0 || row["name_"].indexOf("物资") >= 0);
+                                            _.each(userMenus, (menu) => { $$(tree_id).open(menu["id"], false) });
                                         });
                                 }
                             }

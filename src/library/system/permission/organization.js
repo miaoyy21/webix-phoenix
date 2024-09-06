@@ -30,11 +30,12 @@ function builder() {
                             ready() {
                                 webix.extend(this, webix.ProgressBar).showProgress();
                                 webix.ajax("/api/sys/departs", { "scope": "KIDS", "parent_id": "" }).then((data) => {
-                                    console.log(data.json());
-                                    $$(tree_id).define("data", _.map(data.json(), (obj) => _.extend(obj, { webix_kids: obj["kids_"] === '1' })));
+                                    var newData = _.map(data.json(), (obj) => _.extend(obj, { webix_kids: obj["kids_"] === '1' }));
+                                    $$(tree_id).define("data", newData);
                                     $$(tree_id).refresh();
 
                                     webix.extend($$(tree_id), webix.ProgressBar).hideProgress();
+                                    if (_.first(newData)) $$(tree_id).open(_.first(newData)["id"], false);
                                 })
                             },
                             on: {
