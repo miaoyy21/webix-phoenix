@@ -87,7 +87,7 @@ webix.ui({
     close: true,
     move: true,
     height: 420,
-    width: 480,
+    width: 600,
     headHeight: 38,
     position: "center",
     head: "选择项目",
@@ -124,9 +124,9 @@ webix.ui({
                                     return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
                                 }, width: 50
                             },
-                            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 120 },
-                            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-                            { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 160 },
+                            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 160 },
+                            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
+                            { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 120 },
                             { id: "xmlx", header: { text: "项目类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                             { id: "xmsx", header: { text: "项目属性", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                             { id: "xmfzr", header: { text: "项目负责人", css: { "text-align": "center" } }, width: 240 },

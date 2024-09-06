@@ -17,7 +17,7 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 240 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, width: 240 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 140 },

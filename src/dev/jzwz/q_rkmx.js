@@ -19,7 +19,7 @@ function builder() {
             { id: "khbh", header: { text: "供应商编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 160 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },

@@ -37,7 +37,7 @@ function builder() {
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
+            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, editor: "text", width: 120 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, editor: "text", minWidth: 240, fillspace: true },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 140 },
             {
@@ -61,7 +61,7 @@ function builder() {
         cols: [
             {
                 view: "scrollview",
-                gravity: 3,
+                gravity: 4,
                 body: {
                     rows: [
                         { view: "label", label: "<span style='margin-left:8px'></span>仓库列表", height: 38 },
@@ -72,7 +72,7 @@ function builder() {
             { view: "resizer" },
             {
                 view: "scrollview",
-                gravity: 4,
+                gravity: 3,
                 body: {
                     rows: [
                         {

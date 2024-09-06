@@ -247,7 +247,7 @@ function builder() {
                                         "depart_name_": item["name_"],
                                         "is_depart_leader_": "No",
                                         "sex_": 'Unknown',
-                                        "valid_": 'Disable',
+                                        "valid_": 'Effective',
                                         "classification_": "0"
                                     });
                                 }

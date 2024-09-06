@@ -76,7 +76,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "htbh", header: { text: "采购合同号", css: { "text-align": "center" } }, width: 120 },
             { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
         ],

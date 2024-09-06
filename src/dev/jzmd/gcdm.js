@@ -16,14 +16,14 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            utils.protos.checkbox({ id: "tybz", header: { text: "停用", css: { "text-align": "center" } } }),
-            utils.protos.checkbox({ id: "wgbz", header: { text: "完工", css: { "text-align": "center" } } }),
-            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 120 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
-            { id: "cpxh", header: { text: "产品型号", css: { "text-align": "center" } }, width: 160 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+            utils.protos.checkbox({ id: "tybz", header: { text: "停用", css: { "text-align": "center" } }, width: 60 }),
+            utils.protos.checkbox({ id: "wgbz", header: { text: "完工", css: { "text-align": "center" } }, width: 60 }),
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
+            { id: "cpxh", header: { text: "产品型号", css: { "text-align": "center" } }, width: 120 },
             { id: "sl", header: { text: "数量", css: { "text-align": "center" } }, width: 60 },
-            { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 160 },
+            { id: "xmlb", header: { text: "项目类别", css: { "text-align": "center" } }, width: 120 },
             { id: "xmlx", header: { text: "项目类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "xmsx", header: { text: "项目属性", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "xmfzr", header: { text: "项目负责人", css: { "text-align": "center" } }, width: 240 },
@@ -91,7 +91,7 @@ function builder() {
                                 {
                                     cols: [
                                         { view: "richselect", name: "xmlb", label: "项目类别", options: utils.dicts["md_xmlb"], required: true, placeholder: "请选择..." },
-                                        { view: "richselect", name: "xmlx", label: "项目类型", options: utils.dicts["md_xmlx"], required: true, placeholder: "请选择..." },
+                                        { view: "richselect", name: "xmlx", label: "项目类型", options: utils.dicts["md_xmlx"], placeholder: "请选择..." },
                                         { view: "richselect", name: "xmsx", label: "项目属性", options: utils.dicts["md_xmsx"], required: true, placeholder: "请选择..." },
                                     ]
                                 },

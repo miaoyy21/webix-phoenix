@@ -65,7 +65,7 @@ function builder() {
             { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqbm", header: { text: "申请部门", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
@@ -164,7 +164,7 @@ function builder() {
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             {
                 id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, editor: "text",

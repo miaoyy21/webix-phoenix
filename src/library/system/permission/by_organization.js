@@ -1,5 +1,5 @@
 function builder() {
-    var tree_organization_id = utils.UUID();
+    var tree_org_id = utils.UUID();
     var tree_menu_id = utils.UUID();
 
     var roles = [];
@@ -12,7 +12,7 @@ function builder() {
                     rows: [
                         { view: "label", label: "<span style='margin-left:8px'></span>组织架构" },
                         {
-                            id: tree_organization_id,
+                            id: tree_org_id,
                             view: "tree",
                             select: true,
                             drag: "inner",
@@ -30,10 +30,12 @@ function builder() {
                             ready() {
                                 webix.extend(this, webix.ProgressBar).showProgress();
                                 webix.ajax("/api/sys/departs", { "scope": "KIDS", "parent_id": "" }).then((data) => {
-                                    $$(tree_organization_id).define("data", _.map(data.json(), (obj) => _.extend(obj, { webix_kids: obj["kids_"] === '1' })));
-                                    $$(tree_organization_id).refresh();
+                                    var newData = _.map(data.json(), (obj) => _.extend(obj, { webix_kids: obj["kids_"] === '1' }));
+                                    $$(tree_org_id).define("data", newData);
+                                    $$(tree_org_id).refresh();
 
-                                    webix.extend($$(tree_id), webix.ProgressBar).hideProgress();
+                                    webix.extend($$(tree_org_id), webix.ProgressBar).hideProgress();
+                                    if (_.first(newData)) $$(tree_org_id).open(_.first(newData)["id"], false);
                                 })
                             },
                             on: {

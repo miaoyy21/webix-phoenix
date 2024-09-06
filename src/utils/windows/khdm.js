@@ -85,7 +85,7 @@ webix.ui({
     close: true,
     move: true,
     height: 420,
-    width: 480,
+    width: 600,
     headHeight: 38,
     position: "center",
     head: "选择供应商",
@@ -110,6 +110,7 @@ webix.ui({
                         rowHeight: 28,
                         checkboxRefresh: true,
                         leftSplit: 3,
+                        riightSplit: 0,
                         data: [],
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
@@ -124,9 +125,9 @@ webix.ui({
                                 }, width: 50
                             },
                             { id: "khbh", header: { text: "供应商编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "text", width: 80 },
-                            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, sort: "text", width: 120 },
-                            { id: "gyssx", header: { text: "供应商属性", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-                            { id: "cpfw", header: { text: "产品认定范围", css: { "text-align": "center" } }, width: 360 },
+                            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, sort: "text", width: 240 },
+                            { id: "gyssx", header: { text: "供应商属性", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+                            { id: "cpfw", header: { text: "产品认定范围", css: { "text-align": "center" } }, width: 180 },
                         ],
                         elementsConfig: { labelAlign: "right", clear: false },
                         on: {
