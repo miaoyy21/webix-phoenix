@@ -209,7 +209,7 @@ function datatable(options) {
         },
         on: {
             "data->onStoreUpdated"() { this.data.each((obj, i) => { obj.index = i + 1 }) },
-            onAfterRender(data) {
+            onBeforeRender(data) {
                 if (data.count() < 1) {
                     this.showOverlay("无检索数据");
                 } else {

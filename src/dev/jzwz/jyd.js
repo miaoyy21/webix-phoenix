@@ -169,7 +169,7 @@ function builder() {
                 { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
                 { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                 { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-                { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 180 },
+                { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
                 { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
