@@ -9,8 +9,8 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
-            { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, minWidth: 240, fillspace: true },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 240 },
+            { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
         ],
         on: {
             onAfterSelect(selection, preserve) {

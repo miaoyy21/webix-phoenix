@@ -132,7 +132,6 @@ webix.ui({
                             { id: "xmfzr", header: { text: "项目负责人", css: { "text-align": "center" } }, width: 240 },
                             { id: "xmzg", header: { text: "项目主管", css: { "text-align": "center" } }, width: 240 },
                         ],
-                        elementsConfig: { labelAlign: "right", clear: false },
                         on: {
                             "data->onStoreUpdated": function () {
                                 this.data.each(function (obj, i) {
