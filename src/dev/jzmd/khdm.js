@@ -13,7 +13,6 @@ function builder() {
             trackMove: true,
             operationName: "operation",
         },
-
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "tybz", header: { text: "停用", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "1", uncheckValue: "0", tooltip: false, css: { "text-align": "center" }, width: 60 },

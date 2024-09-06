@@ -15,7 +15,6 @@ function builder() {
             trackMove: true,
             operationName: "operation",
         },
-
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             utils.protos.checkbox({ id: "tybz", header: { text: "停用", css: { "text-align": "center" } } }),

@@ -145,11 +145,13 @@ function datatable(options) {
 
             // 加载前
             this.attachEvent("onBeforeLoad", function () {
+                console.log("onBeforeLoad");
                 this.showOverlay("数据加载中...");
             })
 
             // 加载后
             this.attachEvent("onAfterLoad", function () {
+                console.log("onAfterLoad");
                 this.hideOverlay();
                 if (!this.count()) {
                     this.showOverlay("无检索数据");
@@ -175,6 +177,16 @@ function datatable(options) {
             var first = this.getFirstId();
             if (this.config.select && first) {
                 this.select(first);
+            }
+
+            // 如果没有url和data，那么默认显示无加载数据
+            console.log(this.config.url, this.config.data, this.config.pager);
+            if (_.isEmpty(this.config.url) && _.isEmpty(this.config.data)) {
+                // 没设置查询服务url且也没定义加载数据时，会造成不显示 Overlay 的问题
+                _.delay(() => this.showOverlay("无检索数据"), 250);
+            } else if (!_.isEmpty(this.config.url) && !_.isEmpty(this.config.pager)) {
+                // 启用分页组件，会造成打开界面时，没加载到数据情况下，会造成不显示 Overlay 的问题
+                _.delay(() => this.showOverlay("无检索数据"), 250);
             }
         },
         onClick: {

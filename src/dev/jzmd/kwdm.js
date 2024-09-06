@@ -35,7 +35,6 @@ function builder() {
             trackMove: true,
             operationName: "operation",
         },
-
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },

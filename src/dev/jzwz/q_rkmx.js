@@ -9,6 +9,7 @@ function builder() {
         editable: false,
         drag: false,
         url: null,
+        data: [],
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
             { id: "ly", header: { text: "来源", css: { "text-align": "center" } }, options: utils.dicts["wz_yely"], css: { "text-align": "center" }, width: 60 },
@@ -49,45 +50,75 @@ function builder() {
             {
                 view: "toolbar",
                 cols: [
+                    { id: txtStart, width: 240, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01", stringResult: true, format: utils.formats.date.format },
+                    { id: txtEnd, width: 240, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10), stringResult: true, format: utils.formats.date.format },
+                    { width: 24 },
                     {
-                        gravity: 2,
-                        cols: [
-                            { id: txtStart, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01", stringResult: true, format: utils.formats.date.format },
-                            { id: txtEnd, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10), stringResult: true, format: utils.formats.date.format },
-                            { width: 120 },
-                        ]
-                    },
-                    {
-                        cols: [
-                            {
-                                view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
-                                click() {
-                                    var start = $$(txtStart).getValue().substring(0, 10);
-                                    var end = $$(txtEnd).getValue().substring(0, 10);
+                        view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
+                        click() {
+                            var start = $$(txtStart).getValue().substring(0, 10);
+                            var end = $$(txtEnd).getValue().substring(0, 10);
 
-                                    if (_.isEmpty(start) && _.isEmpty(end)) {
-                                        webix.message({ type: "info", text: "请选择开始时间和结束时间进行检索" });
-                                        return
+                            if (_.isEmpty(start) && _.isEmpty(end)) {
+                                webix.message({ type: "info", text: "请选择开始时间和结束时间进行检索" });
+                                return
+                            }
+
+                            $$(mainGrid.id).clearAll();
+                            webix.ajax()
+                                .get(mainUrl + "&start=" + start + "&end=" + end)
+                                .then(
+                                    (res) => {
+                                        var values = res.json();
+                                        $$(mainGrid.id).define("data", values);
                                     }
+                                );
+                        }
+                    },
+                    {},
+                    {
+                        view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
+                        click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
+                    },
+                    // {
+                    //     gravity: 2,
+                    //     cols: [
+                    //         { id: txtStart, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01", stringResult: true, format: utils.formats.date.format },
+                    //         { id: txtEnd, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10), stringResult: true, format: utils.formats.date.format },
+                    //         { width: 120 },
+                    //     ]
+                    // },
+                    // {
+                    //     cols: [
+                    //         {
+                    //             view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
+                    //             click() {
+                    //                 var start = $$(txtStart).getValue().substring(0, 10);
+                    //                 var end = $$(txtEnd).getValue().substring(0, 10);
 
-                                    $$(mainGrid.id).clearAll();
-                                    webix.ajax()
-                                        .get(mainUrl + "&start=" + start + "&end=" + end)
-                                        .then(
-                                            (res) => {
-                                                var values = res.json();
-                                                $$(mainGrid.id).define("data", values);
-                                            }
-                                        );
-                                }
-                            },
-                            {},
-                            {
-                                view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
-                                click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
-                            },
-                        ]
-                    }
+                    //                 if (_.isEmpty(start) && _.isEmpty(end)) {
+                    //                     webix.message({ type: "info", text: "请选择开始时间和结束时间进行检索" });
+                    //                     return
+                    //                 }
+
+                    //                 $$(mainGrid.id).clearAll();
+                    //                 webix.ajax()
+                    //                     .get(mainUrl + "&start=" + start + "&end=" + end)
+                    //                     .then(
+                    //                         (res) => {
+                    //                             var values = res.json();
+                    //                             $$(mainGrid.id).define("data", values);
+                    //                         }
+                    //                     );
+                    //             }
+                    //         },
+                    //         {},
+                    //         {
+                    //             view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
+                    //             click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
+                    //         },
+                    //     ]
+                    // }
                 ]
             },
             mainGrid, mainPager,
