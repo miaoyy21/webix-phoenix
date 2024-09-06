@@ -123,7 +123,6 @@ function builder() {
                                         return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
                                     }, width: 50
                                 },
-                                { id: "code_", header: { text: "角色编码", css: { "text-align": "center" } }, sort: "text", width: 120 },
                                 { id: "name_", header: { text: "角色名称", css: { "text-align": "center" } }, sort: "text", fillspace: true },
                             ],
                             on: {

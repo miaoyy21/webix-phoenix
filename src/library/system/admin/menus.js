@@ -113,7 +113,7 @@ function builder() {
                         on: {
                             onAfterLoad() {
                                 this.select(this.getFirstId());
-                                this.openAll();
+                                // this.openAll();
                             },
                             onAfterSelect() {
                                 $$(form_id).clearValidation();
