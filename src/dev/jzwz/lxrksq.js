@@ -426,7 +426,7 @@ function builder() {
 
                                     for (let i = 0; i < _.size(data); i++) {
                                         var newRow = _.pick(data, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                        utils.grid.add($$(datatable.id), _.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
+                                        utils.grid.add($$(mxGrid.id), _.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
                                     }
 
                                     setTimeout(() => {
