@@ -481,25 +481,25 @@ function builder() {
                         },
                         {
                             cols: [
-                                { view: "text", name: "ldbh", label: "入库单号" },
-                                { view: "text", name: "kdrq", label: "开单日期" },
-                                { view: "text", name: "create_user_name_", label: "采购员" },
+                                { view: "text", name: "ldbh", label: "入库单号：" },
+                                { view: "text", name: "kdrq", label: "开单日期：" },
+                                { view: "text", name: "create_user_name_", label: "采购员：" },
                             ]
                         },
                         {
                             cols: [
-                                { view: "text", name: "khbh", label: "供应商编号" },
-                                { view: "text", name: "khmc", gravity: 2, label: "供应商名称" },
+                                { view: "text", name: "khbh", label: "供应商编号：" },
+                                { view: "text", name: "khmc", gravity: 2, label: "供应商名称：" },
                             ]
                         },
                         {
                             cols: [
-                                { view: "text", name: "gcbh", label: "项目编号" },
-                                { view: "text", name: "gcmc", gravity: 2, label: "项目名称" },
+                                { view: "text", name: "gcbh", label: "项目编号：" },
+                                { view: "text", name: "gcmc", gravity: 2, label: "项目名称：" },
                             ]
                         },
                     ],
-                    elementsConfig: { labelAlign: "right", clear: false },
+                    elementsConfig: { labelAlign: "right", labelWidth: 100, clear: false },
                 }),
                 utils.protos.datatable({
                     id: printId + "_datatable",
@@ -510,7 +510,7 @@ function builder() {
                         { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                         { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                         { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                        { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 180 },
+                        { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 220 },
                         { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                         { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
                         { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
