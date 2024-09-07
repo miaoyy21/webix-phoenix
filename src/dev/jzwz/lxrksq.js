@@ -187,7 +187,7 @@ function builder() {
         editable: true,
         drag: false,
         url: null,
-        leftSplit: 5,
+        leftSplit: 4,
         rightSplit: 1,
         save: {
             url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.save_lxrksq",
@@ -197,10 +197,10 @@ function builder() {
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 180 },
+            { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             {
                 id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, editor: "text",
@@ -385,7 +385,7 @@ function builder() {
                                         template(row) {
                                             var text = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(row);
                                             return row["flag"] == "1" ? text : "<span style='color:red'>" + text + "</span>";
-                                        }, width: 160
+                                        }, width: 180
                                     },
                                     { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                                     { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
@@ -424,9 +424,18 @@ function builder() {
                                         return;
                                     }
 
+                                    // 检查是否在列表中，相同的入库单不允许存在重复的物资
                                     for (let i = 0; i < _.size(data); i++) {
-                                        var newRow = _.pick(data, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                        utils.grid.add($$(mxGrid.id), _.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
+                                        var find = $$(mxGrid.id).find((row) => _.isEqual(row["wzbh"], data[i]["wzbh"]), true);
+                                        if (!_.isEmpty(find)) {
+                                            webix.message({ type: "error", text: "第" + (i + 1) + "行：物资编号【" + data[i]["wzbh"] + "】已存在入库清单中！" });
+                                            return;
+                                        }
+                                    }
+
+                                    for (let i = 0; i < _.size(data); i++) {
+                                        var newRow = _.omit(data[i], "id");
+                                        $$(mxGrid.id).add(_.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
                                     }
 
                                     setTimeout(() => {
@@ -567,6 +576,15 @@ function builder() {
                                                 },
                                                 { width: 24 },
                                                 utils.protos.importExcelButton({ id: btnMxImport, label: "物资导入", onImport: openImport }),
+                                                { width: 24 },
+                                                {
+                                                    view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                                    click() {
+                                                        var rkdid = $$(mainGrid.id).getSelectedId(false, true);
+                                                        onAfterSelect(rkdid);
+                                                    }
+                                                },
+                                                {}
                                             ]
                                         },
                                         mxGrid

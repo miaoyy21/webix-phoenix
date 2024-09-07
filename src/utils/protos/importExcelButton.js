@@ -13,6 +13,7 @@ function importExcelButton(options) {
         label: options["label"],
         type: "icon",
         icon: "mdi mdi-18px mdi-microsoft-excel",
+        width: 100,
         inputWidth: 100,
         apiOnly: true,
         accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel",
