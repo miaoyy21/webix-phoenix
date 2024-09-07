@@ -354,6 +354,10 @@ function builder() {
                         borderless: true,
                         height: 34,
                         cols: [
+                            {
+                                view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
+                                click() { webix.toExcel($$(winImportId + "_import"), { rawValues: true }) }
+                            },
                             {},
                             {
                                 view: "button", width: 80, label: "导入", css: "webix_primary",

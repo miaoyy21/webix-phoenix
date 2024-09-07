@@ -409,7 +409,7 @@ function builder() {
                         cols: [
                             {
                                 view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
-                                click() { webix.toExcel($$(winImportId + "_import"), { spans: true, styles: true }) }
+                                click() { webix.toExcel($$(winImportId + "_import"), { rawValues: true }) }
                             },
                             {},
                             {
