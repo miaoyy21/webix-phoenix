@@ -459,6 +459,68 @@ function builder() {
         }).show();
     }
 
+    // 打印的UI窗口
+    var printId = utils.UUID();
+    var printView = {
+        id: printId,
+        height: 0.001,
+        view: "scrollview",
+        body: {
+            rows: [
+                utils.protos.form({
+                    id: printId + "_form",
+                    data: {},
+                    rows: [
+                        {
+                            type: "line",
+                            cols: [
+                                {},
+                                { view: "label", align: "center", template: "<span style='font-size:36px'>物资零星入库单</span>", height: 60 },
+                                {}
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "text", name: "ldbh", label: "入库单号" },
+                                { view: "text", name: "kdrq", label: "开单日期" },
+                                { view: "text", name: "create_user_name_", label: "采购员" },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "text", name: "khbh", label: "供应商编号" },
+                                { view: "text", name: "khmc", gravity: 2, label: "供应商名称" },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "text", name: "gcbh", label: "项目编号" },
+                                { view: "text", name: "gcmc", gravity: 2, label: "项目名称" },
+                            ]
+                        },
+                    ],
+                    elementsConfig: { labelAlign: "right", clear: false },
+                }),
+                utils.protos.datatable({
+                    id: printId + "_datatable",
+                    data: [],
+                    select: false,
+                    autoheight: true,
+                    columns: [
+                        { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                        { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                        { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                        { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 180 },
+                        { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                        { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+                        { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
+                        { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, fillspace: true },
+                    ],
+                })
+            ]
+        }
+    }
+
     return {
         rows: [
             {
@@ -516,7 +578,24 @@ function builder() {
                                     }
                                 );
                         }
-                    }
+                    },
+                    {},
+                    {
+                        view: "button", label: "打印入库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                        click() {
+                            var data = $$(mainForm.id).getValues();
+                            var rows = $$(mxGrid.id).serialize(true);
+
+                            console.log(data, rows);
+                            $$(printId + "_form").setValues(data);
+                            $$(printId + "_datatable").define("data", rows);
+
+                            setTimeout(() => {
+                                webix.print($$(printId), { fit: data });
+                            }, 500);
+                        }
+                    },
+                    {}
                 ]
             },
             {
@@ -589,12 +668,13 @@ function builder() {
                                         },
                                         mxGrid
                                     ]
-                                }
+                                },
+                                printView
                             ]
                         },
-                    }
+                    },
                 ]
-            }
+            },
         ]
     }
 }

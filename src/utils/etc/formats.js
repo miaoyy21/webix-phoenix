@@ -13,6 +13,8 @@ formats.fileSize = function (size) {
 
 formats.date = {
     format: function (value) {
+        if (!value) return "";
+
         if (_.isDate(value)) {
             return webix.Date.dateToStr("%Y-%m-%d")(value);
         }
