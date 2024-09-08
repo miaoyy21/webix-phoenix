@@ -478,7 +478,6 @@ function builder() {
                             ]
                         },
                         {
-                            type: "clean",
                             cols: [
                                 { view: "text", name: "ldbh", label: "入库单号：" },
                                 { view: "text", name: "create_user_name_", label: "采购员：" },
