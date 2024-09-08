@@ -506,6 +506,7 @@ function builder() {
                             data: [],
                             select: false,
                             autoheight: true,
+                            scroll: false,
                             columns: [
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                                 { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
