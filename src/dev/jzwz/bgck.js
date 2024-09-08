@@ -350,21 +350,18 @@ function builder() {
                     },
                     { view: "resizer" },
                     {
-                        view: "scrollview",
-                        body: {
-                            rows: [
-                                { gravity: 2, rows: [mxGrid] },
-                                { view: "resizer" },
-                                {
-                                    gravity: 2,
-                                    rows: [
-                                        { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 28 }] },
-                                        kcGrid, kcPager
-                                    ]
-                                }
-                            ]
-                        },
-                    }
+                        rows: [
+                            { gravity: 2, rows: [mxGrid] },
+                            { view: "resizer" },
+                            {
+                                gravity: 2,
+                                rows: [
+                                    { view: "toolbar", cols: [{ view: "label", label: "<span style='margin-left:8px'></span>可发库存明细", height: 28 }] },
+                                    kcGrid, kcPager
+                                ]
+                            }
+                        ]
+                    },
                 ]
             }
         ]

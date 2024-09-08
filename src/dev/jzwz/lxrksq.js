@@ -613,65 +613,62 @@ function builder() {
                     },
                     { view: "resizer" },
                     {
-                        view: "scrollview",
-                        body: {
-                            rows: [
-                                {
-                                    view: "scrollview",
-                                    gravity: 1,
-                                    body: mainForm,
-                                },
-                                { view: "resizer" },
-                                {
-                                    gravity: 2,
-                                    rows: [
-                                        {
-                                            view: "toolbar", cols: [
-                                                {
-                                                    id: btnMxWzdm, view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
-                                                    click() {
-                                                        var values = $$(mxGrid.id).serialize(true);
-                                                        console.log(values)
+                        rows: [
+                            {
+                                view: "scrollview",
+                                gravity: 1,
+                                body: mainForm,
+                            },
+                            { view: "resizer" },
+                            {
+                                gravity: 2,
+                                rows: [
+                                    {
+                                        view: "toolbar", cols: [
+                                            {
+                                                id: btnMxWzdm, view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
+                                                click() {
+                                                    var values = $$(mxGrid.id).serialize(true);
+                                                    console.log(values)
 
-                                                        // 选择物资代码
-                                                        utils.windows.wzdm({
-                                                            multiple: true,
-                                                            checked: [],
-                                                            filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(values, (value) => (value["wzbh"] == row["wzbh"])) < 0),
-                                                            callback(checked) {
-                                                                var rkdid = $$(mainGrid.id).getSelectedId(false, true);
-                                                                _.each(checked, (wzdm) => {
-                                                                    var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                                                    $$(mxGrid.id).add(_.extend({}, data, {
-                                                                        "wzrkd_id": rkdid, "zt": "0",
-                                                                        "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
-                                                                    }));
-                                                                });
+                                                    // 选择物资代码
+                                                    utils.windows.wzdm({
+                                                        multiple: true,
+                                                        checked: [],
+                                                        filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(values, (value) => (value["wzbh"] == row["wzbh"])) < 0),
+                                                        callback(checked) {
+                                                            var rkdid = $$(mainGrid.id).getSelectedId(false, true);
+                                                            _.each(checked, (wzdm) => {
+                                                                var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
+                                                                $$(mxGrid.id).add(_.extend({}, data, {
+                                                                    "wzrkd_id": rkdid, "zt": "0",
+                                                                    "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
+                                                                }));
+                                                            });
 
-                                                                return true;
-                                                            }
-                                                        })
-                                                    }
-                                                },
-                                                { width: 24 },
-                                                utils.protos.importExcelButton({ id: btnMxImport, label: "物资导入", onImport: openImport }),
-                                                { width: 24 },
-                                                {
-                                                    view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
-                                                    click() {
-                                                        var rkdid = $$(mainGrid.id).getSelectedId(false, true);
-                                                        onAfterSelect(rkdid);
-                                                    }
-                                                },
-                                                {}
-                                            ]
-                                        },
-                                        mxGrid
-                                    ]
-                                },
-                                // printView
-                            ]
-                        },
+                                                            return true;
+                                                        }
+                                                    })
+                                                }
+                                            },
+                                            { width: 24 },
+                                            utils.protos.importExcelButton({ id: btnMxImport, label: "物资导入", onImport: openImport }),
+                                            { width: 24 },
+                                            {
+                                                view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                                click() {
+                                                    var rkdid = $$(mainGrid.id).getSelectedId(false, true);
+                                                    onAfterSelect(rkdid);
+                                                }
+                                            },
+                                            {}
+                                        ]
+                                    },
+                                    mxGrid
+                                ]
+                            },
+                            // printView
+                        ]
                     },
                 ]
             },
