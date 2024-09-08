@@ -64,18 +64,11 @@ function builder() {
                                 return
                             }
 
-                            $$(mainGrid.id).clearAll();
-                            webix.ajax()
-                                .get(mainUrl + "&start=" + start + "&end=" + end)
-                                .then(
-                                    (res) => {
-                                        var values = res.json();
-                                        $$(mainGrid.id).define("data", values);
-                                    }
-                                );
+                            $$(mainGrid.id).define("url", mainUrl + "&start=" + start + "&end=" + end);
                         }
                     },
                     {},
+                    mainGrid.actions.search({ fields: "ldbh,sq_gcbh,sq_gcmc,sf_gcbh,sf_gcmc,ckbh,ckmc,kwbh,kwmc,wzbh,wzmc,ggxh", placeholder: "可根据 仓库、项目、库位和物资 进行过滤", width: 360 }),
                     {
                         view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
                         click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }

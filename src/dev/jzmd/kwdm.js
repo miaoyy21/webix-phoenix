@@ -16,6 +16,8 @@ function builder() {
             onAfterSelect(selection, preserve) {
                 var url = "/api/sys/data_service?service=JZMD_KWDM.query&ckdm_id=" + selection.id;
 
+
+                $$(kwGrid.id).showOverlay("数据加载中...");
                 $$(kwGrid.id).define("url", url);
                 $$(kwGrid.id).refresh();
             }

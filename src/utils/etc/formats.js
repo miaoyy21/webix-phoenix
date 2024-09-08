@@ -127,8 +127,8 @@ formats.number = {
             }
         }
 
-        // console.log("editParse", webix.Number.parse(value, _.extend({}, webix.i18n, { decimalSize: size })));
-        return webix.Number.parse(value, _.extend({}, webix.i18n, { decimalSize: size }));
+        console.log("editParse", value, webix.Number.parse(value, _.extend({}, webix.i18n, { decimalSize: size })));
+        return Number(webix.Number.parse(value, _.extend({}, webix.i18n, { decimalSize: size })));
     },
     editFormat: function (value, size) {
         return webix.Number.format(value, _.extend({}, webix.i18n, { decimalSize: size }));

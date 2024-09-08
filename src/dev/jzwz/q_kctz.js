@@ -9,7 +9,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
-            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 100 },
+            { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" }, rowspan: 2 }, width: 100 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" }, rowspan: 2 }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
@@ -48,7 +48,7 @@ function builder() {
         rows: [
             {
                 view: "toolbar", cols: [
-                    mainGrid.actions.search({ fields: "ckbh,ckmc,kwbh,kwmc,wzbh,wzmc,ggxh,wzph,bzdh", label: "快速过滤：", placeholder: "可根据 仓库、库位和物资 进行过滤", autoWidth: true }),
+                    mainGrid.actions.search({ fields: "ckbh,ckmc,kwbh,kwmc,wzbh,wzmc,ggxh,wzph,bzdh", label: "快速过滤：", placeholder: "可根据 仓库、库位和物资 进行过滤" }),
                     {},
                     {
                         view: "button", label: "打印", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",

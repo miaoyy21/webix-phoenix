@@ -16,7 +16,7 @@ function datatable(options) {
         sort: "multi",
         leftSplit: 1,
         rightSplit: 0,
-
+        resizeColumn: true,
         scheme: {},
         rules: {},
 
@@ -307,7 +307,7 @@ function datatable(options) {
             },
             search(opts) {
                 // 执行的是服务端检索
-                /* {id: String, label: String, placeholder: String, fields: String, autoWidth: Boolean }*/
+                /* {id: String, label: String, placeholder: String, fields: String, width: Number }*/
                 opts = opts || {};
                 opts.id = opts.id || utils.UUID();
 
@@ -317,7 +317,7 @@ function datatable(options) {
                 }
 
                 return {
-                    id: opts.id, view: "search", label: opts["label"] || "", labelAlign: "right", align: "center", placeholder: opts["placeholder"] || "请输入搜索内容", width: !opts["autoWidth"] ? 240 : null,
+                    id: opts.id, view: "search", label: opts["label"] || "", labelAlign: "right", align: "center", placeholder: opts["placeholder"] || "请输入搜索内容", width: opts["width"] ? opts["width"] : null,
                     on: { onEnter: search, onSearchIconClick: search }
                 };
             },

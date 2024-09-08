@@ -64,61 +64,15 @@ function builder() {
                                 return
                             }
 
-                            $$(mainGrid.id).clearAll();
-                            webix.ajax()
-                                .get(mainUrl + "&start=" + start + "&end=" + end)
-                                .then(
-                                    (res) => {
-                                        var values = res.json();
-                                        $$(mainGrid.id).define("data", values);
-                                    }
-                                );
+                            $$(mainGrid.id).define("url", mainUrl + "&start=" + start + "&end=" + end);
                         }
                     },
                     {},
+                    mainGrid.actions.search({ fields: "ldbh,htbh,gcbh,gcmc,ckbh,ckmc,kwbh,kwmc,wzbh,wzmc,ggxh", placeholder: "可根据 仓库、项目、库位和物资 进行过滤", width: 360 }),
                     {
                         view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
                         click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
                     },
-                    // {
-                    //     gravity: 2,
-                    //     cols: [
-                    //         { id: txtStart, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01", stringResult: true, format: utils.formats.date.format },
-                    //         { id: txtEnd, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10), stringResult: true, format: utils.formats.date.format },
-                    //         { width: 120 },
-                    //     ]
-                    // },
-                    // {
-                    //     cols: [
-                    //         {
-                    //             view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
-                    //             click() {
-                    //                 var start = $$(txtStart).getValue().substring(0, 10);
-                    //                 var end = $$(txtEnd).getValue().substring(0, 10);
-
-                    //                 if (_.isEmpty(start) && _.isEmpty(end)) {
-                    //                     webix.message({ type: "info", text: "请选择开始时间和结束时间进行检索" });
-                    //                     return
-                    //                 }
-
-                    //                 $$(mainGrid.id).clearAll();
-                    //                 webix.ajax()
-                    //                     .get(mainUrl + "&start=" + start + "&end=" + end)
-                    //                     .then(
-                    //                         (res) => {
-                    //                             var values = res.json();
-                    //                             $$(mainGrid.id).define("data", values);
-                    //                         }
-                    //                     );
-                    //             }
-                    //         },
-                    //         {},
-                    //         {
-                    //             view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
-                    //             click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
-                    //         },
-                    //     ]
-                    // }
                 ]
             },
             mainGrid, mainPager,

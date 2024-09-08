@@ -21,7 +21,7 @@ function builder() {
             { id: "xyzt", header: { text: "选用要求", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzmc", header: { text: "物资名称", css: { "text-align": "center" } }, width: 120 },
-            { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 160 },
+            { id: "ggxh", header: { text: "规格型号", css: { "text-align": "center" } }, width: 180 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
             { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 120 },

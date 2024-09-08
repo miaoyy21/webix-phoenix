@@ -92,6 +92,7 @@ function builder(options, values) {
                     if (qls > kcsl) {
                         webix.message({ type: "info", text: "请领数量不能大于库存数量！" });
                         data["qls"] = kcsl;
+                        data["checked"] = kcsl > 0 ? "1" : "0";
                         return;
                     }
 

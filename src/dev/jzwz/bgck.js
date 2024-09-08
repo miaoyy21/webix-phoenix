@@ -40,7 +40,7 @@ function builder() {
                     var values = res.json()["data"];
                     if (djzt == "0") {
                         values = _.map(values, (value) => {
-                            var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0)) || 0;
+                            var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0), 2) || 0;
                             return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
                         });
 
@@ -196,7 +196,10 @@ function builder() {
                 var sumSfs = 0;
                 if (_.has(allSfData, mxData["id"])) {
                     var sumData = _.reject(allSfData[mxData["id"]], (v, k) => (k == id));
-                    sumSfs = _.reduce(_.values(sumData), function (total, sfs) { return total + sfs; }, 0)
+                    sumSfs = _.reduce(_.values(sumData), (total, sfs) => {
+                        var newSfs = utils.formats.number.editParse(sfs, 2);
+                        return total + newSfs;
+                    }, 0)
                 } else {
                     allSfData[mxData["id"]] = {};
                 }
@@ -209,6 +212,7 @@ function builder() {
                     sfs = kcsl;
                 }
 
+                console.log("sumsfs sfs => ", typeof sumSfs, sumSfs, typeof sfs, sfs);
                 if (sumSfs + sfs > qls) {
                     webix.message({ type: "info", text: "实发数量总和不能大于请领数量！" });
                     sfs = qls - sumSfs;
@@ -280,16 +284,23 @@ function builder() {
                                         webix.message({ type: "success", text: "自动销账成功，请进行出库确认！" });
 
                                         // 刷新明细
-                                        var mxValues = $$(mxGrid.id).serialize(true);
-                                        _.each(mxValues, (value) => {
+                                        // var mxValues = $$(mxGrid.id).serialize(true);
+                                        console.log(allSfData);
+                                        $$(mxGrid.id).eachRow((id) => {
+                                            var value = $$(mxGrid.id).getItem(id);
+
                                             var sumSfs = 0;
-                                            if (_.has(allSfData, value["id"])) {
-                                                sumSfs = _.reduce(_.values(allSfData[value["id"]]), function (total, sfs) { return total + (utils.formats.number.editParse(sfs, 2) || 0); }, 0)
+                                            if (_.has(allSfData, id)) {
+                                                sumSfs = _.reduce(_.values(allSfData[id]), (total, sfs) => {
+                                                    var newSfs = utils.formats.number.editParse(sfs, 2);
+                                                    console.log("reduce => ", typeof total, total, typeof sfs, sfs, typeof newSfs, newSfs);
+                                                    return total + newSfs;
+                                                }, 0);
                                             }
 
-                                            value["sfs"] = sumSfs.toFixed(2);
-                                            $$(mxGrid.id).updateItem(value["id"], value);
-                                        })
+                                            value["sfs"] = sumSfs;
+                                            $$(mxGrid.id).updateItem(id, value);
+                                        }, true);
 
                                         // 刷新选中的领料明细的库存
                                         var mxId = $$(mxGrid.id).getSelectedId(false, true);

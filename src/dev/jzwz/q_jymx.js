@@ -14,7 +14,7 @@ function builder() {
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 180 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 180 },
@@ -54,7 +54,7 @@ function builder() {
                                 }
                             },
                             { width: 24 },
-                            mainGrid.actions.search({ fields: "txmvalue,ldbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,cgy,jyry,bgy", label: "快速过滤：", placeholder: "可根据 条形码、采购员、检验员、供应商、项目和物资 进行过滤", autoWidth: true }),
+                            mainGrid.actions.search({ fields: "txmvalue,ldbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,cgy,jyry,bgy", label: "快速过滤：", placeholder: "可根据 条形码、采购员、检验员、供应商、项目和物资 进行过滤" }),
                         ]
                     },
                     {
