@@ -1,6 +1,3 @@
-import { frontwards } from "./frontwards";
-import { backwards } from "./backwards";
-
 import { show } from "./task_show";
 
 function builder() {

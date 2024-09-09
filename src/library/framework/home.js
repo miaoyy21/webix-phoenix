@@ -1,3 +1,5 @@
+import { show } from "./task_show";
+
 function builder() {
     return {
         id: HOME_PAGE_ID,
@@ -27,23 +29,82 @@ function builder() {
                     cols: [
                         {
                             rows: [
-                                { template: "待办事项", type: "header" },
-                                utils.protos.list({
+                                {
+                                    view: "toolbar", cols: [
+                                        { template: "待办事项", borderless: true, type: "header" },
+                                        {
+                                            view: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                            click() {
+                                                $$(HOME_PAGE_ID + "_unitlist").clearAll();
+                                                $$(HOME_PAGE_ID + "_unitlist").load("/api/wf/flows?method=Tasks&status=Executing");
+                                            }
+                                        },
+                                        { width: 4 },
+                                        {
+                                            view: "icon", icon: "mdi mdi-18px mdi-format-list-bulleted",
+                                            click() {
+                                                $$(VIEWS_ID).addView(_.extend(
+                                                    PHOENIX_FRAMEWORK_DATA["framework_tasks"].builder(),
+                                                    {
+                                                        id: EXECUTING_PAGE_ID,
+                                                        padding: { right: 4 },
+                                                        css: { "border-left": "none", "border-top": "none" }
+                                                    }
+                                                ));
+
+                                                $$(VIEWS_TABBAR_ID).addOption({
+                                                    id: EXECUTING_PAGE_ID,
+                                                    close: true,
+                                                    value: "<span style='font-size:12px'>任务中心</span>"
+                                                }, true);
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: HOME_PAGE_ID + "_unitlist",
+                                    view: "unitlist",
+                                    select: true,
                                     url: "/api/wf/flows?method=Tasks&status=Executing",
+                                    save: {},
+                                    uniteBy: function (obj) {
+                                        return "【" + obj["diagram_code_"] + "】" + obj["diagram_name_"];
+                                    },
                                     template: `
-                                        <div> #diagram_name_#  【#name_#】 <span style="float:right">#activated_at_#</span></div>
-                                        <div style='padding-left:8px'> #keyword_text_#
-                                        <div style="float:right">
-                                            <button webix_tooltip="发起" type="button" class="btn_launch webix_icon_button" style="height:48px;width:48px;">
-                                                <span class="webix_icon phoenix_warning_icon mdi-dark mdi-18px mdi mdi-arrow-right-circle-outline"></span>
-                                            </button>
-                                        </div>
-                                        </div>
+                                        <div> 【#name_#】  <span style="float:right"> #create_user_name_# &nbsp; &nbsp; #activated_at_#</span></div>
+                                        <div style='text-indent:1em;'> #keyword_text_#</div>
                                     `,
                                     type: {
-                                        height: 60
+                                        height: 54
                                     },
-                                }),
+                                    on: {
+                                        "data->onStoreUpdated": function () {
+                                            this.data.each((obj, i) => { obj.index = i + 1 });
+                                        },
+                                        onBeforeLoad() {
+                                            webix.extend(this, webix.OverlayBox);
+                                            this.showOverlay("正在加载待办事项...");
+                                        },
+                                        onAfterLoad() {
+                                            this.hideOverlay();
+                                            if (!this.count()) {
+                                                this.showOverlay("暂无待办事项");
+                                                return;
+                                            }
+
+                                            this.refresh();
+                                        },
+                                        onItemClick(id) {
+                                            var row = this.getItem(id);
+                                            show(_.extend({}, row, {
+                                                "$dtable": HOME_PAGE_ID + "_unitlist",
+                                                "operation": "execute",
+                                                "$keyword": row["keyword_text_"],
+                                                "task_id_": id,
+                                            }));
+                                        }
+                                    },
+                                },
                             ]
                         },
                         { view: "resizer" },
