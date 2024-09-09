@@ -1,6 +1,13 @@
 function builder() {
     var pager = utils.protos.pager();
-    var datatable = utils.protos.datatable({ pager: pager.id });
+    var datatable = utils.protos.datatable({
+        save: {
+            url: "/api/sys/data_service?service=tests.save",
+            updateFromResponse: true,
+            trackMove: true,
+            operationName: "operation",
+        }, pager: pager.id
+    });
 
     return {
         rows: [
