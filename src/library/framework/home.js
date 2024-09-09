@@ -43,22 +43,26 @@ function builder() {
                                         {
                                             view: "icon", icon: "mdi mdi-18px mdi-format-list-bulleted",
                                             click() {
-                                                $$(VIEWS_ID).addView(_.extend(
-                                                    PHOENIX_FRAMEWORK_DATA["framework_tasks"].builder(),
-                                                    {
-                                                        id: EXECUTING_PAGE_ID,
-                                                        padding: { right: 4 },
-                                                        css: { "border-left": "none", "border-top": "none" }
-                                                    }
-                                                ));
+                                                if (!$$(EXECUTING_PAGE_ID)) {
+                                                    $$(VIEWS_ID).addView(_.extend(
+                                                        PHOENIX_FRAMEWORK_DATA["framework_tasks"].builder(),
+                                                        {
+                                                            id: EXECUTING_PAGE_ID,
+                                                            padding: { right: 4 },
+                                                            css: { "border-left": "none", "border-top": "none" }
+                                                        }
+                                                    ));
 
-                                                $$(VIEWS_TABBAR_ID).addOption({
-                                                    id: EXECUTING_PAGE_ID,
-                                                    close: true,
-                                                    value: "<span style='font-size:12px'>任务中心</span>"
-                                                }, true);
+                                                    $$(VIEWS_TABBAR_ID).addOption({
+                                                        id: EXECUTING_PAGE_ID,
+                                                        close: true,
+                                                        value: "<span style='font-size:12px'>任务中心</span>"
+                                                    }, true);
+                                                } else {
+                                                    $$(VIEWS_TABBAR_ID).setValue(EXECUTING_PAGE_ID);
+                                                }
                                             }
-                                        }
+                                        },
                                     ]
                                 },
                                 {
