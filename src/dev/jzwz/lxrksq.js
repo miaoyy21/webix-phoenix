@@ -673,7 +673,8 @@ function builder() {
                     },
                 ]
             },
-        ]
+        ],
+        on: { onDestruct: () => { printView.destructor() } }
     }
 }
 

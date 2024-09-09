@@ -29,8 +29,8 @@ webix.ready(function () {
                                 label: "登 录",
                                 body: {
                                     rows: [
-                                        { view: "text", name: "account_id", value: "admin", label: "登录名", labelPosition: "top", clear: true, required: true },
-                                        { view: "text", name: "password", value: "12345678", label: "密码", labelPosition: "top", type: "password", clear: true, required: true },
+                                        { view: "text", name: "account_id", /*value: "admin",*/ label: "登录名", labelPosition: "top", clear: true, required: true },
+                                        { view: "text", name: "password", /*value: "12345678",*/ label: "密码", labelPosition: "top", type: "password", clear: true, required: true },
                                         { view: "switch", name: "auto_login", label: "自动登录", value: 1, labelWidth: 60, labelAlign: "right" },
                                     ]
                                 }
@@ -134,12 +134,12 @@ webix.ready(function () {
         rows: [
             {
                 view: "toolbar",
-                css: { "background": "#F8F9F9" }, elements: [
+                css: { "background": "#1D2A3D" }, elements: [
                     { view: "icon", icon: "mdi mdi-menu", click: () => { $$(MENU_TREE_ID).toggle() } },
-                    { view: "label", label: PHOENIX_SETTING["name"] },
+                    { view: "label", label: "<span style='color:#eee'>" + PHOENIX_SETTING["name"] + "</span>" },
                     {},
                     {
-                        id: MAIN_PAGE_TASKS_ID, view: "icon", css: "phoenix_primary_icon", icon: "mdi mdi-message", tooltip: "任务中心",
+                        id: MAIN_PAGE_TASKS_ID, view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
                         click() {
                             onMenuSelect({
                                 "id": EXECUTING_PAGE_ID,

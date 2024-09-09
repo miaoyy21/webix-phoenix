@@ -238,7 +238,7 @@ function builder() {
             drag: false,
             sort: false,
             multiselece: false,
-            url: "/api/sys/data_service?service=JZWZ_WZCK.query_ckmxhz&start=" + utils.formats.date.format(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&start=" + utils.formats.date.format(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
             leftSplit: 0,
             rightSplit: 0,
             data: [],
@@ -268,7 +268,7 @@ function builder() {
             width: 720,
             height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "出库单打印【仅显示近7天出库记录】",
+            head: "出库单打印【仅显示本人近7天出库单】",
             position: "center",
             body: {
                 rows: [
