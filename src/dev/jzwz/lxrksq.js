@@ -591,10 +591,10 @@ function builder() {
                     {
                         view: "button", label: "打印入库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
                         click() {
-                            setTimeout(() => {
-                                $$(printId + "_form").setValues($$(mainForm.id).getValues());
-                                $$(printId + "_datatable").define("data", $$(mxGrid.id).serialize(true));
+                            $$(printId + "_form").setValues($$(mainForm.id).getValues());
+                            $$(printId + "_datatable").define("data", $$(mxGrid.id).serialize(true));
 
+                            setTimeout(() => {
                                 webix.print(printView, { mode: "landscape" });
                             }, 500);
                         }
@@ -669,7 +669,6 @@ function builder() {
                                     mxGrid
                                 ]
                             },
-                            // printView
                         ]
                     },
                 ]

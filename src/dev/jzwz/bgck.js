@@ -1,9 +1,11 @@
+
 function builder() {
     const mainUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJ.query_bgck";
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query";
     const kcUrl = "/api/sys/data_service?service=JZWZ_WZYE.query_self";
     const sfUrl = "/api/sys/data_service?service=JZWZ_WZCK.query_yeck";
 
+    var winPrintId = utils.UUID();
     var btnAuto = utils.UUID();
     var btnCommit = utils.UUID();
 
@@ -229,6 +231,88 @@ function builder() {
         pager: kcPager.id
     });
 
+    /***************************** 选择打印已出库的领料单 *****************************/
+    function openPrint() {
+        var printGrid = utils.protos.datatable({
+            editable: true,
+            drag: false,
+            sort: false,
+            multiselece: false,
+            url: "/api/sys/data_service?service=JZWZ_WZCK.query_ckmxhz&start=" + utils.formats.date.format(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+            leftSplit: 0,
+            rightSplit: 0,
+            data: [],
+            save: {},
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                { id: "checked", header: { text: "选择", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "Y", uncheckValue: "N", tooltip: false, css: { "text-align": "center" }, adjust: true, minWidth: 50 },
+                { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "llrq", header: { text: "领料日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
+                { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
+                { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", fillspace: true, minWidth: 180 },
+                { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+                { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
+                { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            ],
+        });
+
+        webix.ui({
+            id: winPrintId,
+            view: "window",
+            close: true,
+            modal: true,
+            move: true,
+            width: 720,
+            height: 420,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "出库单打印【仅显示近7天出库记录】",
+            position: "center",
+            body: {
+                rows: [
+                    {
+                        paddingX: 8,
+                        cols: [printGrid]
+                    },
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            {},
+                            {
+                                view: "button", width: 80, label: "打印", css: "webix_primary",
+                                click() {
+                                    var allData = $$(printGrid.id).serialize(true);
+                                    var newData = _.filter(allData, (row) => row["checked"] == "Y");
+                                    if (_.size(newData) < 1) {
+                                        webix.message({ type: "error", text: "请选择需要打印的出库明细" });
+                                        return
+                                    }
+
+                                    $$(printGrid.id).define("data", newData);
+
+                                    printGrid.actions.hideColumn("checked", true);
+                                    printGrid.actions.hideColumn("llrq", true);
+
+                                    webix.print($$(printGrid.id), { mode: "landscape" });
+                                    $$(winPrintId).hide();
+                                }
+                            },
+                            { width: 8 },
+                            { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winPrintId).hide() },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
     return {
         rows: [
             {
@@ -345,6 +429,9 @@ function builder() {
                             })
                         }
                     },
+                    {},
+                    { view: "button", label: "打印出库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer", click: openPrint },
+                    {}
                 ]
             },
             {
