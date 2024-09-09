@@ -370,16 +370,22 @@ function builder() {
                                         return;
                                     }
 
-                                    for (let i = 0; i < _.size(data); i++) {
-                                        var newRow = _.pick(data[i], ..._.keys(mapping));
+                                    this.disable();
 
-                                        utils.grid.add($$(datatable.id), _.extend(newRow, { "xyzt": "在用" }));
-                                    }
+                                    var self = this;
+                                    webix.ajax().
+                                        post("/api/sys/data_service?service=JZMD_WZDM.patch", { "data": data })
+                                        .then((res) => {
+                                            self.enable();
 
-                                    setTimeout(() => {
-                                        webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
-                                        $$(winImportId).hide();
-                                    }, 500)
+                                            webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
+                                            $$(winImportId).hide();
+
+                                            $$(datatable.id).clearAll();
+                                            $$(datatable.id).load($$(datatable.id).config.url);
+                                        }).fail(function (xhr) {
+                                            self.enable();
+                                        });;
                                 }
                             },
                             { width: 8 },

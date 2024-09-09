@@ -433,15 +433,19 @@ function builder() {
                                         }
                                     }
 
-                                    for (let i = 0; i < _.size(data); i++) {
-                                        var newRow = _.omit(data[i], "id");
-                                        $$(mxGrid.id).add(_.extend(newRow, { "wzrkd_id": rkdid, "zt": "0" }));
-                                    }
+                                    this.disable();
 
-                                    setTimeout(() => {
-                                        webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
-                                        $$(winImportId).hide();
-                                    }, 500)
+                                    // 批量插入
+                                    var self = this;
+                                    webix.ajax()
+                                        .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.patch", { "wzrkd_id": rkdid, "data": data })
+                                        .then((res) => {
+                                            self.enable();
+
+                                            webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
+                                            $$(winImportId).hide();
+                                            onAfterSelect(rkdid);
+                                        });
                                 }
                             },
                             { width: 8 },
@@ -629,7 +633,6 @@ function builder() {
                                                 id: btnMxWzdm, view: "button", label: "选择物资", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
                                                 click() {
                                                     var values = $$(mxGrid.id).serialize(true);
-                                                    console.log(values)
 
                                                     // 选择物资代码
                                                     utils.windows.wzdm({
@@ -638,13 +641,12 @@ function builder() {
                                                         filter: (row) => (row["xyzt"] != '禁用' && _.findIndex(values, (value) => (value["wzbh"] == row["wzbh"])) < 0),
                                                         callback(checked) {
                                                             var rkdid = $$(mainGrid.id).getSelectedId(false, true);
-                                                            _.each(checked, (wzdm) => {
-                                                                var data = _.pick(wzdm, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc");
-                                                                $$(mxGrid.id).add(_.extend({}, data, {
-                                                                    "wzrkd_id": rkdid, "zt": "0",
-                                                                    "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0,
-                                                                }));
-                                                            });
+
+                                                            var data = _.map(checked, (row) => (_.extend(row, { "rksl": 0, "cgdjhs": 0, "cgjehs": 0, "taxrate": 13, "cgdj": 0, "cgje": 0 })));
+                                                            webix.ajax().sync().post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.patch", { "wzrkd_id": rkdid, "data": data });
+
+                                                            webix.message({ type: "success", text: "选择" + _.size(data) + "条物资！" });
+                                                            onAfterSelect(rkdid);
 
                                                             return true;
                                                         }
