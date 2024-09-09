@@ -365,6 +365,7 @@ function onMenuSelect(item) {
             $$(VIEWS_ID).addView({
                 id: item.id,
                 view: "template",
+                padding: { right: 4 },
                 template: "Menu:" + item["menu_"] + "<br>Value: " + item.value
             });
         } else {
