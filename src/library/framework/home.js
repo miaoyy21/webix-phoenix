@@ -7,24 +7,24 @@ function builder() {
         scroll: "y",
         body: {
             rows: [
-                // {
-                //     view: "winmenu",
-                //     height: 144,
-                //     xCount: 4,
-                //     yCount: 1,
-                //     data: [
-                //         { id: "01", value: "员工总数 896人", color: "#0a57c0", img: "/assets/01.png", x: 1, y: 1 },
-                //         { id: "02", value: "本科及以上 549人", color: "#00a300", img: "/assets/02.png", x: 2, y: 1 },
-                //         { id: "03", value: "供应商总数 674家", color: "#a400ab", img: "/assets/03.png", x: 3, y: 1 },
-                //         { id: "04", value: "营业收入 ¥134,678.85", color: "#d9532c", img: "/assets/04.png", x: 4, y: 1 }
-                //     ],
-                //     on: {
-                //         onItemClick: function (id) {
-                //             console.log(this.getItem(id));
-                //         }
-                //     }
-                // },
-                // { view: "resizer" },
+                {
+                    view: "winmenu",
+                    height: 144,
+                    xCount: 4,
+                    yCount: 1,
+                    data: [
+                        { id: "01", value: "物资标准库 896条", color: "#0a57c0", img: "/assets/01.png", x: 1, y: 1 },
+                        { id: "02", value: "供应商标准库 549条", color: "#00a300", img: "/assets/02.png", x: 2, y: 1 },
+                        { id: "03", value: "本月入库物资 674项", color: "#a400ab", img: "/assets/03.png", x: 3, y: 1 },
+                        { id: "04", value: "本月出库物资 789项", color: "#d9532c", img: "/assets/04.png", x: 4, y: 1 }
+                    ],
+                    on: {
+                        onItemClick: function (id) {
+                            console.log(this.getItem(id));
+                        }
+                    }
+                },
+                { view: "resizer" },
                 {
                     cols: [
                         {
@@ -75,8 +75,8 @@ function builder() {
                                         return "【" + obj["diagram_code_"] + "】" + obj["diagram_name_"];
                                     },
                                     template: `
-                                        <div> 【#name_#】  <span style="float:right"> #create_user_name_# &nbsp; &nbsp; #activated_at_#</span></div>
-                                        <div style='text-indent:1em;'> #keyword_text_#</div>
+                                        <div class='webix_strong'> #status_text_#  <span style="float:right"> #create_user_name_# &nbsp; #activated_at_#</span></div>
+                                        <div style='text-indent:0em;'> #keyword_text_#</div>
                                     `,
                                     type: {
                                         height: 54

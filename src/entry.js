@@ -1,6 +1,8 @@
 import "./install";
 import { utils } from "./utils";
 
+webix.debug = false;
+
 // 自定义的工具库
 _.extend(global, { utils });
 
@@ -260,6 +262,10 @@ setInterval(() => {
                 if (!_.isEqual(oldTasks, data["tasks"])) {
                     $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
                     $$(MAIN_PAGE_TASKS_ID).refresh();
+
+                    // 刷新首页的待办事项
+                    $$(HOME_PAGE_ID + "_unitlist").clearAll();
+                    $$(HOME_PAGE_ID + "_unitlist").load($$(HOME_PAGE_ID + "_unitlist").config.url);
 
                     if (data["tasks"] > oldTasks) {
                         webix.message({ type: "info", text: "你收到新的待办事项！" })

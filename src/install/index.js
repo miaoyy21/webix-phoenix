@@ -7,8 +7,9 @@ import "../assets/phoenix.css";
 
 import "../assets/goJs";
 import _ from "underscore";
-import * as webix from "webix";
 
+// import * as webix from "webix"; // Debug Version
+import * as webix from "webix/webix.min.js";
 
 _.extend(global, {
     MAIN_PAGE_ID: "PHOENIX_MAIN",
