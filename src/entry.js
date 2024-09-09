@@ -166,8 +166,9 @@ webix.ready(function () {
 
                                         // 显示登录界面
                                         $$(LOGIN_PAGE_ID).show();
-                                        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
+
                                         $$(LOGIN_PAGE_FORM_ID).clear();
+                                        $$(LOGIN_PAGE_FORM_ID).setValues({ "auto_login": 1 });
 
                                         // 关闭所有的页面，并隐藏主界面
                                         var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
@@ -234,6 +235,7 @@ webix.ready(function () {
     // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
     if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {
         $$(LOGIN_PAGE_ID).hide();
+        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
         $$(MAIN_PAGE_ID).show();
         reloadMenus();
