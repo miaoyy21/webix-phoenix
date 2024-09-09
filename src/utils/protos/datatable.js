@@ -149,6 +149,7 @@ function datatable(options) {
             this.attachEvent("onBeforeLoad", function () {
                 console.log("onBeforeLoad");
                 this.showOverlay("数据加载中...");
+                return true;
             })
 
             // 加载后
@@ -288,6 +289,7 @@ function datatable(options) {
 
                         var params = {};
                         var state = datatable.getState();
+                        console.log(state);
 
                         // 保持原有的数据排序状态
                         if (state.sort) {
@@ -300,7 +302,7 @@ function datatable(options) {
                             _.forEach(state.filter, (v, k) => { params["filter[" + k + "]"] = v });
                         }
 
-                        datatable.clearAll();
+                        // 由于可能分页，所以不能执行clearAll，清除后，客户端丢失已分页数据，将产生重复请求
                         datatable.load(() => webix.ajax(datatable.config.url, params));
                     }
                 }
