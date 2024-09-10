@@ -10,7 +10,7 @@ function builder() {
                     {
                         view: "button", label: "创建", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                         click() {
-                            utils.grid.add($$(kind_grid_id), { "description_": "" }, "code_");
+                            utils.grid.add($$(kind_grid_id), { "is_sys_": "1", "description_": "" }, "code_");
                         }
                     },
                     {
@@ -58,6 +58,7 @@ function builder() {
                         },
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+                            { id: "is_sys_", header: { text: "系统", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "1", uncheckValue: "0", tooltip: false, css: { "text-align": "center" }, width: 60 },
                             { id: "code_", header: { text: "字典编码", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
                             { id: "name_", header: { text: "字典名称", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
                             { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },

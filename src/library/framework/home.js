@@ -236,6 +236,29 @@ function builder() {
                                             obj.index = i + 1;
                                         })
                                     },
+                                    onItemClick(id) {
+                                        var item = this.getItem(id);
+
+                                        if (!$$(item.id)) {
+                                            var module = PHOENIX_MENUS_DATA[item["menu_"]];
+                                            $$(VIEWS_ID).addView(_.extend(
+                                                module.builder(),
+                                                {
+                                                    id: item.id,
+                                                    padding: { right: 4 },
+                                                    css: { "border-left": "none", "border-top": "none" }
+                                                }
+                                            ));
+
+                                            $$(VIEWS_TABBAR_ID).addOption({
+                                                id: item.id,
+                                                close: true,
+                                                value: "<span style='font-size:12px'>" + item["menu_name_"].trim() + "</span>"
+                                            }, true);
+                                        } else {
+                                            $$(VIEWS_TABBAR_ID).setValue(item.id);
+                                        }
+                                    },
                                     onBeforeLoad() {
                                         webix.extend(this, webix.OverlayBox);
                                         this.showOverlay("正在加载用户常用功能 ...");
