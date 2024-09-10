@@ -9,6 +9,7 @@ system.system_admin_menus = require("./admin/menus");
 system.system_admin_operate_logs = require("./admin/operate_logs");
 system.system_service_tables = require("./service/tables");
 system.system_service_dicts = require("./service/dicts");
+system.system_service_user_dicts = require("./service/user_dicts");
 system.system_service_auto_no = require("./service/auto_no");
 system.system_service_data = require("./service/data");
 system.system_service_time_task = require("./service/time_task");

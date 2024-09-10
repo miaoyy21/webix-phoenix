@@ -8,16 +8,6 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "button", label: "创建", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
-                        click() {
-                            utils.grid.add($$(kind_grid_id), { "is_sys_": "1", "description_": "" }, "code_");
-                        }
-                    },
-                    {
-                        view: "button", label: "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
-                        click: () => utils.grid.remove($$(kind_grid_id), null, "数据字典", "name_")
-                    },
-                    {
                         view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
                         click() {
                             $$(kind_grid_id).editCancel();
@@ -35,39 +25,22 @@ function builder() {
                     {
                         id: kind_grid_id,
                         view: "datatable",
+                        gravity: 1,
                         css: "webix_data_border webix_header_border",
                         resizeColumn: true,
-                        editable: true,
+                        editable: false,
                         tooltip: true,
                         scrollX: false,
-                        drag: "order",
+                        drag: false,
                         select: true,
-                        url: "/api/sys/dict_kinds",
-                        save: {
-                            url: "/api/sys/dict_kinds",
-                            updateFromResponse: true,
-                            trackMove: true,
-                            operationName: "operation",
-                            on: {
-                                onAfterSync(status, text, data, loader) {
-                                    if (status["status"] === "insert") {
-                                        utils.grid.add($$(item_grid_id), { "kind_id_": data["newid"], "code_": "Default", "name_": "默认值" });
-                                    }
-                                }
-                            }
-                        },
+                        url: "/api/sys/dict_kinds?scope=USER",
+                        save: {},
                         columns: [
                             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                            { id: "is_sys_", header: { text: "系统", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "1", uncheckValue: "0", tooltip: false, css: { "text-align": "center" }, width: 60 },
-                            { id: "code_", header: { text: "字典编码", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
-                            { id: "name_", header: { text: "字典名称", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
-                            { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
+                            { id: "name_", header: { text: "类别名称", css: { "text-align": "center" } }, sort: "text", width: 140 },
+                            { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, sort: "text", fillspace: true },
                             { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 160, css: { "text-align": "center" } },
                         ],
-                        rules: {
-                            "code_": webix.rules.isNotEmpty,
-                            "name_": webix.rules.isNotEmpty,
-                        },
                         on: {
                             "data->onStoreUpdated": function () {
                                 this.data.each(function (obj, i) {
@@ -87,8 +60,6 @@ function builder() {
                                 this.select(this.getFirstId());
                             },
                             onAfterSelect(row) {
-                                $$(item_grid_id).editCancel();
-
                                 $$(item_grid_id).clearAll();
                                 $$(item_grid_id).load(() => webix.ajax("/api/sys/dict_items", { "kind_id": row.id }));
                             },
@@ -98,7 +69,7 @@ function builder() {
                     {
                         id: item_grid_id,
                         view: "datatable",
-                        width: 420,
+                        gravity: 1,
                         css: "webix_data_border webix_header_border",
                         resizeColumn: true,
                         editable: true,
@@ -114,8 +85,9 @@ function builder() {
                             operationName: "operation"
                         },
                         columns: [
-                            { id: "code_", header: { text: "字典项编码", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
-                            { id: "name_", header: { text: "字典项名称", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
+                            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+                            { id: "code_", header: { text: "代码编码", css: { "text-align": "center" } }, editor: "text", sort: "text", width: 140 },
+                            { id: "name_", header: { text: "代码名称", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
                             {
                                 width: 120,
                                 header: { text: "操作", css: { "text-align": "center" } },
@@ -146,14 +118,19 @@ function builder() {
                                 if (!row) return;
 
                                 if ($$(item_grid_id).count() == 1) {
-                                    webix.message({ type: "error", text: "至少要包含一个数据字典项" });
+                                    webix.message({ type: "error", text: "至少要包含一个代码项" });
                                     return;
                                 }
 
-                                utils.grid.remove($$(item_grid_id), row, "数据字典项", "code_")
+                                utils.grid.remove($$(item_grid_id), row, "代码编码", "code_")
                             },
                         },
                         on: {
+                            "data->onStoreUpdated": function () {
+                                this.data.each(function (obj, i) {
+                                    obj.index = i + 1;
+                                })
+                            },
                             onBeforeLoad() {
                                 this.showOverlay("数据加载中...");
                             },
