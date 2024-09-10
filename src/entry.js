@@ -84,7 +84,7 @@ webix.ready(function () {
                                                     $$(LOGIN_PAGE_FORM_ID).clear();
                                                     departView.hide();
 
-                                                    webix.ui(mainPage).show();
+                                                    webix.ui(buildMainPage()).show();
                                                     $$(LOGIN_PAGE_ID).hide();
 
                                                     // 设置该参数的意义：避免密码登录时，多显示1条Token登录
@@ -133,7 +133,26 @@ webix.ready(function () {
             })
     }
 
-    var mainPage = {
+    // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
+    if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {
+        $$(LOGIN_PAGE_ID).hide();
+        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
+
+        // 主界面
+        webix.ui(buildMainPage()).show();
+        reloadMenus();
+    } else {
+        $$(LOGIN_PAGE_ID).show();
+        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
+
+        $$(MAIN_PAGE_ID).hide();
+    }
+});
+
+
+// 应用主页面构建
+function buildMainPage() {
+    return {
         id: MAIN_PAGE_ID,
         rows: [
             {
@@ -186,7 +205,7 @@ webix.ready(function () {
                                 }
                             }
                         }
-                    }
+                    },
                 ]
             },
             {
@@ -226,10 +245,18 @@ webix.ready(function () {
                                 ]
                             },
                             {
-                                view: "template",
-                                height: 28,
-                                css: { "text-align": "center", "background": "#F8F9F9" },
-                                template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
+                                cols: [
+                                    { borderless: true, css: { "background": "#F8F9F9" } },
+                                    {
+                                        view: "template",
+                                        borderless: true,
+                                        gravity: 2,
+                                        height: 28,
+                                        css: { "text-align": "center", "background": "#F8F9F9" },
+                                        template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
+                                    },
+                                    { view: "template", borderless: true, css: { "text-align": "center", "background": "#F8F9F9" }, template: "【登录用户】" + utils.users.getUserName() },
+                                ]
                             }
                         ]
                     }
@@ -237,22 +264,7 @@ webix.ready(function () {
             }
         ],
     };
-
-    // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
-    if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {
-        $$(LOGIN_PAGE_ID).hide();
-        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
-
-        // 主界面
-        webix.ui(mainPage).show();
-        reloadMenus();
-    } else {
-        $$(LOGIN_PAGE_ID).show();
-        $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
-
-        $$(MAIN_PAGE_ID).hide();
-    }
-});
+}
 
 // 每隔10秒执行一次定时任务
 setInterval(() => {
