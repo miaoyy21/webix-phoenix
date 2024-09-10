@@ -1,6 +1,9 @@
 import { show } from "./task_show";
 
 function builder() {
+    var res = webix.ajax().sync().get("/api/sys/data_service?service=JZWZ.query");
+    var data = JSON.parse(res.responseText);
+
     return {
         id: HOME_PAGE_ID,
         padding: { right: 4 },
@@ -11,10 +14,10 @@ function builder() {
                 xCount: 4,
                 yCount: 1,
                 data: [
-                    { id: "01", value: "物资标准库 896条", color: "#0a57c0", img: "/assets/01.png", x: 1, y: 1 },
-                    { id: "02", value: "供应商标准库 549条", color: "#00a300", img: "/assets/02.png", x: 2, y: 1 },
-                    { id: "03", value: "本月入库物资 674项", color: "#a400ab", img: "/assets/03.png", x: 3, y: 1 },
-                    { id: "04", value: "本月出库物资 789项", color: "#d9532c", img: "/assets/04.png", x: 4, y: 1 }
+                    { id: "01", value: "物资标准库 " + data["wzdm"] + "条", color: "#0a57c0", img: "/assets/01.png", x: 1, y: 1 },
+                    { id: "02", value: "供应商标准库 " + data["khdm"] + "条", color: "#00a300", img: "/assets/02.png", x: 2, y: 1 },
+                    { id: "03", value: "本月入库物资 " + data["rkd"] + "项", color: "#a400ab", img: "/assets/03.png", x: 3, y: 1 },
+                    { id: "04", value: "本月出库物资 " + data["ckd"] + "项", color: "#d9532c", img: "/assets/04.png", x: 4, y: 1 }
                 ],
                 on: {
                     onItemClick: function (id) {
@@ -115,7 +118,7 @@ function builder() {
                         rows: [
                             {
                                 view: "toolbar", cols: [
-                                    { template: "待办事项", borderless: true, type: "header" },
+                                    { template: "常用功能", borderless: true, type: "header" },
                                     {
                                         view: "icon", icon: "mdi mdi-18px mdi-refresh",
                                         click() {
