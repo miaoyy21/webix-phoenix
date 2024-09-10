@@ -128,8 +128,8 @@ function builder() {
                                             menus.push(id);
                                         })
 
-                                        var params = { "role_id": $$(grid_id).getSelectedId(false, true), "menus": menus };
-                                        webix.ajax().post("/api/sys/role_menus?method=Patch", params)
+                                        var values = { "role_id": $$(grid_id).getSelectedId(false, true), "menus": menus };
+                                        webix.ajax().post("/api/sys/role_menus?method=Patch", values)
                                             .then((res) => webix.message({ type: "success", text: "保存成功" }));
                                     }
                                 },

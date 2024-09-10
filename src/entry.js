@@ -111,8 +111,9 @@ webix.ready(function () {
             .then((res) => {
                 var data = res.json();
 
+                var PHOENIX_USER_MENUS_DATA = data["menus"];
                 var menus = _.map(
-                    _.sortBy(data["menus"], (o) => Number(o["seq"])), (d) => ({
+                    _.sortBy(PHOENIX_USER_MENUS_DATA, (o) => Number(o["seq"])), (d) => ({
                         "id": d["id"],
                         "menu_": d["menu_"],
                         "value": d["name_"],
@@ -121,7 +122,9 @@ webix.ready(function () {
                     }));
 
                 $$(MENU_TREE_ID).clearAll();
-                $$(MENU_TREE_ID).define("data", utils.tree.buildTree(menus))
+                $$(MENU_TREE_ID).define("data", utils.tree.buildTree(menus));
+
+                _.extend(global, { PHOENIX_USER_MENUS_DATA }); // 记录用户菜单数据，这边为平面的数据
 
                 $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
                 $$(MAIN_PAGE_TASKS_ID).refresh();
@@ -190,7 +193,7 @@ webix.ready(function () {
                     {
                         id: MENU_TREE_ID,
                         view: "sidebar",
-                        css: { "background": "#F8F9F9" },
+                        css: { "background": "#F9F9F9" },
                         scroll: "y",
                         width: 240,
                         data: null,

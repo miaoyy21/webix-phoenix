@@ -43,7 +43,6 @@ function builder() {
                     width: 360,
                     templateLoading: `<div class="lds-dual-ring"></div>`,
                 },
-                // data: big_film_set,
                 onClick: {
                     btn_launch(e, id) {
                         var row = this.getItem(id);
