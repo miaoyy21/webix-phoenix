@@ -1,11 +1,11 @@
 import { show } from "./task_show";
 
 function builder() {
-    const menusUrl = "/api/sys/home_menus";
+    const menusUrl = "/api/sys/home_menus?PHOENIX_IGNORE_LOG=true";
 
     var winId = utils.UUID();
 
-    var res = webix.ajax().sync().get("/api/sys/data_service?service=JZWZ.query");
+    var res = webix.ajax().sync().get("/api/sys/data_service?PHOENIX_IGNORE_LOG=true&service=JZWZ.query");
     var data = JSON.parse(res.responseText);
 
     // 打开登录用户的菜单对话框
@@ -150,7 +150,7 @@ function builder() {
                                 id: HOME_PAGE_ID + "_unitlist",
                                 view: "unitlist",
                                 select: true,
-                                url: "/api/wf/flows?method=Tasks&status=Executing",
+                                url: "/api/wf/flows?method=Tasks&status=Executing&PHOENIX_IGNORE_LOG=true",
                                 save: {},
                                 uniteBy: function (obj) {
                                     return "【" + obj["diagram_code_"] + "】" + obj["diagram_name_"];

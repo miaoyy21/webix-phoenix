@@ -245,13 +245,13 @@ function buildMainPage() {
                                 ]
                             },
                             {
+                                height: 24,
                                 cols: [
                                     { borderless: true, css: { "background": "#F8F9F9" } },
                                     {
                                         view: "template",
                                         borderless: true,
                                         gravity: 2,
-                                        height: 28,
                                         css: { "text-align": "center", "background": "#F8F9F9" },
                                         template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
                                     },
@@ -269,7 +269,7 @@ function buildMainPage() {
 // 每隔10秒执行一次定时任务
 setInterval(() => {
     try {
-        webix.ajax().get("api/sys?method=Sync")
+        webix.ajax().get("api/sys?method=Sync&PHOENIX_IGNORE_LOG=true")
             .then((res) => {
                 var data = res.json();
 

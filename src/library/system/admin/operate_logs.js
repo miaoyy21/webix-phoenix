@@ -25,7 +25,7 @@ function builder() {
                                 _.forEach(state.filter, (v, k) => { params["filter[" + k + "]"] = v });
                             }
 
-                            $$(grid_id).load(() => webix.ajax("/api/sys/operate_logs", params));
+                            $$(grid_id).load(() => webix.ajax("/api/sys/operate_logs?PHOENIX_IGNORE_LOG=true", params));
                             $$(grid_id).refresh();
                         }
                     },
@@ -48,14 +48,14 @@ function builder() {
                 resizeColumn: true,
                 tooltip: true,
                 hover: "phoenix_hover",
-                leftSplit: 5,
+                leftSplit: 4,
                 sort: "multi",
-                url: "/api/sys/operate_logs",
+                url: "/api/sys/operate_logs?PHOENIX_IGNORE_LOG=true",
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
                     { id: "user_name_", header: [{ text: "用户名", css: { "text-align": "center" } }, { content: "serverFilter" }], sort: "server", width: 100 },
                     { id: "method_", header: { text: "方法", css: { "text-align": "center" } }, css: { "text-align": "center" }, cssFormat: utils.formats.method, css: { "text-align": "center" }, width: 60 },
-                    { id: "menu_name_", header: [{ text: "菜单名称", css: { "text-align": "center" } }, { content: "serverFilter" }], sort: "server", width: 100 },
+                    { id: "menu_name_", header: [{ text: "菜单名称", css: { "text-align": "center" } }, { content: "serverFilter" }], sort: "server", width: 160 },
                     { id: "path_", header: { text: "URL地址", css: { "text-align": "center" } }, sort: "server", width: 180 },
 
                     { id: "params_", header: [{ text: "请求参数", css: { "text-align": "center" } }, { content: "serverFilter" }], width: 480 },

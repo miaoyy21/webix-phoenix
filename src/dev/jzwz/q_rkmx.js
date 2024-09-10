@@ -65,7 +65,7 @@ function builder() {
                             }
 
                             $$(mainGrid.id).clearAll();
-                            $$(mainGrid.id).load(mainUrl + "&start=" + start + "&end=" + end);
+                            $$(mainGrid.id).define("url", mainUrl + "&start=" + start + "&end=" + end);
                         }
                     },
                     {},

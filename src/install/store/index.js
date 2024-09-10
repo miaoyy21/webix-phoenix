@@ -5,7 +5,7 @@ import { framework } from "../../library/framework";
 import { dev } from "../../dev";
 
 // 系统设置
-var text = webix.ajax().sync().get("/api/sys", { "method": "Setting", "PHOENIX_USING_MENU": "[系统加载]" }).responseText;
+var text = webix.ajax().sync().get("/api/sys", { "method": "Setting", "PHOENIX_IGNORE_LOG": true, "PHOENIX_USING_MENU": "[系统加载]" }).responseText;
 var PHOENIX_SETTING = JSON.parse(text);
 
 _.extend(global, { PHOENIX_SETTING });
