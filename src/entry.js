@@ -266,9 +266,13 @@ function buildMainPage() {
     };
 }
 
-// 每隔10秒执行一次定时任务
+// 每隔10秒执行1次定时任务
 setInterval(() => {
     try {
+        // 在登录界面，则不进行消息同步
+        if ($$(LOGIN_PAGE_ID)) return;
+
+        // 查询用户的待办事项
         webix.ajax().get("api/sys?method=Sync&PHOENIX_IGNORE_LOG=true")
             .then((res) => {
                 var data = res.json();
