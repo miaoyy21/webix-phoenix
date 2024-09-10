@@ -133,109 +133,111 @@ webix.ready(function () {
             })
     }
 
-    // 主界面
-    webix.ui({
-        id: MAIN_PAGE_ID,
-        rows: [
-            {
-                view: "toolbar",
-                css: { "background": "#1D2A3D" }, elements: [
-                    { view: "icon", icon: "mdi mdi-menu", click: () => { $$(MENU_TREE_ID).toggle() } },
-                    { view: "label", label: "<span style='color:#eee'>" + PHOENIX_SETTING["name"] + "</span>" },
-                    {},
-                    {
-                        id: MAIN_PAGE_TASKS_ID, view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
-                        click() {
-                            onMenuSelect({
-                                "id": EXECUTING_PAGE_ID,
-                                "menu_": "framework_tasks",
-                                "value": "任务中心"
-                            });
-                        }
-                    },
-                    {
-                        view: "icon", icon: "wxi-user", tooltip: "个人设置",
-                        popup: {
-                            view: 'contextmenu',
-                            data: [
-                                { id: "change_password", value: '修改密码', icon: "mdi mdi-shield-key" },
-                                { id: 'logout', value: '退出系统', icon: "mdi mdi-exit-to-app" },
-                            ],
-                            on: {
-                                onMenuItemClick(id) {
-                                    if (id === "change_password") {
-                                        change_password();
-                                    } else if (id === 'logout') {
-                                        // 移除自动登录
-                                        webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
+    var mainPage =
 
-                                        // 显示登录界面
-                                        $$(LOGIN_PAGE_ID).show();
+        // 主界面
+        webix.ui({
+            id: MAIN_PAGE_ID,
+            rows: [
+                {
+                    view: "toolbar",
+                    css: { "background": "#1D2A3D" }, elements: [
+                        { view: "icon", icon: "mdi mdi-menu", click: () => { $$(MENU_TREE_ID).toggle() } },
+                        { view: "label", label: "<span style='color:#eee'>" + PHOENIX_SETTING["name"] + "</span>" },
+                        {},
+                        {
+                            id: MAIN_PAGE_TASKS_ID, view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
+                            click() {
+                                onMenuSelect({
+                                    "id": EXECUTING_PAGE_ID,
+                                    "menu_": "framework_tasks",
+                                    "value": "任务中心"
+                                });
+                            }
+                        },
+                        {
+                            view: "icon", icon: "wxi-user", tooltip: "个人设置",
+                            popup: {
+                                view: 'contextmenu',
+                                data: [
+                                    { id: "change_password", value: '修改密码', icon: "mdi mdi-shield-key" },
+                                    { id: 'logout', value: '退出系统', icon: "mdi mdi-exit-to-app" },
+                                ],
+                                on: {
+                                    onMenuItemClick(id) {
+                                        if (id === "change_password") {
+                                            change_password();
+                                        } else if (id === 'logout') {
+                                            // 移除自动登录
+                                            webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
 
-                                        $$(LOGIN_PAGE_FORM_ID).clear();
-                                        $$(LOGIN_PAGE_FORM_ID).setValues({ "auto_login": 1 });
+                                            // 显示登录界面
+                                            $$(LOGIN_PAGE_ID).show();
 
-                                        // 关闭所有的页面，并隐藏主界面
-                                        var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
-                                        _.each(menus, (id) => { id != HOME_PAGE_ID && $$(VIEWS_TABBAR_ID).removeOption(id) });
-                                        $$(MAIN_PAGE_ID).hide();
+                                            $$(LOGIN_PAGE_FORM_ID).clear();
+                                            $$(LOGIN_PAGE_FORM_ID).setValues({ "auto_login": 1 });
 
-                                        webix.storage.cookie.put("PHOENIX_USING_MENU", null);
+                                            // 关闭所有的页面，并隐藏主界面
+                                            var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
+                                            _.each(menus, (id) => { id != HOME_PAGE_ID && $$(VIEWS_TABBAR_ID).removeOption(id) });
+                                            $$(MAIN_PAGE_ID).hide();
+
+                                            webix.storage.cookie.put("PHOENIX_USING_MENU", null);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                cols: [
-                    {
-                        id: MENU_TREE_ID,
-                        view: "sidebar",
-                        css: { "background": "#F9F9F9" },
-                        scroll: "y",
-                        width: 240,
-                        data: null,
-                        on: { onAfterSelect(id) { onMenuSelect(this.getItem(id)) } }
-                    },
-                    { view: "resizer" },
-                    {
-                        rows: [
-                            {
-                                id: VIEWS_TABBAR_ID,
-                                view: "tabbar",
-                                multiview: true,
-                                multipleOpen: true,
-                                options: [
-                                    { id: HOME_PAGE_ID, value: "<span style='font-size:12px'>首页</span>" }
-                                ],
-                                optionWidth: 140,
-                                height: 30,
-                                on: {
-                                    onOptionRemove(id) { $$(VIEWS_ID).removeView(id) },
-                                    onChange: onTabChange
+                    ]
+                },
+                {
+                    cols: [
+                        {
+                            id: MENU_TREE_ID,
+                            view: "sidebar",
+                            css: { "background": "#F9F9F9" },
+                            scroll: "y",
+                            width: 240,
+                            data: null,
+                            on: { onAfterSelect(id) { onMenuSelect(this.getItem(id)) } }
+                        },
+                        { view: "resizer" },
+                        {
+                            rows: [
+                                {
+                                    id: VIEWS_TABBAR_ID,
+                                    view: "tabbar",
+                                    multiview: true,
+                                    multipleOpen: true,
+                                    options: [
+                                        { id: HOME_PAGE_ID, value: "<span style='font-size:12px'>首页</span>" }
+                                    ],
+                                    optionWidth: 140,
+                                    height: 30,
+                                    on: {
+                                        onOptionRemove(id) { $$(VIEWS_ID).removeView(id) },
+                                        onChange: onTabChange
+                                    },
                                 },
-                            },
-                            {
-                                id: VIEWS_ID,
-                                animate: false,
-                                cells: [
-                                    PHOENIX_FRAMEWORK_DATA.framework_home.builder(),
-                                ]
-                            },
-                            {
-                                view: "template",
-                                height: 28,
-                                css: { "text-align": "center", "background": "#F8F9F9" },
-                                template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
-    }).hide();
+                                {
+                                    id: VIEWS_ID,
+                                    animate: false,
+                                    cells: [
+                                        PHOENIX_FRAMEWORK_DATA["framework_home"].builder(),
+                                    ]
+                                },
+                                {
+                                    view: "template",
+                                    height: 28,
+                                    css: { "text-align": "center", "background": "#F8F9F9" },
+                                    template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+        }).hide();
 
     // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
     if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {

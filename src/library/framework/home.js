@@ -24,13 +24,18 @@ function builder() {
             body: {
                 rows: [
                     {
-                        id: winId + "_tree",
-                        view: "tree",
-                        type: "lineTree",
-                        threeState: true,
-                        data: [],
-                        template: "{common.icon()} {common.checkbox()} <span>#name_#</span>",
+                        cols: [
+                            {
+                                id: winId + "_tree",
+                                view: "tree",
+                                type: "lineTree",
+                                threeState: true,
+                                data: [],
+                                template: "{common.icon()} {common.checkbox()} <span> &nbsp; #name_#</span>",
+                            },
+                        ]
                     },
+                    { height: 8 },
                     {
                         view: "toolbar",
                         borderless: true,
@@ -63,8 +68,7 @@ function builder() {
                             { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winId).hide() },
                             { width: 8 }
                         ]
-                    },
-                    { height: 8 }
+                    }
                 ]
             },
             on: {
