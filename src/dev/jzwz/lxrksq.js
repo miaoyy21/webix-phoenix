@@ -550,7 +550,7 @@ function builder() {
                     },
                     mainGrid.actions.refresh(),
                     { width: 24 },
-                    mainGrid.actions.add({ id: btnCreate, label: "新建单据", callback: () => ({ "wgbz": "0", "rklx": "1" }) }),
+                    mainGrid.actions.add({ id: btnCreate, label: "新建单据", callback: () => ({ "wgbz": "0", "cgy_id": utils.users.getUserId(), "cgy": utils.users.getUserName(), "rklx": "1" }) }),
                     mainGrid.actions.remove({ id: btnDelete, label: "删除单据" }),
                     {
                         id: btnCommit, view: "button", label: "提交检验", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-comment-check",
