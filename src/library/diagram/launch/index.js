@@ -31,7 +31,7 @@ function builder() {
                         <span class='phoenix_primary_icon mdi-18px #icon_#'></span>
                         【#diagram_code_#】#diagram_name_#
                     </div> 
-                    <div class='webix_light' style="height:24px;text-indent:2em;">#description_#</div>
+                    <div class='webix_light' style="height:24px;text-indent:1em;">#description_#</div>
                     <div style="text-align:right">
                         <button webix_tooltip="发起" type="button" class="btn_launch webix_icon_button" style="height:36px;width:36px;">
                             <span class="webix_icon phoenix_warning_icon mdi-dark mdi-18px mdi mdi-arrow-right-circle-outline"></span>
