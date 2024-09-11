@@ -136,7 +136,6 @@ webix.ui({
                             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
                             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
-                            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
                         ],
                         elementsConfig: { labelAlign: "right", clear: false },

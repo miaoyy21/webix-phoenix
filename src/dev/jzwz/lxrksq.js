@@ -174,7 +174,7 @@ function builder() {
             {
                 cols: [
                     { view: "text", name: "cgy", label: "采购员", readonly: true },
-                    { view: "datepicker", name: "create_at_", label: "编制日期", readonly: true, stringResult: true, format: "%Y-%m-%d %H:%i:%s" },
+                    { view: "datepicker", name: "kdrq", label: "开单日期", readonly: true, stringResult: true, format: "%Y-%m-%d %H:%i:%s" },
                 ]
             },
         ],
@@ -257,6 +257,7 @@ function builder() {
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
+            { id: "qx", header: { text: "去向", css: { "text-align": "center" } }, editor: "text", width: 160 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
@@ -268,8 +269,8 @@ function builder() {
                 editFormat: utils.formats.date.editFormat,
                 css: { "text-align": "center" }, width: 80
             },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
-            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 160 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
+            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 160 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", width: 240 },
             { id: "tjrq", header: { text: "提交日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -299,18 +300,7 @@ function builder() {
                     return;
                 }
 
-                if (_.isEqual(cell["column"], "ckmc")) {
-                    // 选择仓库
-                    var checked = !_.isEmpty(values["ckbh"]) ? [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }] : [];
-                    utils.windows.ckdm({
-                        multiple: false,
-                        checked: checked,
-                        callback(checked) {
-                            $$(mxGrid.id).updateItem(cell["row"], _.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }))
-                            return true;
-                        }
-                    })
-                } else if (_.isEqual(cell["column"], "byyq")) {
+                if (_.isEqual(cell["column"], "byyq")) {
                     // 选择检验要求
                     var checked = !_.isEmpty(values["byyq"]) ? values["byyq"].split(",") : [];
                     utils.windows.dicts({

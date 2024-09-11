@@ -26,8 +26,8 @@ function builder() {
             { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
             { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 180 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "ckmc", header: { text: "默认仓库", css: { "text-align": "center" } }, width: 120 },
+            { id: "kwmc", header: { text: "默认库位", css: { "text-align": "center" } }, width: 160 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
@@ -161,56 +161,56 @@ function builder() {
                                         }
                                     ]
                                 },
-                                {
-                                    cols: [
-                                        {
-                                            view: "search", name: "ckmc", label: "仓库名称", readonly: true,
-                                            on: {
-                                                onSearchIconClick() {
-                                                    var values = $$(formId).getValues();
+                                // {
+                                //     cols: [
+                                //         {
+                                //             view: "search", name: "ckmc", label: "仓库名称", readonly: true,
+                                //             on: {
+                                //                 onSearchIconClick() {
+                                //                     var values = $$(formId).getValues();
 
-                                                    var checked = [];
-                                                    if (!_.isEmpty(values["ckbh"])) {
-                                                        checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
-                                                    }
+                                //                     var checked = [];
+                                //                     if (!_.isEmpty(values["ckbh"])) {
+                                //                         checked = [{ "ckbh": values["ckbh"], "ckmc": values["ckmc"] }];
+                                //                     }
 
-                                                    // 选择用户
-                                                    utils.windows.ckdm({
-                                                        multiple: false,
-                                                        checked: checked,
-                                                        callback(checked) {
-                                                            $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
-                                                            return true;
-                                                        }
-                                                    })
-                                                }
-                                            }
-                                        },
-                                        {
-                                            view: "search", name: "cgy", label: "采购员", readonly: true,
-                                            on: {
-                                                onSearchIconClick() {
-                                                    var values = $$(formId).getValues();
+                                //                     // 选择用户
+                                //                     utils.windows.ckdm({
+                                //                         multiple: false,
+                                //                         checked: checked,
+                                //                         callback(checked) {
+                                //                             $$(formId).setValues(_.extend(values, { "ckbh": checked["ckbh"], "ckmc": checked["ckmc"] }));
+                                //                             return true;
+                                //                         }
+                                //                     })
+                                //                 }
+                                //             }
+                                //         },
+                                //         {
+                                //             view: "search", name: "cgy", label: "采购员", readonly: true,
+                                //             on: {
+                                //                 onSearchIconClick() {
+                                //                     var values = $$(formId).getValues();
 
-                                                    var checked = [];
-                                                    if (!_.isEmpty(values["cgy_id"])) {
-                                                        checked = [{ "id": values["cgy_id"], "user_name_": values["cgy"] }];
-                                                    }
+                                //                     var checked = [];
+                                //                     if (!_.isEmpty(values["cgy_id"])) {
+                                //                         checked = [{ "id": values["cgy_id"], "user_name_": values["cgy"] }];
+                                //                     }
 
-                                                    // 选择用户
-                                                    utils.windows.users({
-                                                        multiple: false,
-                                                        checked: checked,
-                                                        callback(checked) {
-                                                            $$(formId).setValues(_.extend(values, { "cgy_id": checked["id"], "cgy": checked["user_name_"] }));
-                                                            return true;
-                                                        }
-                                                    })
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
+                                //                     // 选择用户
+                                //                     utils.windows.users({
+                                //                         multiple: false,
+                                //                         checked: checked,
+                                //                         callback(checked) {
+                                //                             $$(formId).setValues(_.extend(values, { "cgy_id": checked["id"], "cgy": checked["user_name_"] }));
+                                //                             return true;
+                                //                         }
+                                //                     })
+                                //                 }
+                                //             }
+                                //         }
+                                //     ]
+                                // },
                                 { view: "textarea", name: "bz", label: "备注", placeholder: "请输入备注 ..." },
                                 {
                                     cols: [
@@ -283,8 +283,6 @@ function builder() {
             "sccjmc": "生产厂家",
             "bylx": "报验类型",
             "byyq": ["报验要求", "检验要求"],
-            "ckmc": ["仓库名称", "仓库"],
-            "cgy": "采购员",
             "bz": "备注"
         };
 
@@ -337,8 +335,6 @@ function builder() {
                                     { id: "wzph", header: { text: "物资牌号", css: { "text-align": "center" } }, width: 120 },
                                     { id: "bzdh", header: { text: "标准代号", css: { "text-align": "center" } }, width: 180 },
                                     { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
-                                    { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                                    { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                                     { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                                     { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
                                     { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, minWidth: 180 },
