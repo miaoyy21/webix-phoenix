@@ -37,7 +37,7 @@ function builder() {
                         $$(btnMxImport).disable();
 
                         mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], false);
-                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
+                        mainForm.actions.readonly(["rklx", "htbh", "bz"], true);
 
                         if (_.findIndex(values["data"], (row) => (row["zt"] == "0" || row["zt"] == "1")) >= 0) {
                             mxGrid.actions.hideColumn("buttons", false);
@@ -53,7 +53,7 @@ function builder() {
                         $$(btnMxImport).enable();
 
                         mainForm.actions.required(["rklx", "khbh", "htbh", "gcbh"], true);
-                        mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], false);
+                        mainForm.actions.readonly(["rklx", "htbh", "bz"], false);
 
                         mxGrid.actions.hideColumn("buttons", false);
                     }
@@ -123,7 +123,8 @@ function builder() {
                         view: "search", name: "khbh", label: "供应商编号", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                if (this.config.readonly) return;
+                                var mxValues = $$(mxGrid.id).serialize(true);
+                                if (_.findIndex(mxValues, (row) => (row["zt"] != "0")) >= 0) return;
 
                                 var values = $$(mainForm.id).getValues();
                                 utils.windows.khdm({
@@ -149,7 +150,8 @@ function builder() {
                         view: "search", name: "gcbh", label: "项目编号", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                if (this.config.readonly) return;
+                                var mxValues = $$(mxGrid.id).serialize(true);
+                                if (_.findIndex(mxValues, (row) => (row["zt"] != "0")) >= 0) return;
 
                                 var values = $$(mainForm.id).getValues();
                                 utils.windows.gcdm({
@@ -171,7 +173,7 @@ function builder() {
             { view: "textarea", name: "bz", label: "备注", placeholder: "请输入备注 ..." },
             {
                 cols: [
-                    { view: "text", name: "create_user_name_", label: "编制人员", readonly: true },
+                    { view: "text", name: "cgy", label: "采购员", readonly: true },
                     { view: "datepicker", name: "create_at_", label: "编制日期", readonly: true, stringResult: true, format: "%Y-%m-%d %H:%i:%s" },
                 ]
             },
@@ -186,6 +188,7 @@ function builder() {
     var mxGrid = utils.protos.datatable({
         editable: true,
         drag: false,
+        footer: true,
         url: null,
         leftSplit: 4,
         rightSplit: 1,
@@ -196,7 +199,7 @@ function builder() {
             operationName: "operation",
         },
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, footer: { text: "合  计：", colspan: 3 }, css: { "text-align": "center" }, width: 50 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 180 },
@@ -223,6 +226,7 @@ function builder() {
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right", "background": "#d5f5e3" },
                 adjust: true, minWidth: 80
             },
@@ -242,15 +246,18 @@ function builder() {
             {
                 id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" }, adjust: true, minWidth: 80
+                footer: { content: "summColumn", css: { "text-align": "right" } },
+                css: { "text-align": "right" },
+                adjust: true, minWidth: 80
             },
             {
                 id: "taxje", header: { text: "税额", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" }, adjust: true, minWidth: 80
+                footer: { content: "summColumn", css: { "text-align": "right" } },
+                css: { "text-align": "right" },
+                adjust: true, minWidth: 80
             },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
             { id: "clph", header: { text: "材料批号", css: { "text-align": "center" } }, editor: "text", width: 120 },
@@ -261,9 +268,11 @@ function builder() {
                 editFormat: utils.formats.date.editFormat,
                 css: { "text-align": "center" }, width: 80
             },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 160 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", width: 240 },
             { id: "tjrq", header: { text: "提交日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
-            { id: "create_user_name_", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
@@ -380,13 +389,7 @@ function builder() {
                                     utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
                                     { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
                                     { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
-                                    {
-                                        id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } },
-                                        template(row) {
-                                            var text = webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(row);
-                                            return row["flag"] == "1" ? text : "<span style='color:red'>" + text + "</span>";
-                                        }, width: 180
-                                    },
+                                    { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, width: 180 },
                                     { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                                     { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                     { id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
@@ -484,7 +487,7 @@ function builder() {
                         {
                             cols: [
                                 { view: "text", name: "ldbh", label: "入库单号：" },
-                                { view: "text", name: "create_user_name_", label: "采购员：" },
+                                { view: "text", name: "cgy", label: "采购员：" },
                                 { view: "text", name: "kdrq", label: "开单日期：" },
                                 {},
                             ]
