@@ -238,13 +238,13 @@ function builder() {
     });
 
     /***************************** 选择打印已出库的领料单 *****************************/
-    function openPrint() {
+    function openPrint(sqId) {
         var printGrid = utils.protos.datatable({
             editable: true,
             drag: false,
             sort: false,
             multiselece: false,
-            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&start=" + utils.formats.date.format(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + sqId,
             leftSplit: 0,
             rightSplit: 0,
             data: [],
@@ -263,6 +263,21 @@ function builder() {
                 { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
                 { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
+            on: {
+                onAfterLoad() {
+                    var max;
+
+                    // 默认选中最后1次出库的记录
+                    this.eachRow((id) => {
+                        var row = this.getItem(id);
+                        if (_.isEmpty(max)) {
+                            max = row["llrq"];
+                        }
+
+                        row["checked"] = row["llrq"] == max ? "Y" : "N";
+                    }, true);
+                }
+            }
         });
 
         webix.ui({
@@ -274,7 +289,7 @@ function builder() {
             width: 720,
             height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "出库单打印【仅显示本人近7天出库单】",
+            head: "出库单打印",
             position: "center",
             body: {
                 rows: [
@@ -436,7 +451,15 @@ function builder() {
                         }
                     },
                     {},
-                    { view: "button", label: "打印出库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer", click: openPrint },
+                    {
+                        view: "button", label: "打印出库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                        click() {
+                            var sqId = $$(mainGrid.id).getSelectedId(false, true);
+                            if (sqId) {
+                                openPrint(sqId);
+                            }
+                        }
+                    },
                     {}
                 ]
             },
