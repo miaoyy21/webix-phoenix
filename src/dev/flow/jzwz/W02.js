@@ -1,8 +1,5 @@
 function defaultValues(options) {
-    /*
-    rows：领料明细数据格式
-    { wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,kcsl,qls,bz }
-    */
+    // rows：{ wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,kcsl,qls,bz }
 
     var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_lxc_ldbh" });
     var ldbh = JSON.parse(request.responseText)["no"];

@@ -14,9 +14,8 @@ function builder() {
 
     // 列表选择事件
     function onAfterSelectMain(id) {
-        $$(mxGrid.id).clearAll();
-
         // 重新加载
+        $$(mxGrid.id).clearAll();
         webix.ajax()
             .get(mxUrl, { "sq_id": id, "zt": djzt })
             .then(
@@ -25,6 +24,7 @@ function builder() {
                     $$(mxGrid.id).define("data", values);
 
                     allSfData = {}; // 清空本次实发
+                    $$(mxGrid.id).define("editable", !_.isEqual(djzt, "1"));
                 }
             );
     }
@@ -89,11 +89,17 @@ function builder() {
 
     /********** 出库单明细 **********/
     var mxGrid = utils.protos.datatable({
-        editable: false,
+        editable: true,
         drag: false,
         url: null,
         leftSplit: 5,
         rightSplit: 1,
+        save: {
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.save_bgck",
+            updateFromResponse: true,
+            trackMove: true,
+            operationName: "operation",
+        },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
@@ -104,7 +110,7 @@ function builder() {
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right", "background": "#d6eaf8" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
-            { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+            { id: "qx", header: { text: "去向", css: { "text-align": "center" } }, editor: "text", width: 160 },
             { id: "lly", hidden: true, header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bgy", hidden: true, header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, fillspace: true, minWidth: 240 },

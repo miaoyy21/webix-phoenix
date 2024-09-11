@@ -257,7 +257,6 @@ function builder() {
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
-            { id: "qx", header: { text: "去向", css: { "text-align": "center" } }, editor: "text", width: 160 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, editor: "text", width: 160 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },

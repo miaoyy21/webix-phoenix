@@ -1,4 +1,6 @@
 function defaultValues(options) {
+    // rows：{ wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,kcsl,qls,bz }
+
     return {
         "type_": "事假",
         "start_": utils.formats.date.format(new Date()),
