@@ -421,24 +421,32 @@ function builder(options, values) {
                 return
             }
 
-            // 是否输入请领数量
+            // 是否填写入库数量
             var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["rksl"], 2) <= 0));
             if (index >= 0) {
                 webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写入库数量！" });
                 return
             }
 
-            // 请领数量是否大于库存数量
-            // var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["qls"], 2) > utils.formats.number.editParse(row["kcsl"], 2)));
-            // if (index >= 0) {
-            //     webix.message({ type: "error", text: "第" + (index + 1) + "行：请领数量大于库存数量！" });
-            //     return
-            // }
-
+            // 入库类型不是捐赠入库时，必须填写含税金额及含税单价
             var values = $$(mainForm.id).getValues();
+            if (!_.isEqual(values["rklx"], '9')) {
+                var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgjehs"], 2) <= 0));
+                if (index >= 0) {
+                    webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写含税金额！" });
+                    return
+                }
+
+                var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgdjhs"], 2) <= 0));
+                if (index >= 0) {
+                    webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写含税单价！" });
+                    return
+                }
+            }
+
+            // 入库单明细
             values["rows"] = rows;
 
-            console.log(values);
             return values;
         },
     }
