@@ -112,9 +112,9 @@ function builder() {
         rows: [
             {
                 cols: [
-                    { view: "richselect", name: "rklx", label: "入库类型", options: utils.dicts["wz_lxr_rklx"], required: true, placeholder: "请选择入库类型..." },
                     { view: "text", name: "ldbh", label: "入库单号", readonly: true },
-                    { view: "text", name: "kdrq", label: "开单日期", readonly: true },
+                    { view: "richselect", name: "rklx", label: "入库类型", options: utils.dicts["wz_lxr_rklx"], required: true, placeholder: "请选择入库类型..." },
+                    {}
                 ]
             },
             {
@@ -174,7 +174,8 @@ function builder() {
             {
                 cols: [
                     { view: "text", name: "cgy", label: "采购员", readonly: true },
-                    { view: "datepicker", name: "kdrq", label: "开单日期", readonly: true, stringResult: true, format: "%Y-%m-%d %H:%i:%s" },
+                    { view: "text", name: "create_depart_name_", label: "所属部门", readonly: true },
+                    { view: "text", name: "kdrq", label: "开单日期", readonly: true },
                 ]
             },
         ],
@@ -346,16 +347,16 @@ function builder() {
                         onData(data) {
                             webix.ajax()
                                 .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.import", { data: data })
-                                .then(
-                                    (res) => {
-                                        console.log(res.json());
+                                .then((res) => {
+                                    console.log(res.json());
 
-                                        $$(winImportId + "_import").define("data", res.json());
+                                    $$(winImportId + "_import").define("data", res.json());
 
-                                        $$(winImportId + "_import").hideOverlay();
-                                        $$(winImportId + "_import").refresh();
-                                    }
-                                );
+                                    $$(winImportId + "_import").hideOverlay();
+                                    $$(winImportId + "_import").refresh();
+                                }).fail(() => {
+                                    $$(winImportId).hide();
+                                });
                         }
                     }),
                     {
@@ -437,6 +438,8 @@ function builder() {
                                             webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
                                             $$(winImportId).hide();
                                             onAfterSelect(rkdid);
+                                        }).fail(() => {
+                                            self.enable();
                                         });
                                 }
                             },
