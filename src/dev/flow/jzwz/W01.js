@@ -220,6 +220,8 @@ function builder(options, values) {
         var mapping = {
             "wzmc": "物资名称",
             "ggxh": ["规格型号", "型号规格", "型号"],
+            "wzph": ["物资牌号", "材料牌号", "牌号"],
+            "bzdh": ["标准代号", "代号"],
             "rksl": ["入库数量", "到货数量"],
             "cgjehs": ["含税金额", "金额"],
             "taxrate": "税率",
@@ -243,7 +245,7 @@ function builder(options, values) {
                         mapping: mapping,
                         onData(data) {
                             webix.ajax()
-                                .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.import", { data: data })
+                                .post("/api/sys/data_service?service=JZWZ.rkd_import", { data: data })
                                 .then((res) => {
                                     console.log(res.json());
 
@@ -308,11 +310,6 @@ function builder(options, values) {
                                     var allData = $$(winImportId + "_import").serialize(true);
 
                                     var data = _.filter(allData, (row) => (row["flag"] == "1"));
-                                    var rkdid = $$(mainGrid.id).getSelectedId(false, true);
-                                    if (_.size(data) < 1 || _.isEmpty(rkdid)) {
-                                        webix.message({ type: "error", text: "没有可导入的采购物资记录！" });
-                                        return;
-                                    }
 
                                     // 检查是否在列表中，相同的入库单不允许存在重复的物资
                                     for (let i = 0; i < _.size(data); i++) {
@@ -323,20 +320,19 @@ function builder(options, values) {
                                         }
                                     }
 
-                                    // 批量插入
-                                    this.disable();
-                                    var self = this;
-                                    webix.ajax()
-                                        .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.patch", { "wzrkd_id": rkdid, "data": data })
-                                        .then((res) => {
-                                            self.enable();
+                                    // 获取条形码
+                                    var request = webix.ajax().sync().get("api/sys/auto_nos", { "method": "Patch", "code": "txmvalue", "count": _.size(data) });
+                                    var txmvalues = JSON.parse(request.responseText);
 
-                                            webix.message({ type: "success", text: "成功导入" + _.size(data) + "条物资！" });
-                                            $$(winImportId).hide();
-                                            onAfterSelect(rkdid);
-                                        }).fail(() => {
-                                            self.enable();
-                                        });
+                                    _.each(data, (row, index) => {
+                                        var newRow = _.pick(row, "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc", "kwbh", "kwmc", "rksl", "cgdjhs", "cgjehs", "taxrate", "cgdj", "cgje", "taxje");
+                                        newRow = _.extend(newRow, { "txmvalue": txmvalues[index] });
+
+                                        $$(mxGrid.id).add(newRow);
+                                    });
+
+                                    webix.message({ type: "success", text: "导入【" + _.size(data) + "】条物资！" });
+                                    $$(winImportId).hide();
                                 }
                             },
                             { width: 8 },
@@ -376,7 +372,7 @@ function builder(options, values) {
 
                         $$(mxGrid.id).add(newRow);
                     });
-                    webix.message({ type: "success", text: "选择" + _.size(checked) + "条物资！" });
+                    webix.message({ type: "success", text: "选择【" + _.size(checked) + "】条物资！" });
 
                     return true;
                 }
