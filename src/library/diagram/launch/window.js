@@ -325,7 +325,8 @@ function show(options) {
         options["model"] = JSON.parse(resp["model"]);
         values = JSON.parse(resp["values"]);
     }
-    var view = mod.builder(options, values);
+
+    var view = mod.builder(options, webix.copy(values)); // 需要给一份拷贝的原值，用于是否数据变化比较
 
     // 按钮 保存
     var save = {
@@ -334,10 +335,10 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            if (_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
-                webix.message({ type: "info", text: "没有修改数据！" });
-                return;
-            }
+            // if (_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
+            //     webix.message({ type: "info", text: "没有修改数据！" });
+            //     return;
+            // }
 
             webix.ajax().post("/api/wf/flows", {
                 "operation": options["operation"],
@@ -365,25 +366,25 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            if (!_.isEqual(values, newValues)) {
-                console.log("数据已发生变化，先保存后再启动流程");
-                webix.ajax().post("/api/wf/flows", {
-                    "operation": options["operation"],
-                    "id": options["flow_id_"],
-                    "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(newValues),
-                    "diagram_id_": options["diagram_id_"],
-                }).then((res) => {
-                    var row = res.json();
+            // if (!_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
+            console.log("数据已发生变化，先保存后再启动流程");
+            webix.ajax().post("/api/wf/flows", {
+                "operation": options["operation"],
+                "id": options["flow_id_"],
+                "values_": JSON.stringify(newValues),
+                "keyword_": webix.template(options["keyword_"])(newValues),
+                "diagram_id_": options["diagram_id_"],
+            }).then((res) => {
+                var row = res.json();
 
-                    options["operation"] = "update";
-                    options["flow_id_"] = row["id"];
-                    advStart(options);
-                })
-            } else {
-                console.log("数据没有发生变化，直接启动流程");
+                options["operation"] = "update";
+                options["flow_id_"] = row["id"];
                 advStart(options);
-            }
+            })
+            // } else {
+            //     console.log("数据没有发生变化，直接启动流程");
+            //     advStart(options);
+            // }
         }
     };
 
@@ -413,7 +414,6 @@ function show(options) {
 };
 
 function showUI(view, actions, options) {
-    console.log("showUI() Options is", options);
 
     // 标题
     var operation = _.isEqual(options["operation"], "insert") ? "创建" :

@@ -272,8 +272,6 @@ function builder() {
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 160 },
             { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", width: 240 },
-            { id: "tjrq", header: { text: "提交日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
-            { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },

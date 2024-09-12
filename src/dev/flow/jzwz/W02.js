@@ -1,8 +1,9 @@
+// 领料申请单
 function defaultValues(options) {
     // rows：{ wzbh,wzmc,ggxh,wzph,bzdh,jldw,sccjmc,kcsl,qls,bz }
 
     var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_lxc_ldbh" });
-    var ldbh = JSON.parse(request.responseText)["no"];
+    var ldbh = request.responseText;
 
     return {
         "ldbh": ldbh,
@@ -172,17 +173,17 @@ function builder(options, values) {
             {
                 cols: [
                     { view: "text", name: "ldbh", label: "领料单号", readonly: true },
-                    { view: "combo", name: "cklx", label: '出库类型', readonly: options["readonly"], options: utils.dicts["wz_cklx"], required: true },
+                    { view: "combo", name: "cklx", label: '出库类型', options: utils.dicts["wz_cklx"], readonly: options["readonly"], required: true, placeholder: "请选择出库类型..." },
                     {}
                 ]
             },
             {
                 cols: [
                     {
-                        view: "search", name: "lly", label: "领料员", readonly: options["readonly"],
+                        view: "search", name: "lly", label: "领料员", readonly: true,
                         on: {
                             onSearchIconClick() {
-                                if (this.config.readonly) return;
+                                if (options["readonly"]) return;
 
                                 // 选择领料员
                                 var values = $$(form.id).getValues();
@@ -198,10 +199,10 @@ function builder(options, values) {
                         }
                     },
                     {
-                        view: "search", name: "gcbh", label: "项目编号", readonly: options["readonly"], required: true,
+                        view: "search", name: "gcbh", label: "项目编号", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                if (this.config.readonly) return;
+                                if (options["readonly"]) return;
 
                                 // 选择项目
                                 var values = $$(form.id).getValues();

@@ -42,10 +42,10 @@ function builder() {
 
                             var callback = function (values) {
                                 webix.ajax()
-                                    .post("api/sys/auto_nos?code=" + row["code_"], values)
+                                    .get("api/sys/auto_nos?code=" + row["code_"], values)
                                     .then(
                                         (res) => {
-                                            webix.alert({ type: "alert-warning", title: "系统提示", text: res.json()["no"] });
+                                            webix.alert({ type: "alert-warning", title: "系统提示", text: res.text() });
                                         }
                                     );
                             }
