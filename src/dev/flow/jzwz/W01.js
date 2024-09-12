@@ -394,7 +394,7 @@ function builder(options, values) {
                 scroll: "y",
                 body: {
                     cols: [
-                        { width: 120 },
+                        { width: 160 },
                         {
                             rows: [
                                 mainForm,
@@ -415,7 +415,7 @@ function builder(options, values) {
                                 },
                             ]
                         },
-                        { width: 120 },
+                        { width: 160 },
                     ]
                 }
             }

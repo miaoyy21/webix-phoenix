@@ -306,7 +306,7 @@ function builder(options, values) {
                 scroll: "y",
                 body: {
                     cols: [
-                        { width: 240 },
+                        { width: 160 },
                         {
                             rows: [
                                 form,
@@ -321,7 +321,7 @@ function builder(options, values) {
                                 },
                             ]
                         },
-                        { width: 240 },
+                        { width: 160 },
                     ]
                 }
             }
