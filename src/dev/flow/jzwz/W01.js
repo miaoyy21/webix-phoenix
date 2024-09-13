@@ -20,9 +20,8 @@ function defaultValues(options) {
 function builder(options, values) {
     console.log(options, values)
 
-    var btnMxWzdm = utils.UUID();
-    var btnMxImport = utils.UUID();
     var winImportId = utils.UUID();
+    var saving = 0; // 标识是否正在保存中
 
     // 元素
     var mainForm = utils.protos.form({
@@ -195,6 +194,7 @@ function builder(options, values) {
                 var newData = _.pick(data, "rksl", "cgdjhs", "cgjehs", "taxrate");
                 var oldData = _.pick(old, "rksl", "cgdjhs", "cgjehs", "taxrate");
 
+                saving++;
                 webix.ajax()
                     .post("/api/sys/data_service?service=JZWZ.calucate", { "new": newData, "old": oldData })
                     .then((res) => {
@@ -202,7 +202,9 @@ function builder(options, values) {
 
                         data = _.extend(data, calcData);
                         $$(mxGrid.id).refresh(id);
-                    })
+
+                        saving--;
+                    });
             },
             onAfterRender() {
                 if (options["readonly"]) {
@@ -417,6 +419,11 @@ function builder(options, values) {
             }
         },
         values() {
+            if (saving > 0) {
+                webix.message({ type: "error", text: "正在进行计算，请稍后再试..." });
+                return
+            }
+
             if (!$$(mainForm.id).validate()) {
                 webix.message({ type: "error", text: "缺少必输项" });
                 return;
