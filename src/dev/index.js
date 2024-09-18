@@ -6,7 +6,7 @@ dev.dev_jzmd_wzdm = require("./jzmd/wzdm.js");
 dev.dev_jzmd_khdm = require("./jzmd/khdm.js");
 dev.dev_jzmd_gcdm = require("./jzmd/gcdm.js");
 
-dev.dev_jzwz_lxrksq = require("./jzwz/lxrksq.js");
+dev.dev_jzwz_print_rkd = require("./jzwz/print_rkd.js");
 dev.dev_jzwz_jyd = require("./jzwz/jyd.js");
 dev.dev_jzwz_bgrk = require("./jzwz/bgrk.js");
 dev.dev_jzwz_bgck = require("./jzwz/bgck.js");
