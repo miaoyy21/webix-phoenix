@@ -154,7 +154,6 @@ function builder() {
                     {
                         id: winId + "_print",
                         view: "scrollview",
-                        borderless: true,
                         body: {
                             paddingX: 12,
                             rows: [
@@ -199,7 +198,6 @@ function builder() {
                                 utils.protos.datatable({
                                     data: options["rows"],
                                     url: null,
-                                    paddingX: 12,
                                     select: false,
                                     autoheight: true,
                                     scroll: false,
