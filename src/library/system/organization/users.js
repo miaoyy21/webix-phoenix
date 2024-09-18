@@ -7,7 +7,19 @@ function builder() {
     var pager_id = utils.UUID();
     var search_id = utils.UUID();
 
+    // 刷新数字签名
+    function onSigner(signer) {
+        if (_.size(signer) > 1) {
+            $$(winId + "_signer").define("template", "<img src='/api/sys/docs?method=Download&id=" + signer + "' style='width:100%; height:100%; object-fit:contain'>");
+        } else {
+            $$(winId + "_signer").define("template", `<div class='webix_light'>请上传用户的数字签名 ...</div>`);
+        }
+
+        $$(winId + "_signer").refresh();
+    }
+
     function open(options) {
+
         webix.ui({
             id: winId,
             view: "window",
@@ -87,9 +99,19 @@ function builder() {
                                 {}
                             ]
                         },
-                        { view: "textarea", name: "description_", label: "描述" },
+                        { view: "textarea", name: "description_", label: "备注" },
+                        {
+                            cols: [
+                                { view: "label", label: "数字签名", align: "right", width: 80 },
+                                { width: 5 },
+                                { id: winId + "_signer", view: "template", width: 160 },
+                                { width: 5 },
+                                utils.protos.signerButton({ id: winId + "_signer_id", onSigner: (docId) => { onSigner(docId) } }),
+                                {}
+                            ]
+                        },
                     ],
-                    elementsConfig: { labelAlign: "right", clear: false },
+                    elementsConfig: { labelAlign: "right" },
                 },
                 {
                     view: "toolbar",
@@ -102,7 +124,10 @@ function builder() {
                             click() {
                                 if (!$$(winId + "_form").validate()) return;
 
-                                var value = $$(winId + "_form").getValues();
+                                // 获取签名ID
+                                var signer = $$(winId + "_signer_id").getValue();
+
+                                var value = _.extend($$(winId + "_form").getValues(), { "signer_": signer });
                                 if (_.isEqual(value["operation"], "insert")) {
                                     utils.grid.add($$(grid_id), value);
                                 } else {
@@ -129,7 +154,11 @@ function builder() {
                 { height: 8 }
                 ]
             },
-            on: { onHide() { this.close() } }
+            on: {
+                // 在打开窗口时刷新签名
+                onShow() { onSigner(options["signer_"]) },
+                onHide() { this.close() }
+            }
         }).show();
     }
 
@@ -343,7 +372,7 @@ function builder() {
                                         { id: "telephone_", header: { text: "联系电话", css: { "text-align": "center" } }, width: 120 },
                                         { id: "email_", header: { text: "邮箱", css: { "text-align": "center" } }, width: 160 },
                                         { id: "birth_", header: { text: "出生日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 100 },
-                                        { id: "description_", header: { text: "描述", css: { "text-align": "center" } }, width: 360 },
+                                        { id: "description_", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
                                         { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 },
                                         { id: "login_at_", header: { text: "最近登录时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 }
                                     ],
