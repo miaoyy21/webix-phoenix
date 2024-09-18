@@ -17,7 +17,7 @@ function builder() {
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
-        url: mainUrl + "&wgbz=0",
+        url: mainUrl + "&wgbz=1",
         save: {},
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
@@ -126,6 +126,11 @@ function builder() {
 
     // 打印的UI窗口
     var printId = utils.UUID();
+
+    function openPrint() {
+
+    }
+
     var printView = webix.ui({
         view: "scrollview",
         body: {
@@ -201,8 +206,40 @@ function builder() {
                     ]
                 },
                 { height: 5 },
+                {
+                    cols: [
+                        {
+                            cols: [
+                                { view: "label", label: "采购员", align: "right", width: 80 },
+                                { width: 5 },
+                                { id: "_signer_cgy_id", view: "template", width: 80 },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "label", label: "部门领导", align: "right", width: 80 },
+                                { width: 5 },
+                                { id: "_signer_bmld_id", view: "template", width: 80 },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "label", label: "检验员", align: "right", width: 80 },
+                                { width: 5 },
+                                { id: "_signer_jyry_id", view: "template", width: 80 },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "label", label: "保管员", align: "right", width: 80 },
+                                { width: 5 },
+                                { id: "_signer_bgy_id", view: "template", width: 80 },
+                            ]
+                        },
+                    ]
+                },
             ]
-        }
+        },
     });
 
     return {
@@ -211,7 +248,7 @@ function builder() {
                 view: "toolbar",
                 cols: [
                     {
-                        view: "richselect", options: utils.dicts["wgzt"], width: 120, value: "0", labelAlign: "center",
+                        view: "richselect", options: utils.dicts["wgzt"], width: 120, value: "1", labelAlign: "center",
                         on: {
                             onChange(newValue) {
                                 $$(mainGrid.id).clearAll();
@@ -237,11 +274,28 @@ function builder() {
                                 return
                             }
 
-                            $$(printId + "_form").setValues($$(mainForm.id).getValues());
+                            var mainValues = $$(mainForm.id).getValues();
+
+                            $$(printId + "_form").setValues(mainValues);
                             $$(printId + "_datatable").define("data", mxValues);
+
+                            // 设置签名
+                            var signer = _.pick(mainValues, "cgy_id", "bmld_id");
+                            signer = _.extend(signer, _.pick(_.first(mxValues), "jyry_id", "bgy_id"));
+                            _.each(signer, (v, k) => {
+                                console.log(v, k);
+                                _.delay(() => {
+                                    $$("_signer_" + k).define("template", "<img src='/api/sys/docs?method=Signer&user=" + v + "' style='width:100%; height:100%; object-fit:contain'>");
+                                    $$("_signer_" + k).refresh();
+                                }, 250)
+                            })
+
+                            // 设置签名
+                            // this.disable();
                             setTimeout(() => {
+                                // this.enable();
                                 webix.print(printView, { mode: "landscape" });
-                            }, 500);
+                            }, 1000);
                         }
                     },
                     {}
