@@ -50,7 +50,7 @@ function builder() {
                                             var size = _.size(values);
                                             if (size == 0) {
                                                 onLoad({ "txmvalue": txmvalue });
-                                                webix.message({ type: "error", text: "无效的条形码" });
+                                                webix.message({ type: "error", text: "无效或未检验的条形码" });
                                                 return;
                                             } else if (size > 1) {
                                                 onLoad({ "txmvalue": txmvalue });

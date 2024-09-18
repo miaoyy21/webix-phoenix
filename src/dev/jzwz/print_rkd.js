@@ -35,8 +35,6 @@ function builder() {
             onAfterLoad() {
                 if (this.count() < 1) {
                     $$(mainForm.id).setValues({});
-                    mainForm.actions.readonly(["rklx", "khbh", "htbh", "gcbh", "bz"], true);
-
                     $$(mxGrid.id).define("data", []);
                 }
             }
@@ -102,12 +100,13 @@ function builder() {
             { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+            { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             { id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             { id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 60 },
             { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 4), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             { id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
-            { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+            { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
@@ -120,7 +119,6 @@ function builder() {
             { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "jyry", header: { text: "检验员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
             { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
         ],
@@ -147,9 +145,8 @@ function builder() {
                         {
                             cols: [
                                 { view: "text", name: "ldbh", label: "入库单号：" },
-                                { view: "text", name: "cgy", label: "采购员：" },
-                                { view: "text", name: "kdrq", label: "开单日期：" },
-                                {},
+                                { view: "text", name: "htbh", label: "合同号：" },
+                                { gravity: 2 }
                             ]
                         },
                         {
@@ -160,31 +157,47 @@ function builder() {
                                 { view: "text", name: "gcmc", label: "项目名称：" },
                             ]
                         },
+                        {
+                            cols: [
+                                { view: "text", name: "cgy", label: "采购员：" },
+                                { view: "text", name: "kdrq", label: "开单日期：" },
+                                { view: "text", name: "bmld", label: "部门领导", readonly: true },
+                                { view: "text", name: "bmld_shrq", label: "审核日期", readonly: true },
+                            ]
+                        },
                     ],
                     elementsConfig: { labelAlign: "right", labelWidth: 100, clear: false },
                 }),
                 { view: "label", label: "<span style='margin-left:8px'></span>物资入库清单" },
                 {
                     cols: [
-                        { width: 5 },
+                        { width: 2 },
                         utils.protos.datatable({
                             id: printId + "_datatable",
                             data: [],
                             select: false,
                             autoheight: true,
                             scroll: false,
+                            footer: true,
                             columns: [
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
-                                { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", minWidth: 220, fillspace: true },
                                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
-                                { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 100 },
-                                { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
-                                { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 220, fillspace: true },
+                                { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 100 },
+                                { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                { id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                { id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 60 },
+                                { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                { id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
+                                { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                                { id: "jyry", header: { text: "检验员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                                { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
+                                { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                             ],
                         }),
-                        { width: 5 },
+                        { width: 2 },
                     ]
                 },
                 { height: 5 },
@@ -211,9 +224,21 @@ function builder() {
                     {
                         view: "button", label: "打印入库单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
                         click() {
-                            $$(printId + "_form").setValues($$(mainForm.id).getValues());
-                            $$(printId + "_datatable").define("data", $$(mxGrid.id).serialize(true));
+                            var mxValues = $$(mxGrid.id).serialize(true);
+                            if (_.size(mxValues) < 1) {
+                                webix.message({ type: "error", text: "正在检索该入库单明细，请等待..." });
+                                return
+                            }
 
+                            // 必须全部入库才可以打印
+                            var has = _.findIndex(mxValues, (row) => row["zt"] != "9");
+                            if (has >= 0) {
+                                webix.message({ type: "error", text: "入库单中存在未办理入库实收的物资！" });
+                                return
+                            }
+
+                            $$(printId + "_form").setValues($$(mainForm.id).getValues());
+                            $$(printId + "_datatable").define("data", mxValues);
                             setTimeout(() => {
                                 webix.print(printView, { mode: "landscape" });
                             }, 500);
