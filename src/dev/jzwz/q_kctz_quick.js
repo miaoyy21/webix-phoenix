@@ -19,7 +19,6 @@ function builder() {
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", minWidth: 240, fillspace: true, },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
 
-            { id: "dj", header: { text: "单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 4), css: { "text-align": "right" }, width: 100 },
             { id: "sssl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, width: 100 },
             { id: "sfs", header: { text: "出库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, width: 100 },
             { id: "kcsl", header: { text: "库存数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), footer: { content: "summColumn", css: { "text-align": "right" } }, css: { "text-align": "right" }, width: 100 },
@@ -47,10 +46,10 @@ function builder() {
                                     var wzbh = $$(txtWzbh).getValue();
                                     var wzms = $$(txtWzms).getValue();
 
-                                    if (_.isEmpty(wzbh) && _.isEmpty(wzms)) {
-                                        webix.message({ type: "info", text: "请输入物资编号或物资名称/型号/牌号/代号进行检索" });
-                                        return
-                                    }
+                                    // if (_.isEmpty(wzbh) && _.isEmpty(wzms)) {
+                                    //     webix.message({ type: "info", text: "请输入物资编号或物资名称/型号/牌号/代号进行检索" });
+                                    //     return
+                                    // }
 
                                     $$(mainGrid.id).clearAll();
                                     webix.ajax()

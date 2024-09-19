@@ -122,8 +122,8 @@ function builder(options, values) {
             {
                 id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, editor: !options["readonly"] ? "text" : null,
                 format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 4),
+                editFormat: (value) => utils.formats.number.editFormat(value, 4),
                 css: { "text-align": "right", "background": !options["readonly"] ? "#d5f5e3" : null },
                 adjust: true, minWidth: 80
             },
@@ -146,7 +146,7 @@ function builder(options, values) {
             },
             {
                 id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } },
-                format: (value) => utils.formats.number.format(value, 4),
+                format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
@@ -273,9 +273,6 @@ function builder(options, values) {
                                 rightSplit: 0,
                                 data: [],
                                 columns: [
-                                    // wzrkd_id, zt
-                                    // "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sccjmc", "bylx", "byyq", "ckbh", "ckmc", "kwbh", "kwmc"
-                                    // rksl, cgdjhs, cgjehs, taxrate, cgdj, cgje, taxje
                                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                                     utils.protos.checkbox({ id: "flag", header: { text: "导入", css: { "text-align": "center" } } }),
                                     { id: "result", header: { text: "匹配结果", css: { "text-align": "center" } }, width: 240 },
@@ -286,7 +283,7 @@ function builder(options, values) {
                                     { id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                     { id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                     { id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 60 },
-                                    { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+                                    { id: "cgdj", header: { text: "采购单价1", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                     { id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                     { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
                                 ],
@@ -452,7 +449,7 @@ function builder(options, values) {
                     return
                 }
 
-                var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgdjhs"], 2) <= 0));
+                var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgdjhs"], 4) <= 0));
                 if (index >= 0) {
                     webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写含税单价！" });
                     return
