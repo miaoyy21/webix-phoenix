@@ -25,9 +25,9 @@ function builder() {
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 240 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
             { id: "htbh", header: { text: "采购合同号", css: { "text-align": "center" } }, width: 120 },
-            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
             { id: "bmld", header: { text: "部门领导", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "bmld_shrq", header: { text: "审核日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "bmld_shrq", header: { text: "审核日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
         ],
         on: {
             onDataUpdate(id, newValues) { $$(mainForm.id).setValues(newValues) },
