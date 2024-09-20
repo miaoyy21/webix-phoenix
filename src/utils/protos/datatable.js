@@ -155,11 +155,11 @@ function datatable(options) {
             // 加载后
             this.attachEvent("onAfterLoad", function () {
                 console.log("onAfterLoad");
-                // this.hideOverlay();
-                // if (!this.count()) {
-                //     this.showOverlay("无检索数据");
-                //     return;
-                // }
+                this.hideOverlay();
+                if (!this.count()) {
+                    this.showOverlay("无检索数据");
+                    return;
+                }
 
                 var first = this.getFirstId();
                 if (this.config.select && first) {
@@ -210,7 +210,7 @@ function datatable(options) {
         },
         on: {
             "data->onStoreUpdated"() { this.data.each((obj, i) => { obj.index = i + 1 }) },
-            onBeforeRender(data) {
+            onAfterRender(data) {
                 if (data.count() < 1) {
                     this.showOverlay("无检索数据");
                 } else {
@@ -315,6 +315,9 @@ function datatable(options) {
 
                 var search = function () {
                     var url = $$(datatable_id).config.url;
+                    if (_.isEmpty(url)) return;
+
+                    $$(datatable_id).clearAll();
                     $$(datatable_id).load(url + "&full_filter[" + opts["fields"] + "]=" + this.getValue(), "json", () => { }, true)
                 }
 

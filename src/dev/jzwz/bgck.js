@@ -16,44 +16,50 @@ function builder() {
     function onAfterSelectMain(id) {
         // 重新加载
         $$(mxGrid.id).clearAll();
+        $$(mxGrid.id).showOverlay("正在检索领料单明细，请稍后...");
+
+        $$(kcGrid.id).clearAll();
+        $$(kcGrid.id).showOverlay("正在检索库存，请稍后...");
+
         webix.ajax()
             .get(mxUrl, { "sq_id": id, "zt": djzt })
-            .then(
-                (res) => {
-                    var values = res.json();
-                    $$(mxGrid.id).define("data", values);
+            .then((res) => {
+                var values = res.json();
+                $$(mxGrid.id).define("data", values);
 
-                    allSfData = {}; // 清空本次实发
-                    $$(mxGrid.id).define("editable", !_.isEqual(djzt, "1"));
-                }
-            );
+                allSfData = {}; // 清空本次实发
+                $$(mxGrid.id).define("editable", !_.isEqual(djzt, "1"));
+            }).fail(() => {
+                $$(mxGrid.id).showOverlay("检索出现异常");
+            });
     }
 
     // 明细选择事件
     function onAfterSelectMx(id) {
         var row = $$(mxGrid.id).getItem(id);
         $$(kcGrid.id).clearAll();
+        $$(kcGrid.id).showOverlay("正在检索库存，请稍后...");
 
         // 重新加载数据
         webix.ajax()
             .get(djzt == "0" ? kcUrl + "&wzbh=" + row["wzbh"] : sfUrl + "&sqmx_id=" + id)
-            .then(
-                (res) => {
-                    var values = res.json()["data"];
-                    if (djzt == "0") {
-                        values = _.map(values, (value) => {
-                            var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0), 2) || 0;
-                            return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
-                        });
+            .then((res) => {
+                var values = res.json()["data"];
+                if (djzt == "0") {
+                    values = _.map(values, (value) => {
+                        var sfs = utils.formats.number.editParse(_.get(allSfData, [id, value["id"]], 0), 2) || 0;
+                        return _.extend(value, { "checked": sfs > 0 ? "1" : "0", "sfs": sfs });
+                    });
 
-                        $$(kcGrid.id).define("editable", true);
-                    } else {
-                        $$(kcGrid.id).define("editable", false);
-                    }
-
-                    $$(kcGrid.id).define("data", values);
+                    $$(kcGrid.id).define("editable", true);
+                } else {
+                    $$(kcGrid.id).define("editable", false);
                 }
-            );
+
+                $$(kcGrid.id).define("data", values);
+            }).fail(() => {
+                $$(kcGrid.id).showOverlay("检索出现错误");
+            });
     }
 
     /********** 出库单列表 **********/
@@ -65,11 +71,11 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-            { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
+            { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 180 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
+            { id: "cklx", header: { text: "出库类型", css: { "text-align": "center" } }, options: utils.dicts["wz_cklx"], css: { "text-align": "center" }, width: 80 },
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "sqry", header: { text: "申请人", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "sqbm", header: { text: "申请部门", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
             { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "bmld", header: { text: "审批人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -122,7 +128,7 @@ function builder() {
                 tooltip: false,
                 template() {
                     return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
-                                <button webix_tooltip="撤销出库" type="button" class="button_unCommit webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-comment-remove"/> </button>
+                                <button webix_tooltip="撤销出库" type="button" class="button_unCommit webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-eyedropper-minus"/> </button>
                             </div>`;
                 },
             }
@@ -466,14 +472,11 @@ function builder() {
             {
                 cols: [
                     {
-                        view: "scrollview",
-                        width: 320,
-                        body: {
-                            rows: [
-                                { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,gcbh,gcmc,sqry,sqbm,lly", autoWidth: true })] },
-                                mainGrid, mainPager
-                            ],
-                        },
+                        width: 280,
+                        rows: [
+                            { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,gcbh,gcmc,sqry,sqbm,lly", autoWidth: true })] },
+                            mainGrid, mainPager
+                        ],
                     },
                     { view: "resizer" },
                     {

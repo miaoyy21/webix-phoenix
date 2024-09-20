@@ -8,9 +8,14 @@ function builder() {
         $$(mainForm.id).setValues($$(mainGrid.id).getItem(id));
 
         $$(mxGrid.id).clearAll();
+        $$(mxGrid.id).showOverlay("正在检索入库单明细，请稍后...");
+
         webix.ajax()
             .get(mxUrl, { "wzrkd_id": id })
-            .then((res) => { $$(mxGrid.id).define("data", res.json()) });
+            .then((res) => { $$(mxGrid.id).define("data", res.json()) })
+            .fail(() => {
+                $$(mxGrid.id).showOverlay("检索出现异常");
+            });
     }
 
     // 列表
@@ -309,15 +314,12 @@ function builder() {
             {
                 cols: [
                     {
-                        view: "scrollview",
                         width: 240,
-                        body: {
-                            rows: [
-                                { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
-                                mainGrid,
-                                mainPager
-                            ],
-                        },
+                        rows: [
+                            { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
+                            mainGrid,
+                            mainPager
+                        ],
                     },
                     { view: "resizer" },
                     {

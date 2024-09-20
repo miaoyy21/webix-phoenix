@@ -52,14 +52,16 @@ function builder() {
                                     // }
 
                                     $$(mainGrid.id).clearAll();
+                                    $$(mainGrid.id).showOverlay("数据加载中...");
+
                                     webix.ajax()
                                         .get(mainUrl + "&filter[wzbh]=" + wzbh + "&full_filter[wzmc,ggxh,wzph,bzdh]=" + wzms)
-                                        .then(
-                                            (res) => {
-                                                var values = res.json()["data"];
-                                                $$(mainGrid.id).define("data", values);
-                                            }
-                                        );
+                                        .then((res) => {
+                                            var values = res.json()["data"];
+                                            $$(mainGrid.id).define("data", values);
+                                        }).fail(() => {
+                                            $$(mainGrid.id).showOverlay("检索出现异常");
+                                        });
                                 }
                             },
                             {},
