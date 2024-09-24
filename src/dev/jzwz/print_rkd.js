@@ -3,16 +3,21 @@ function builder() {
     const mxUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query";
 
     var mainPager = utils.protos.pager();
+    var btnPrint = utils.UUID();
 
     function onAfterSelect(id) {
         $$(mainForm.id).setValues($$(mainGrid.id).getItem(id));
 
+        $$(btnPrint).disable();
         $$(mxGrid.id).clearAll();
         $$(mxGrid.id).showOverlay("正在检索入库单明细，请稍后...");
 
         webix.ajax()
             .get(mxUrl, { "wzrkd_id": id })
-            .then((res) => { $$(mxGrid.id).define("data", res.json()) })
+            .then((res) => {
+                $$(mxGrid.id).define("data", res.json());
+                $$(btnPrint).enable();
+            })
             .fail(() => {
                 $$(mxGrid.id).showOverlay("检索出现异常");
             });
@@ -288,7 +293,7 @@ function builder() {
                     mainGrid.actions.refresh(),
                     { width: 24 },
                     {
-                        view: "button", label: "打印预览", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                        id: btnPrint, view: "button", label: "打印预览", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
                         click() {
                             var mxValues = $$(mxGrid.id).serialize(true);
                             if (_.size(mxValues) < 1) {
