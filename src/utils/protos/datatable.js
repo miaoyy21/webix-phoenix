@@ -20,6 +20,7 @@ function datatable(options) {
         scheme: {},
         rules: {},
 
+        data: [],
         url: "/api/sys/data_service?service=tests.query&pager=true",
         save: {
             url: "/api/sys/data_service?service=tests.save",
@@ -180,6 +181,10 @@ function datatable(options) {
             var first = this.getFirstId();
             if (this.config.select && first) {
                 this.select(first);
+            }
+
+            if (!_.isEmpty(this.config.url) && _.isEmpty(this.config.data)) {
+                this.showOverlay("数据加载中...");
             }
         },
         onClick: {

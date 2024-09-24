@@ -51,10 +51,6 @@ function builder() {
                     mainGrid.actions.search({ fields: "ckbh,ckmc,kwbh,kwmc,wzbh,wzmc,ggxh,wzph,bzdh", label: "快速过滤：", placeholder: "可根据 仓库、库位和物资 进行过滤" }),
                     {},
                     {
-                        view: "button", label: "打印", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
-                        click() { webix.print($$(mainGrid.id), { mode: "landscape", fit: "data" }) }
-                    },
-                    {
                         view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",
                         click() { webix.toExcel($$(mainGrid.id), { spans: true, styles: true }) }
                     },

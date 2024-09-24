@@ -39,8 +39,10 @@ function builder() {
             onAfterSelect: (selection, preserve) => onAfterSelect(selection.id),
             onAfterLoad() {
                 if (this.count() < 1) {
-                    $$(mainForm.id).setValues({});
-                    $$(mxGrid.id).define("data", []);
+                    _.delay(() => {
+                        $$(mainForm.id).setValues({});
+                        $$(mxGrid.id).define("data", []);
+                    }, 50);
                 }
             }
         },

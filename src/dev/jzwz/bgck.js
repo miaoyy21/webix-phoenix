@@ -86,7 +86,9 @@ function builder() {
             onAfterSelect: (selection, preserve) => onAfterSelectMain(selection.id),
             onAfterLoad() {
                 if (this.count() < 1) {
-                    $$(mxGrid.id).define("data", []);
+                    _.delay(() => {
+                        $$(mxGrid.id).define("data", []);
+                    }, 50);
                 }
             }
         },
@@ -137,7 +139,9 @@ function builder() {
             onAfterSelect: (selection, preserve) => onAfterSelectMx(selection.id),
             onAfterLoad() {
                 if (this.count() < 1) {
-                    $$(kcGrid.id).define("data", []);
+                    _.delay(() => {
+                        $$(kcGrid.id).define("data", []);
+                    }, 50);
                 }
             }
         },

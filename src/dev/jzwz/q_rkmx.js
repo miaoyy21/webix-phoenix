@@ -4,11 +4,14 @@ function builder() {
     var txtStart = utils.UUID();
     var txtEnd = utils.UUID();
 
+    var initStart = webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01";
+    var initEnd = webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10);
+
     var mainPager = utils.protos.pager();
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
-        url: null,
+        url: mainUrl + "&start=" + initStart + "&end=" + initEnd,
         data: [],
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
@@ -50,8 +53,8 @@ function builder() {
             {
                 view: "toolbar",
                 cols: [
-                    { id: txtStart, width: 240, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 8) + "01", stringResult: true, format: utils.formats.date.format },
-                    { id: txtEnd, width: 240, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: webix.Date.dateToStr("%Y-%m-%d")(new Date()).substring(0, 10), stringResult: true, format: utils.formats.date.format },
+                    { id: txtStart, width: 240, name: "start", view: "datepicker", label: "开始时间", labelAlign: "right", value: initStart, stringResult: true, format: utils.formats.date.format },
+                    { id: txtEnd, width: 240, name: "end", view: "datepicker", label: "结束时间", labelAlign: "right", value: initEnd, stringResult: true, format: utils.formats.date.format },
                     { width: 24 },
                     {
                         view: "button", label: "检索", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-filter-outline",
