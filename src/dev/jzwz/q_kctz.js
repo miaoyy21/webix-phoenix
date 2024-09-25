@@ -8,7 +8,7 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, width: 80 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" }, rowspan: 2 }, width: 100 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
