@@ -199,12 +199,12 @@ function builder() {
                                             cols: [
                                                 { view: "text", name: "cgy", label: "采购员：" },
                                                 { view: "text", name: "kdrq", label: "开单日期：" },
-                                                { view: "text", name: "bmld", label: "部门领导", readonly: true },
-                                                { view: "text", name: "bmld_shrq", label: "审核日期", readonly: true },
+                                                { view: "text", name: "bmld", label: "部门领导" },
+                                                { view: "text", name: "bmld_shrq", label: "审核日期" },
                                             ]
                                         },
                                     ],
-                                    elementsConfig: { labelAlign: "right", labelWidth: 100, clear: false },
+                                    elementsConfig: { labelAlign: "right", labelWidth: 100, readonly: true, clear: false },
                                 }),
                                 { view: "label", label: "<span style='margin-left:8px'></span>物资入库清单" },
                                 utils.protos.datatable({
