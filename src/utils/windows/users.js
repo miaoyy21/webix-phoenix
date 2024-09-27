@@ -91,7 +91,7 @@ instance.ok = function () {
     }
 }
 
-var win = webix.ui({
+webix.ui({
     id: instance.window_id,
     view: "window",
     modal: true,

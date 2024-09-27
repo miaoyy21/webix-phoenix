@@ -338,8 +338,6 @@ function builder(options, values) {
         }
     };
 
-    var btnImport = utils.protos.importExcelButton({ label: "物资导入", onImport: openImport });
-
     // 请假单
     return {
         show() {
