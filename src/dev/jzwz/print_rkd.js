@@ -302,7 +302,20 @@ function builder() {
                             }
 
                             // 必须全部入库才可以打印
-                            var has = _.findIndex(mxValues, (row) => row["zt"] != "9");
+                            var has = _.findIndex(mxValues, (row) => {
+                                if (_.isEqual(row["zt"], "9")) {
+                                    return false;
+                                }
+
+                                if (_.isEqual(row["zt"], "5")) {
+                                    var hgsl = utils.formats.number.editParse(row["hgsl"], 2);
+                                    if (hgsl < 0.01) {
+                                        return false;
+                                    }
+                                }
+
+                                return true;
+                            });
                             if (has >= 0) {
                                 webix.message({ type: "error", text: "入库单中存在未办理入库实收的物资！" });
                                 return
@@ -310,7 +323,7 @@ function builder() {
 
                             var mainValues = $$(mainForm.id).getValues();
                             var options = _.extend({}, mainValues, _.pick(_.first(mxValues), "jyry_id", "bgy_id"));
-                            options["rows"] = mxValues;
+                            options["rows"] = _.filter(mxValues, (row) => row["zt"] == "9");
 
                             openPrint(options);
                         }
