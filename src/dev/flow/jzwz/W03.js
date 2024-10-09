@@ -202,7 +202,7 @@ function builder(options, values) {
                 adjust: true, minWidth: 80
             },
             {
-                id: "cgdjhs", header: [{ text: "新入库单", css: { "text-align": "center", "background": "#d5f5e3" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center" } }], editor: !options["readonly"] ? "text" : null,
+                id: "cgdjhs", header: [{ text: "新入库单", css: { "text-align": "center", "background": "#d5f5e3" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 4),
                 editFormat: (value) => utils.formats.number.editFormat(value, 4),
@@ -210,7 +210,7 @@ function builder(options, values) {
                 adjust: true, minWidth: 80
             },
             {
-                id: "cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center" } }], editor: !options["readonly"] ? "text" : null,
+                id: "cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),
@@ -219,7 +219,7 @@ function builder(options, values) {
                 adjust: true, minWidth: 80
             },
             {
-                id: "taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center" } }], editor: !options["readonly"] ? "text" : null,
+                id: "taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),
@@ -227,57 +227,57 @@ function builder(options, values) {
                 adjust: true, minWidth: 60
             },
             {
-                id: "cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center" } }],
+                id: "cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center", "background": "#d5f5e3" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
-                id: "cgje", header: [{}, { text: "采购金额", css: { "text-align": "center" } }],
+                id: "cgje", header: [{}, { text: "采购金额", css: { "text-align": "center", "background": "#d5f5e3" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "taxje", header: [{}, { text: "税额", css: { "text-align": "center" } }],
+                id: "taxje", header: [{}, { text: "税额", css: { "text-align": "center", "background": "#d5f5e3" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "src_cgdjhs", header: [{ text: "原入库单", css: { "text-align": "center", "background": "#d5e3f5" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center" } }],
+                id: "src_cgdjhs", header: [{ text: "原入库单", css: { "text-align": "center", "background": "#d5e3f5" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "src_cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center" } }],
+                id: "src_cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "src_taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center" } }],
+                id: "src_taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 60
             },
             {
-                id: "src_cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center" } }],
+                id: "src_cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" }, adjust: true, minWidth: 80
             },
             {
-                id: "src_cgje", header: [{}, { text: "采购金额", css: { "text-align": "center" } }],
+                id: "src_cgje", header: [{}, { text: "采购金额", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "src_taxje", header: [{}, { text: "税额", css: { "text-align": "center" } }],
+                id: "src_taxje", header: [{}, { text: "税额", css: { "text-align": "center", "background": "#d5e3f5" } }],
                 format: (value) => utils.formats.number.format(value, 2),
                 footer: { content: "summColumn", css: { "text-align": "right" } },
                 css: { "text-align": "right" },
