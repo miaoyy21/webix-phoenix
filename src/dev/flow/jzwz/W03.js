@@ -1,6 +1,6 @@
 // 红冲申请单
 function defaultValues(options) {
-    // rows：{ ldbh,rkrq,wzbh,wzmc,ggxh,wzph,bzdh,jldw,ckbh,ckmc,sssl }
+    // rows：{ ldbh,rkrq,wzbh,wzmc,ggxh,wzph,bzdh,jldw,gcbh,gcmc,ckbh,ckmc,sssl }
     //      { src_cgdjhs,src_cgjehs,src_cgdj,src_cgje,src_taxrate,src_taxje }
     //      { cgdjhs,cgjehs,cgdj,cgje,taxrate,taxje }
 
@@ -73,7 +73,7 @@ function builder(options, values) {
     // 加载入库单
     function onLoad(values) {
         var newValues = _.map(values, (value) => {
-            var newValue = _.pick(value, "id", "ldbh", "rkrq", "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "ckbh", "ckmc", "sssl");
+            var newValue = _.pick(value, "id", "ldbh", "rkrq", "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "gcbh", "gcmc", "ckbh", "ckmc", "sssl");
             newValue = _.extend(newValue, _.pick(value, "cgdjhs", "cgjehs", "cgdj", "cgje", "taxrate", "taxje"));
 
             return _.extend(newValue, {
@@ -283,6 +283,8 @@ function builder(options, values) {
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 180 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
             { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
             {
