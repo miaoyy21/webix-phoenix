@@ -191,8 +191,11 @@ function builder(options, values) {
         ],
         on: {
             onDataUpdate(id, data, old) {
-                var newData = _.pick(data, "rksl", "cgdjhs", "cgjehs", "taxrate");
-                var oldData = _.pick(old, "rksl", "cgdjhs", "cgjehs", "taxrate");
+                var newData = _.pick(data, "cgdjhs", "cgjehs", "taxrate");
+                newData["sl"] = data["rksl"];
+
+                var oldData = _.pick(old, "cgdjhs", "cgjehs", "taxrate");
+                oldData["sl"] = old["rksl"];
 
                 saving++;
                 webix.ajax()

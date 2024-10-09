@@ -9,7 +9,7 @@ function datatable(options) {
         css: "webix_data_border webix_header_border",
         tooltip: true,
         select: "row",
-        multiselect: true,
+        multiselect: false,
         editable: true,
         editaction: "click",
         drag: "order",
