@@ -276,7 +276,9 @@ function datatable(options) {
                                     // 提交服务端删除
                                     webix.ajax()
                                         .post(url, { "id": id, "operation": "delete" })
-                                        .then((res) => webix.dp(datatable).ignore(() => datatable.remove(res.json()["id"] || id)));
+                                        .then((res) => {
+                                            webix.dp(datatable).ignore(() => datatable.remove(res.json()["id"] || id));
+                                        });
                                 } else {
                                     // 客户端直接移除记录
                                     datatable.remove(id);

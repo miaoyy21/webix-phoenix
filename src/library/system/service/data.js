@@ -221,7 +221,7 @@ function builder() {
                         tooltip: true,
                         rightSplit: 1,
                         drag: "order",
-                        data: [],
+                        // data: [],
                         save: {
                             url: "/api/sys/data_service?method=ByTableId",
                             updateFromResponse: true,
@@ -229,7 +229,7 @@ function builder() {
                             operationName: "operation"
                         },
                         columns: [
-                            { id: "code_", header: { text: "服务编码", css: { "text-align": "center" } }, sort: "text", width: 100 },
+                            { id: "code_", header: { text: "服务编码", css: { "text-align": "center" } }, sort: "text", width: 120 },
                             { id: "name_", header: { text: "服务名称", css: { "text-align": "center" } }, sort: "text", width: 240 },
                             { id: "method_", header: { text: "方法", css: { "text-align": "center" } }, cssFormat: utils.formats.method, css: { "text-align": "center" }, width: 60 },
                             { id: "source_", header: { text: "服务脚本", css: { "text-align": "center" } }, minWidth: 160, fillspace: true },

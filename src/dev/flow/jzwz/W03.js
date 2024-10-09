@@ -138,7 +138,7 @@ function builder(options, values) {
             width: 680,
             height: 420,
             animate: { type: "flip", subtype: "vertical" },
-            head: "选择物资待入库或已入库的入库单",
+            head: "选择待红冲的入库单",
             position: "center",
             body: {
                 paddingX: 12,

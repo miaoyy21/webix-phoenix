@@ -27,27 +27,28 @@ grid.remove = function (table, row, module, name) {
         type: "confirm-error"
     }).then((result) => {
         var url = table.config.save.url;
-        webix.dp(table).ignore(
-            function () {
-                webix.ajax()
-                    .post(url, { "id": row.id, "operation": "delete" })
-                    .then(
-                        (res) => {
-                            table.remove(row.id);
+        if (url) {
+            webix.ajax()
+                .post(url, { "id": row.id, "operation": "delete" })
+                .then(
+                    (res) => {
+                        webix.dp(table).ignore(() => table.remove(row.id));
 
-                            // 自动选择删除节点的附近记录
-                            if (table.count()) {
-                                var id = table.getIdByIndex(table.count() > row.index ? row.index - 1 : table.count() - 1);
-                                if (id) {
-                                    table.select && table.select(id, false);
-                                }
-                            } else {
-                                table.showOverlay("无检索数据");
+
+                        // 自动选择删除节点的附近记录
+                        if (table.count()) {
+                            var id = table.getIdByIndex(table.count() > row.index ? row.index - 1 : table.count() - 1);
+                            if (id) {
+                                table.select && table.select(id, false);
                             }
+                        } else {
+                            table.showOverlay("无检索数据");
                         }
-                    );
-            }
-        )
+                    }
+                );
+        } else {
+            table.remove(row.id);
+        }
     });
 }
 
