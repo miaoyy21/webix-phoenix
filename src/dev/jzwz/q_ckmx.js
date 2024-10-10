@@ -15,7 +15,6 @@ function builder() {
         data: [],
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
-            { id: "ly", header: { text: "来源", css: { "text-align": "center" } }, options: utils.dicts["wz_ckly"], css: { "text-align": "center" }, width: 60 },
             { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "llrq", header: { text: "出库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "sq_gcbh", header: { text: "请领项目编号", css: { "text-align": "center" } }, width: 180 },
