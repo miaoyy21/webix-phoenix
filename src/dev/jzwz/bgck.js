@@ -181,8 +181,8 @@ function builder() {
             // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 100 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
+            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 160 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             {
                 id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, editor: "text",
@@ -280,9 +280,7 @@ function builder() {
                     // 默认选中最后1次出库的记录
                     this.eachRow((id) => {
                         var row = this.getItem(id);
-                        if (_.isEmpty(max)) {
-                            max = row["llrq"];
-                        }
+                        if (_.isEmpty(max)) { max = row["llrq"]; }
 
                         row["checked"] = row["llrq"] == max ? "Y" : "N";
                     }, true);

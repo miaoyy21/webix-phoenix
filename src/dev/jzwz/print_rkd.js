@@ -323,7 +323,7 @@ function builder() {
 
                             var mainValues = $$(mainForm.id).getValues();
                             var options = _.extend({}, mainValues, _.pick(_.first(mxValues), "jyry_id", "bgy_id"));
-                            options["rows"] = _.filter(mxValues, (row) => row["zt"] == "9");
+                            options["rows"] = _.filter(mxValues, (row) => row["zt"] == "9" && row["hcbz"] == "0");
 
                             openPrint(options);
                         }

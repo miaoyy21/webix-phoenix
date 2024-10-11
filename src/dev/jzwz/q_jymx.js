@@ -18,7 +18,7 @@ function builder() {
             { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 180 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
+            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "jydd", header: { text: "检验地点", css: { "text-align": "center" } }, width: 80 },
             { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, minWidth: 80 },
             { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
