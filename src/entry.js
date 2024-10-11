@@ -12,18 +12,18 @@ webix.ready(function () {
     // 登录界面
     webix.ui({
         id: LOGIN_PAGE_ID,
-        css: {
-            "background": "#dee2ee",
-        },
         cols: [
             {
                 gravity: 2,
                 css: {
                     "background": "url('./assets/background.png') no-repeat center center",
-                    "background-size": "90% 90%",
+                    "background-size": "100% 100%",
                 },
             },
             {
+                css: {
+                    "background": "#cedeee",
+                },
                 rows: [
                     {},
                     {
@@ -33,6 +33,12 @@ webix.ready(function () {
                                 id: LOGIN_PAGE_FORM_ID,
                                 view: "form",
                                 width: 360,
+                                css: {
+                                    "border-radius": "8px",
+                                    // "box-shadow": "0px 8px 8px 0px rgba(0,0,0,0.75)",
+                                    "-webkit-box-shadow": "0px 8px 8px 0px rgba(0,0,0,0.75)",
+                                    // "-moz-box-shadow": "0px 8px 8px 0px rgba(0,0,0,0.75)"
+                                },
                                 rows: [
                                     {
                                         view: "fieldset",
@@ -155,7 +161,7 @@ webix.ready(function () {
         $$(LOGIN_PAGE_ID).show();
         $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
-        $$(MAIN_PAGE_ID).hide();
+        $$(MAIN_PAGE_ID) && $$(MAIN_PAGE_ID).hide();
     }
 });
 
