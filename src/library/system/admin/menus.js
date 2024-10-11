@@ -39,22 +39,24 @@ function builder() {
                     {
                         view: "button", label: "新增同级", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-format-line-spacing",
                         click() {
-                            if (!$$(tree_id).count()) {
+                            var count = $$(tree_id).count();
+                            if (count < 1) {
                                 $$(tree_id).hideOverlay();
                             }
 
                             var item = $$(tree_id).getSelectedItem();
                             if (!item) {
-                                $$(tree_id).select($$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, 0));
+                                $$(tree_id).select($$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, count));
                             } else {
-                                $$(tree_id).select($$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, 0, item.$parent));
+                                $$(tree_id).select($$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, count, item.$parent));
                             }
                         }
                     },
                     {
                         view: "button", label: "新增下级", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-format-list-group",
                         click() {
-                            if (!$$(tree_id).count()) {
+                            var count = $$(tree_id).count();
+                            if (count < 1) {
                                 $$(tree_id).hideOverlay();
                             }
 
@@ -64,7 +66,7 @@ function builder() {
                                 return;
                             }
 
-                            var id = $$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, 0, item.id);
+                            var id = $$(tree_id).add({ "name_": "<菜单名称>", "icon_": "mdi mdi-checkbox-blank-circle-outline", "valid_": "Effective" }, count, item.id);
                             $$(tree_id).select(id);
                             $$(tree_id).open(item.id);
                         }

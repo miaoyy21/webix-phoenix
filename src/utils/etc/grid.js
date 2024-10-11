@@ -1,11 +1,20 @@
 var grid = {};
 
 grid.add = function (table, row, edit) {
-    if (!table.count()) {
+    add(table, row, 0, edit);
+}
+
+grid.addLast = function (table, row, edit) {
+    add(table, row, table.count(), edit);
+}
+
+function add(table, row, index, edit) {
+    var count = table.count();
+    if (count < 1) {
         table.hideOverlay();
     }
 
-    var id = table.add(row, 0);
+    var id = table.add(row, index);
     table.select && table.select(id, false);
 
     if (edit) {

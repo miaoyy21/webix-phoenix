@@ -1,31 +1,16 @@
 function builder() {
-    var out = utils.UUID();
-
-    function load() {
-        webix.ajax().get("/api/sys/system")
-            .then((res) => {
-                $$(out).setHTML("<pre>" + res.json() + "</pre>");
-            });
-    }
-
-    load();
+    const url = "/api/sys/system";
+    var iframe = utils.UUID();
 
     return {
         rows: [
             {
                 view: "toolbar",
                 cols: [
-                    { view: "button", label: "刷新", css: "webix_primary", autowidth: true, type: "icon", icon: "mdi mdi-18px mdi-refresh", click: load }
+                    { view: "button", label: "刷新", css: "webix_primary", autowidth: true, type: "icon", icon: "mdi mdi-18px mdi-refresh", click: () => { $$(iframe).define("src", url) } }
                 ]
             },
-            {
-                view: "scrollview",
-                scroll: "y",
-                body: {
-                    id: out,
-                    view: "template",
-                }
-            }
+            { id: iframe, view: "iframe", src: url }
         ]
     }
 }

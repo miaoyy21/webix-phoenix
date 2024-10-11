@@ -300,7 +300,7 @@ function builder() {
                                 if (!pattern.test(res.trim())) {
                                     webix.alert({ type: "alert-warning", title: "系统提示", text: "表名不符合规则" });
                                 } else {
-                                    utils.grid.add($$(grid_id), { "code_": res.trim(), "description_": "" }, "name_");
+                                    utils.grid.addLast($$(grid_id), { "code_": res.trim(), "description_": "" }, "name_");
                                 }
                             });
                         }

@@ -22,6 +22,15 @@ function builder() {
                                     view: "button", label: "删除", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-trash-can",
                                     click: () => utils.grid.remove($$(grid_id), null, "角色", "name_")
                                 },
+                                {
+                                    view: "button", label: "刷新", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                    click() {
+                                        $$(grid_id).editCancel();
+
+                                        $$(grid_id).clearAll();
+                                        $$(grid_id).load($$(grid_id).config.url);
+                                    }
+                                },
                             ]
                         },
                         {

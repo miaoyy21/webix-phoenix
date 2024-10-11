@@ -82,11 +82,12 @@ function builder() {
                                                 if (operation === "insert") {
                                                     row["id"] = data["newid"];
 
-                                                    if (!$$(service_grid_id).count()) {
+                                                    var count = $$(service_grid_id).count();
+                                                    if (count < 1) {
                                                         $$(service_grid_id).hideOverlay();
                                                     }
 
-                                                    $$(service_grid_id).add(row, 0);
+                                                    $$(service_grid_id).add(row, count);
                                                 } else {
                                                     $$(service_grid_id).updateItem(values["id"], row);
                                                 }

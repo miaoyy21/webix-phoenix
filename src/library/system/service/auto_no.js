@@ -10,7 +10,7 @@ function builder() {
                     {
                         view: "button", label: "创建", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-plus",
                         click() {
-                            utils.grid.add($$(kind_grid_id), { "description_": "" }, "code_");
+                            utils.grid.addLast($$(kind_grid_id), { "description_": "" }, "code_");
                         }
                     },
                     {
