@@ -21,7 +21,6 @@ function defaultValues(options) {
 function builder(options, values) {
     console.log(options, values)
 
-    var winImportId = utils.UUID();
     var saving = 0; // 标识是否正在保存中
 
     // 元素
