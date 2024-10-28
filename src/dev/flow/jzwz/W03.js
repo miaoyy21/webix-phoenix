@@ -328,7 +328,6 @@ function builder(options, values) {
         }
     });
 
-
     var btnRkd = {
         view: "button", label: "加载入库单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
         click() {
@@ -342,7 +341,7 @@ function builder(options, values) {
         }
     };
 
-    // 请假单
+    // 红冲单
     return {
         show() {
             return {

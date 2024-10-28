@@ -125,8 +125,8 @@ webix.ui({
                                     return "<span class='webix_table_checkbox notchecked webix_icon mdi mdi-checkbox-blank-outline'/>";
                                 }, width: 50
                             },
-                            { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "text", width: 80 },
-                            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, sort: "text", width: 120 },
+                            { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, sort: "text", width: 100 },
+                            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, sort: "text", width: 140 },
                             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, width: 360 },
                         ],
                         elementsConfig: { labelAlign: "right", clear: false },

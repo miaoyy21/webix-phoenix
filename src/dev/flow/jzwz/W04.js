@@ -23,8 +23,6 @@ function defaultValues(options) {
 function builder(options, values) {
     console.log(options, values)
 
-    var saving = 0; // 标识是否正在保存中
-
     // 元素
     var mainForm = utils.protos.form({
         data: values,
@@ -43,6 +41,18 @@ function builder(options, values) {
                         view: "search", name: "zc_ckbh", label: "转出仓库", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
+                                var values = $$(mainForm.id).getValues();
+
+                                utils.windows.ckdm({
+                                    multiple: false,
+                                    filter: (row) => row["bgy_id"].indexOf(utils.users.getUserId()) >= 0,
+                                    checked: !_.isEmpty(values["zc_ckbh"]) ? [{ "ckbh": values["zc_ckbh"], "ckmc": values["zc_ckmc"] }] : [],
+                                    callback(checked) {
+                                        var newValues = _.extend(values, { "zc_ckbh": checked["ckbh"], "zc_ckmc": checked["ckmc"] });
+                                        $$(mainForm.id).setValues(newValues);
+                                        return true;
+                                    }
+                                })
                             }
                         }
                     },
@@ -51,6 +61,17 @@ function builder(options, values) {
                         view: "search", name: "zr_ckbh", label: "转入仓库", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
+                                var values = $$(mainForm.id).getValues();
+
+                                utils.windows.ckdm({
+                                    multiple: false,
+                                    checked: !_.isEmpty(values["zr_ckbh"]) ? [{ "ckbh": values["zr_ckbh"], "ckmc": values["zr_ckmc"] }] : [],
+                                    callback(checked) {
+                                        var newValues = _.extend(values, { "zr_ckbh": checked["ckbh"], "zr_ckmc": checked["ckmc"] });
+                                        $$(mainForm.id).setValues(newValues);
+                                        return true;
+                                    }
+                                })
                             }
                         }
                     },
@@ -291,25 +312,6 @@ function builder(options, values) {
             }
         ],
         on: {
-            onDataUpdate(id, data, old) {
-                var newData = _.pick(data, "cgdjhs", "cgjehs", "taxrate");
-                newData["sl"] = data["sssl"];
-
-                var oldData = _.pick(old, "cgdjhs", "cgjehs", "taxrate");
-                oldData["sl"] = old["sssl"];
-
-                saving++;
-                webix.ajax()
-                    .post("/api/sys/data_service?service=JZWZ.calucate", { "new": newData, "old": oldData })
-                    .then((res) => {
-                        var calcData = res.json();
-
-                        data = _.extend(data, calcData);
-                        $$(mxGrid.id).refresh(id);
-
-                        saving--;
-                    });
-            },
             onAfterRender() {
                 if (options["readonly"]) {
                     mxGrid.actions.hideColumn("buttons", true);
@@ -320,13 +322,12 @@ function builder(options, values) {
         }
     });
 
-
     var btnRkd = {
         view: "button", label: "加载入库单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-gesture-tap-hold",
         click() {
             var values = $$(mainForm.id).getValues();
-            if (_.isEmpty(values["khbh"])) {
-                webix.message({ type: "error", text: "请选择供应商！" });
+            if (_.isEmpty(values["zc_ckbh"])) {
+                webix.message({ type: "error", text: "请选择转出仓库！" });
                 return;
             }
 
@@ -334,7 +335,7 @@ function builder(options, values) {
         }
     };
 
-    // 请假单
+    // 转库单
     return {
         show() {
             return {
@@ -367,38 +368,26 @@ function builder(options, values) {
             }
         },
         values() {
-            if (saving > 0) {
-                webix.message({ type: "error", text: "正在进行计算，请稍后再试..." });
-                return
-            }
-
             if (!$$(mainForm.id).validate()) {
                 webix.message({ type: "error", text: "缺少必输项" });
                 return;
             };
 
-            // 红冲明细
+            // 转库明细
             var rows = $$(mxGrid.id).serialize(true);
             if (_.size(rows) < 1) {
-                webix.message({ type: "error", text: "请选择待红冲的物资入库单！" });
+                webix.message({ type: "error", text: "请选择待转库的物资清单！" });
                 return
             }
 
-            // 必须填写含税金额及含税单价
-            var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgjehs"], 2) <= 0));
-            if (index >= 0) {
-                webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写含税金额！" });
-                return
-            }
-
-            var index = _.findIndex(rows, (row) => (utils.formats.number.editParse(row["cgdjhs"], 4) <= 0));
-            if (index >= 0) {
-                webix.message({ type: "error", text: "第" + (index + 1) + "行：请填写含税单价！" });
-                return
-            }
-
-            // 入库单明细
             var values = $$(mainForm.id).getValues();
+
+            // 转出仓库是否与转入仓库相同
+            if (_.isEqual(values["zc_ckbh"], values["zr_ckbh"])) {
+                webix.message({ type: "error", text: "转出仓库不能与转入仓库相同" });
+                return
+            }
+
             values["rows"] = rows;
 
             return values;
