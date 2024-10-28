@@ -43,6 +43,11 @@ function builder() {
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
         ],
+        styles: {
+            cellTextColor(row, col) {
+                return row["ly"] == "HCD" || row["ly"] == "ZKD" ? "red" : (row["ly"] == "HCR" || row["ly"] == "ZKR" ? "blue" : "none");
+            }
+        },
         pager: mainPager.id,
     });
 
