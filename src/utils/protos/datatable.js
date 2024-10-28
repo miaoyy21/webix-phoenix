@@ -224,7 +224,7 @@ function datatable(options) {
             }
         },
         styles: {
-            cellTextColor: function (row, col) { }
+            cellTextColor: function (row) { }
         },
         actions: {
             hideColumn(column, hide) {
@@ -372,12 +372,20 @@ function datatable(options) {
                 return;
             }
 
-            if (_.has(column, "template")) {
-                return;
-            }
+            var tpl = column["template"];
+            var opts = column["options"];
 
             column.template = function (row) {
                 var value = row[column["id"]] || "";
+                if (_.size(opts) > 0) {
+                    var find = _.find(opts, { "id": value });
+                    if (find) {
+                        value = find["value"];
+                    }
+                } else if (_.size(tpl) > 0) {
+                    value = webix.template(tpl)(row);
+                }
+
                 var color = fn(row, column["id"]);
                 if (!_.isEmpty(color)) {
                     return "<span style='color:" + color + ";'>" + value + "</span>";

@@ -43,6 +43,11 @@ function builder() {
             { id: "mxrkrq", header: { text: "入库时间", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
         ],
+        styles: {
+            cellTextColor(row, col) {
+                return row["ly"] == "HCD" || row["ly"] == "ZKD" ? "red" : (row["ly"] == "HCR" || row["ly"] == "ZKR" ? "blue" : "none");
+            }
+        },
         pager: mainPager.id,
     });
 
