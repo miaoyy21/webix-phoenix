@@ -1,16 +1,18 @@
-// 红冲申请单
+// 转库申请单
 function defaultValues(options) {
     // rows：{ ldbh,rkrq,wzbh,wzmc,ggxh,wzph,bzdh,jldw,gcbh,gcmc,ckbh,ckmc,sssl }
     //      { src_cgdjhs,src_cgjehs,src_cgdj,src_cgje,src_taxrate,src_taxje }
     //      { cgdjhs,cgjehs,cgdj,cgje,taxrate,taxje }
 
-    var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_hcd_ldbh" });
+    var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_zkd_ldbh" });
     var ldbh = request.responseText;
 
     return {
         "ldbh": ldbh,
-        "khbh": "",
-        "khmc": "",
+        "zc_ckbh": "",
+        "zc_ckmc": "",
+        "zr_ckbh": "",
+        "zr_ckmc": "",
         "bz": "",
         "sqry_id": utils.users.getUserId(),
         "sqry": utils.users.getUserName(),
@@ -29,43 +31,33 @@ function builder(options, values) {
         rows: [
             {
                 cols: [
-                    { view: "text", name: "ldbh", label: "红冲单号", readonly: true },
+                    { view: "text", name: "ldbh", label: "转库单号", readonly: true },
                     { view: "text", name: "sqrq", label: "申请日期", readonly: true },
                     { view: "text", name: "sqry", label: "申请人员", readonly: true },
+                    {}
                 ]
             },
             {
                 cols: [
                     {
-                        view: "search", name: "khbh", label: "供应商编号", readonly: true, required: true,
+                        view: "search", name: "zc_ckbh", label: "转出仓库", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                if (options["readonly"]) return;
-
-                                var rows = $$(mxGrid.id).serialize(true);
-                                if (_.size(rows) > 0) {
-                                    webix.message({ type: "error", text: "修改供应商前，请先删除入库单明细！" });
-                                    return
-                                }
-
-                                var values = $$(mainForm.id).getValues();
-                                utils.windows.khdm({
-                                    multiple: false,
-                                    checked: !_.isEmpty(values["khbh"]) ? [_.pick(values, "khbh", "khmc")] : [],
-                                    filter: (row) => row["tybz"] != '1',
-                                    callback(checked) {
-                                        var newValues = _.extend(values, _.pick(checked, "khbh", "khmc"));
-                                        $$(mainForm.id).setValues(newValues);
-                                        return true;
-                                    }
-                                });
                             }
                         }
                     },
-                    { view: "text", name: "khmc", gravity: 2, label: "供应商名称", readonly: true },
-                ]
+                    { view: "text", name: "zc_ckmc", readonly: true },
+                    {
+                        view: "search", name: "zr_ckbh", label: "转入仓库", readonly: true, required: true,
+                        on: {
+                            onSearchIconClick() {
+                            }
+                        }
+                    },
+                    { view: "text", name: "zr_ckmc", readonly: true },
+                ],
             },
-            { view: "textarea", name: "bz", label: "红冲原因", readonly: options["readonly"], required: true, height: 72, placeholder: "请填写红冲原因 ..." },
+            { view: "textarea", name: "bz", label: "转库原因", readonly: options["readonly"], required: true, height: 72, placeholder: "请填写红冲原因 ..." },
         ],
     });
 
