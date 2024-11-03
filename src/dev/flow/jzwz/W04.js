@@ -1,8 +1,7 @@
 // 转库申请单
 function defaultValues(options) {
-    // rows：{ ldbh,rkrq,wzbh,wzmc,ggxh,wzph,bzdh,jldw,gcbh,gcmc,ckbh,ckmc,sssl }
-    //      { src_cgdjhs,src_cgjehs,src_cgdj,src_cgje,src_taxrate,src_taxje }
-    //      { cgdjhs,cgjehs,cgdj,cgje,taxrate,taxje }
+    // rows：{ ldbh,rkrq,wzbh,wzmc,ggxh,wzph,bzdh,jldw,sl }
+    //      { src_kwbh,src_kwmc,dst_kwbh,dst_kwmc }
 
     var request = webix.ajax().sync().get("api/sys/auto_nos", { "code": "wz_zkd_ldbh" });
     var ldbh = request.responseText;
@@ -78,24 +77,16 @@ function builder(options, values) {
                     { view: "text", name: "zr_ckmc", readonly: true },
                 ],
             },
-            { view: "textarea", name: "bz", label: "转库原因", readonly: options["readonly"], required: true, height: 72, placeholder: "请填写红冲原因 ..." },
+            { view: "textarea", name: "bz", label: "转库原因", readonly: options["readonly"], required: true, height: 72, placeholder: "请填写申请转库原因 ..." },
         ],
     });
 
     // 加载入库单
     function onLoad(values) {
         var newValues = _.map(values, (value) => {
-            var newValue = _.pick(value, "id", "ldbh", "rkrq", "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "gcbh", "gcmc", "ckbh", "ckmc", "sssl");
-            newValue = _.extend(newValue, _.pick(value, "cgdjhs", "cgjehs", "cgdj", "cgje", "taxrate", "taxje"));
+            var newValue = _.pick(value, "id", "ldbh", "rkrq", "wzbh", "wzmc", "ggxh", "wzph", "bzdh", "jldw", "sssl", "sfs", "qmsl");
 
-            return _.extend(newValue, {
-                "src_cgdjhs": value["cgdjhs"],
-                "src_cgjehs": value["cgjehs"],
-                "src_cgdj": value["cgdj"],
-                "src_cgje": value["cgje"],
-                "src_taxrate": value["taxrate"],
-                "src_taxje": value["taxje"],
-            })
+            return _.extend(newValue, { "src_kwbh": value["kwbh"], "src_kwmc": value["kwmc"] });
         });
 
         var rows = $$(mxGrid.id).serialize(true);
@@ -124,16 +115,12 @@ function builder(options, values) {
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 200 },
                 { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
-                { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "cgdjhs", header: { text: "含税单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "cgjehs", header: { text: "含税金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "taxrate", header: { text: "税率(%)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 60 },
-                { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "cgje", header: { text: "采购金额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "taxje", header: { text: "税额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "qmsl", header: { text: "结存数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
             ],
             pager: dlgPager.id,
         });
@@ -147,7 +134,7 @@ function builder(options, values) {
             width: 720,
             height: 480,
             animate: { type: "flip", subtype: "vertical" },
-            head: "选择待红冲的入库单",
+            head: "选择待转库的入库单",
             position: "center",
             body: {
                 paddingX: 8,
@@ -196,109 +183,32 @@ function builder(options, values) {
     var mxGrid = utils.protos.datatable({
         editable: true,
         drag: false,
-        footer: true,
         url: null,
         data: values["rows"],
         leftSplit: 3,
         rightSplit: 1,
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" }, rowspan: 2 }, footer: { text: "合  计：", colspan: 3 }, css: { "text-align": "center" }, width: 50 },
-            { id: "ldbh", header: { text: "原入库单号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 100 },
-            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
-            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" }, rowspan: 2 }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
-            { id: "jldw", header: { text: "单位", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
+            { id: "ldbh", header: { text: "原入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
+            { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             {
-                id: "sssl", header: { text: "实收数量", css: { "text-align": "center" }, rowspan: 2 },
+                id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
             {
-                id: "cgdjhs", header: [{ text: "新入库单", css: { "text-align": "center", "background": "#d5f5e3" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
-                format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 4),
-                editFormat: (value) => utils.formats.number.editFormat(value, 4),
-                css: { "text-align": "right", "background": !options["readonly"] ? "#d5f5e3" : null },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
-                format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right", "background": !options["readonly"] ? "#d5f5e3" : null },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center", "background": "#d5f5e3" } }], editor: !options["readonly"] ? "text" : null,
-                format: (value) => utils.formats.number.format(value, 2),
-                editParse: (value) => utils.formats.number.editParse(value, 2),
-                editFormat: (value) => utils.formats.number.editFormat(value, 2),
-                css: { "text-align": "right", "background": !options["readonly"] ? "#d5f5e3" : null },
-                adjust: true, minWidth: 60
-            },
-            {
-                id: "cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center", "background": "#d5f5e3" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" }, adjust: true, minWidth: 80
-            },
-            {
-                id: "cgje", header: [{}, { text: "采购金额", css: { "text-align": "center", "background": "#d5f5e3" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "taxje", header: [{}, { text: "税额", css: { "text-align": "center", "background": "#d5f5e3" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "src_cgdjhs", header: [{ text: "原入库单", css: { "text-align": "center", "background": "#d5e3f5" }, colspan: 6 }, { text: "含税单价", css: { "text-align": "center", "background": "#d5e3f5" } }],
+                id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
                 css: { "text-align": "right" },
                 adjust: true, minWidth: 80
             },
-            {
-                id: "src_cgjehs", header: [{}, { text: "含税金额", css: { "text-align": "center", "background": "#d5e3f5" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "src_taxrate", header: [{}, { text: "税率(%)", css: { "text-align": "center", "background": "#d5e3f5" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 60
-            },
-            {
-                id: "src_cgdj", header: [{}, { text: "采购单价", css: { "text-align": "center", "background": "#d5e3f5" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" }, adjust: true, minWidth: 80
-            },
-            {
-                id: "src_cgje", header: [{}, { text: "采购金额", css: { "text-align": "center", "background": "#d5e3f5" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "src_taxje", header: [{}, { text: "税额", css: { "text-align": "center", "background": "#d5e3f5" } }],
-                format: (value) => utils.formats.number.format(value, 2),
-                footer: { content: "summColumn", css: { "text-align": "right" } },
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 180 },
-            { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
-            { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
+            { id: "src_kwbh", header: { text: "转出库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, width: 120 },
+            { id: "dst_kwbh", header: { text: "转入库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "dst_kwmc", header: { text: "转入库位名称", css: { "text-align": "center" } }, width: 120 },
             {
                 id: "buttons",
                 width: 80,
@@ -355,7 +265,7 @@ function builder(options, values) {
                                             view: "toolbar", cols: !options["readonly"] ? [
                                                 btnRkd,
                                                 {}
-                                            ] : [{ view: "label", label: "<span style='margin-left:8px'></span>待红冲入库单明细", height: 38 }]
+                                            ] : [{ view: "label", label: "<span style='margin-left:8px'></span>待转库入库单明细", height: 38 }]
                                         },
                                         mxGrid,
                                     ]
