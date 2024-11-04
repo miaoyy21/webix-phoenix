@@ -36,7 +36,7 @@ webix.attachEvent("onAjaxError", function (xhr) {
     try {
         var obj = JSON.parse(xhr.response);
         if (obj["error"] == "[PHOENIX_TOKEN_EXPIRE]") {
-            webix.message({ type: "error", text: "Token已失效，需要重新登录" });
+            webix.message({ type: "error", text: "登录令牌已过期，请重新登录" });
 
             // 显示登录界面
             $$(LOGIN_PAGE_ID) && $$(LOGIN_PAGE_ID).show();
