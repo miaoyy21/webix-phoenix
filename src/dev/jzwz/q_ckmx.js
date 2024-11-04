@@ -21,6 +21,7 @@ function builder() {
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "rkldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "sq_gcbh", header: { text: "请领项目编号", css: { "text-align": "center" } }, width: 180 },
             { id: "sq_gcmc", header: { text: "请领项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "sf_gcbh", header: { text: "实发项目编号", css: { "text-align": "center" } }, width: 180 },
