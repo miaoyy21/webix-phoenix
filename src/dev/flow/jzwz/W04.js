@@ -198,17 +198,26 @@ function builder(options, values) {
         rightSplit: 1,
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-            { id: "ldbh", header: { text: "原入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+            { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "sssl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
-            { id: "sfs", header: { text: "出库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+            { id: "src_kwbh", header: { text: "转出库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, width: 160 },
             { id: "qmsl", header: { text: "转库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
-            { id: "src_kwbh", header: { text: "转出库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, width: 120 },
-            { id: "dst_kwbh", header: { text: "转入库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "dst_kwmc", header: { text: "转入库位名称", css: { "text-align": "center" } }, width: 120 },
+            {
+                id: "dst_kwbh", header: { text: "转入库位编号", css: { "text-align": "center" } },
+                template(values) {
+                    if (_.isEqual(options["code_"], "RECV")) {
+                        return ` <div class="webix_el_box"> ` + (values["dst_kwbh"] || "") + `
+                                <span class="button_kwbh webix_input_icon wxi-search" style="height:22px;padding-top:2px;"/>
+                            </div>`;
+                    }
+
+                    return (values["dst_kwbh"] || "");
+                }, css: { "text-align": "center" }, width: 120
+            },
+            { id: "dst_kwmc", header: { text: "转入库位名称", css: { "text-align": "center" } }, width: 160 },
             {
                 id: "buttons",
                 width: 80,
@@ -229,6 +238,40 @@ function builder(options, values) {
                     mxGrid.actions.hideColumn("buttons", false);
                 }
             }
+        },
+        onClick: {
+            button_kwbh: function (e, item) {
+                var values = $$(mainForm.id).getValues();
+
+                var data = $$(mxGrid.id).getItem(item.row);
+                if (!data) return;
+
+                // 选择用户
+                utils.windows.kwdm({
+                    multiple: false,
+                    checked: [],
+                    filter: (row) => (row["ckbh"] == values["zr_ckbh"]),
+                    callback(checked) {
+                        var kwData = { "dst_kwbh": checked["kwbh"], "dst_kwmc": checked["kwmc"] };
+
+                        var rows = $$(mxGrid.id).serialize(true);
+                        var newRows = _.map(rows, (row) => {
+                            if (row["id"] == data["id"]) {
+                                return _.extend({}, row, kwData);
+                            }
+
+                            if (row["wzbh"] == data["wzbh"] && _.isEmpty(row["dst_kwbh"])) {
+                                return _.extend({}, row, kwData);
+                            }
+
+                            return row;
+                        })
+
+                        $$(mxGrid.id).define("data", newRows);
+                        return true;
+                    }
+                })
+            },
         }
     });
 
@@ -288,6 +331,15 @@ function builder(options, values) {
             if (_.size(rows) < 1) {
                 webix.message({ type: "error", text: "请选择待转库的物资清单！" });
                 return
+            }
+
+            // 接收确认时，必须选择库位
+            if (_.isEqual(options["code_"], "RECV")) {
+                var index = _.findIndex(rows, (row) => (_.isEmpty(row["dst_kwbh"])));
+                if (index >= 0) {
+                    webix.message({ type: "error", text: "第" + (index + 1) + "行：请选择转入库位！" });
+                    return
+                }
             }
 
             var values = $$(mainForm.id).getValues();

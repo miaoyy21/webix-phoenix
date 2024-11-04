@@ -67,8 +67,8 @@ function show(options) {
 
     options["model"] = JSON.parse(resp["model"]);
 
-    var values = JSON.parse(resp["values"]);
-    var view = mod.builder(options, values);
+    var valuesText = resp["values"];
+    var view = mod.builder(options, JSON.parse(valuesText));
 
     // 按钮 同意
     var accept = {
@@ -77,8 +77,11 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            if (!_.isEqual(values, newValues)) {
-                console.log("数据已发生变化，先保存后再流转");
+            if (_.isEqual(valuesText, JSON.stringify(newValues))) {
+                // console.log("数据没有发生变化，直接流转");
+                advAccept(options);
+            } else {
+                // console.log("数据已发生变化，先保存后再流转");
                 webix.ajax().post("/api/wf/flows", {
                     "operation": "update",
                     "id": options["flow_id_"],
@@ -87,9 +90,6 @@ function show(options) {
                 }).then((res) => {
                     advAccept(options);
                 })
-            } else {
-                console.log("数据没有发生变化，直接流转");
-                advAccept(options);
             }
         }
     };
