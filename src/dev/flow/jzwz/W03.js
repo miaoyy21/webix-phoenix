@@ -30,8 +30,8 @@ function builder(options, values) {
             {
                 cols: [
                     { view: "text", name: "ldbh", label: "红冲单号", readonly: true },
-                    { view: "text", name: "sqrq", label: "申请日期", readonly: true },
                     { view: "text", name: "sqry", label: "申请人员", readonly: true },
+                    { view: "text", name: "sqrq", label: "申请日期", readonly: true },
                 ]
             },
             {

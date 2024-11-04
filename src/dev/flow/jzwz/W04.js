@@ -29,8 +29,8 @@ function builder(options, values) {
             {
                 cols: [
                     { view: "text", name: "ldbh", label: "转库单号", readonly: true },
-                    { view: "text", name: "sqrq", label: "申请日期", readonly: true },
                     { view: "text", name: "sqry", label: "申请人员", readonly: true },
+                    { view: "text", name: "sqrq", label: "申请日期", readonly: true },
                     {}
                 ]
             },
@@ -40,8 +40,15 @@ function builder(options, values) {
                         view: "search", name: "zc_ckbh", label: "转出仓库", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
-                                var values = $$(mainForm.id).getValues();
+                                if (options["readonly"]) return;
 
+                                var rows = $$(mxGrid.id).serialize(true);
+                                if (_.size(rows) > 0) {
+                                    webix.message({ type: "error", text: "重新选择转出仓库前，请删除已加载的转库清单！" });
+                                    return
+                                }
+
+                                var values = $$(mainForm.id).getValues();
                                 utils.windows.ckdm({
                                     multiple: false,
                                     filter: (row) => row["bgy_id"].indexOf(utils.users.getUserId()) >= 0,
@@ -60,6 +67,8 @@ function builder(options, values) {
                         view: "search", name: "zr_ckbh", label: "转入仓库", readonly: true, required: true,
                         on: {
                             onSearchIconClick() {
+                                if (options["readonly"]) return;
+
                                 var values = $$(mainForm.id).getValues();
 
                                 utils.windows.ckdm({
@@ -107,18 +116,18 @@ function builder(options, values) {
             editable: false,
             multiselect: true,
             drag: false,
-            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_hcd&khbh=" + data["khbh"],
-            leftSplit: 4,
+            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_zkd&ckbh=" + data["zc_ckbh"],
+            leftSplit: 3,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
-                { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 200 },
+                { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                 { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 80 },
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-                { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
-                { id: "qmsl", header: { text: "结存数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "sssl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "sfs", header: { text: "出库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "qmsl", header: { text: "库存数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
                 { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
             ],
@@ -145,7 +154,7 @@ function builder(options, values) {
                                 view: "toolbar",
                                 height: 38,
                                 cols: [
-                                    dlgGrid.actions.search({ fields: "ldbh,gcbh,gcmc,wzbh,wzmc,ggxh,wzph,bzdh", autoWidth: true }),
+                                    dlgGrid.actions.search({ fields: "ldbh,wzbh,wzmc,ggxh,wzph,bzdh,kwbh,kwmc", autoWidth: true }),
                                 ]
                             },
                             dlgGrid,
@@ -193,18 +202,9 @@ function builder(options, values) {
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            {
-                id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } },
-                format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
-            {
-                id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } },
-                format: (value) => utils.formats.number.format(value, 2),
-                css: { "text-align": "right" },
-                adjust: true, minWidth: 80
-            },
+            { id: "sssl", header: { text: "入库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+            { id: "sfs", header: { text: "出库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
+            { id: "qmsl", header: { text: "转库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             { id: "src_kwbh", header: { text: "转出库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, width: 120 },
             { id: "dst_kwbh", header: { text: "转入库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
@@ -212,7 +212,7 @@ function builder(options, values) {
             {
                 id: "buttons",
                 width: 80,
-                header: { text: "操作按钮", css: { "text-align": "center" }, rowspan: 2 },
+                header: { text: "操作按钮", css: { "text-align": "center" } },
                 tooltip: false,
                 template() {
                     return ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
@@ -265,7 +265,7 @@ function builder(options, values) {
                                             view: "toolbar", cols: !options["readonly"] ? [
                                                 btnRkd,
                                                 {}
-                                            ] : [{ view: "label", label: "<span style='margin-left:8px'></span>待转库入库单明细", height: 38 }]
+                                            ] : [{ view: "label", label: "<span style='margin-left:8px'></span>待转库清单", height: 38 }]
                                         },
                                         mxGrid,
                                     ]
