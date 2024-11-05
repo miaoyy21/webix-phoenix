@@ -169,23 +169,24 @@ function builder() {
     var kcGrid = utils.protos.datatable({
         editable: true,
         drag: false,
+        footer: true,
         url: null,
         leftSplit: 4,
         rightSplit: 0,
         columns: [
-            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, footer: { text: "合  计：", colspan: 3 }, css: { "text-align": "center" }, css: { "text-align": "center" }, width: 60 },
             {
                 id: "checked", header: { text: "✓", css: { "text-align": "center" } }, css: { "text-align": "center" },
                 options: utils.dicts["checked"], adjust: true, width: 40
             },
-            // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "gcbh", header: { text: "项目编号", css: { "text-align": "center" } }, width: 160 },
             { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "kcsl", header: { text: "可发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
             {
-                id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, editor: "text",
+                id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } },
+                footer: { content: "summColumn", css: { "text-align": "right" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),

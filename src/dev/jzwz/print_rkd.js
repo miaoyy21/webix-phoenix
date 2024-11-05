@@ -13,7 +13,7 @@ function builder() {
         $$(mxGrid.id).showOverlay("正在检索入库单明细，请稍后...");
 
         webix.ajax()
-            .get(mxUrl, { "wzrkd_id": id })
+            .get(mxUrl, { "hcbz": "0", "wzrkd_id": id })
             .then((res) => {
                 $$(mxGrid.id).define("data", res.json());
                 $$(btnPrint).enable();
