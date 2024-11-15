@@ -18,6 +18,4 @@ dev.dev_jzwz_q_rkmx = require("./jzwz/q_rkmx.js");
 dev.dev_jzwz_q_ckmx = require("./jzwz/q_ckmx.js");
 
 
-dev.dev_jzerp_demo = require("./jzerp/demo.js")
-
 export { dev }

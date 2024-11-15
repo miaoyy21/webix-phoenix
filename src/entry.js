@@ -333,7 +333,7 @@ function change_password() {
         body: {
             rows: [
                 {
-                    id: "PHOENIX_CHANGE_PASSWORD_FORM",
+                    id: PHOENIX_CHANGE_PASSWORD_FORM,
                     view: "form",
                     borderless: true,
                     gravity: 2,
@@ -354,9 +354,9 @@ function change_password() {
                         {
                             view: "button", label: "修改", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-shield-key",
                             click() {
-                                if (!$$("PHOENIX_CHANGE_PASSWORD_FORM").validate()) return;
+                                if (!$$(PHOENIX_CHANGE_PASSWORD_FORM).validate()) return;
 
-                                var values = $$("PHOENIX_CHANGE_PASSWORD_FORM").getValues();
+                                var values = $$(PHOENIX_CHANGE_PASSWORD_FORM).getValues();
 
                                 // 确认密码与新密码
                                 if (values["new_password1"] != values["new_password2"]) {
