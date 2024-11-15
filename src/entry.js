@@ -12,13 +12,13 @@ webix.ready(function () {
     webix.ui({
         id: LOGIN_PAGE_BACKGROUND,
         css: {
-            "background": "url('./assets/images/platformImg-lgbg-5.jpg') no-repeat center center",
+            "background": "url('./assets/background.png') no-repeat center center",
             "background-size": "100% 100%",
-            // "-webkit-filter": "blur(4px)",
-            // "-moz-filter": "blur(4px)",
-            // "-o-filter": "blur(4px)",
-            // "-ms-filter": "blur(4px)",
-            // "filter": "blur(4px)",
+            // "-webkit-filter": "blur(2px)",
+            // "-moz-filter": "blur(2px)",
+            // "-o-filter": "blur(2px)",
+            // "-ms-filter": "blur(2px)",
+            // "filter": "blur(2px)",
         },
     }).hide();
 
@@ -42,10 +42,10 @@ webix.ready(function () {
         id: LOGIN_PAGE_ID,
         view: "window",
         modal: true,
-        head: "登录",
+        head: "用户登录",
         position: "center",
         css: {
-            "padding": "0px 24px 0px 24px ",
+            "padding": "0px 12px 0px 12px ",
             "border-radius": "8px",
             "box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
             "-webkit-box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
