@@ -12,7 +12,7 @@ webix.ready(function () {
     webix.ui({
         id: LOGIN_PAGE_BACKGROUND,
         css: {
-            "background": "url('./assets/background.png') no-repeat center center",
+            "background": "url('./assets/background.png?001') no-repeat center center",
             "background-size": "100% 100%",
             // "-webkit-filter": "blur(2px)",
             // "-moz-filter": "blur(2px)",
