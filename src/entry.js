@@ -8,105 +8,114 @@ _.extend(global, { utils });
 
 // 界面初始化
 webix.ready(function () {
+    // 登录背景
+    webix.ui({
+        id: LOGIN_PAGE_BACKGROUND,
+        css: {
+            "background": "url('./assets/images/platformImg-lgbg-5.jpg') no-repeat center center",
+            "background-size": "100% 100%",
+            // "-webkit-filter": "blur(4px)",
+            // "-moz-filter": "blur(4px)",
+            // "-o-filter": "blur(4px)",
+            // "-ms-filter": "blur(4px)",
+            // "filter": "blur(4px)",
+        },
+    }).hide();
+
+    var login = {
+        id: LOGIN_PAGE_FORM_ID,
+        view: "form",
+        width: 300,
+        borderless: true,
+        rows: [
+            { view: "text", name: "account_id", /*value: "admin",*/ label: "账号", clear: true, required: true },
+            { view: "text", name: "password", /*value: "12345678",*/ label: "密码", type: "password", clear: true, required: true },
+            { view: "switch", name: "auto_login", label: "自动登录", value: 1 },
+
+            { view: "combo", name: "depart_id", label: "登录部门", options: [] },
+        ],
+        elementsConfig: { labelAlign: "center", labelWidth: 60 },
+    };
 
     // 登录界面
     webix.ui({
         id: LOGIN_PAGE_ID,
-        cols: [
-            {
-                gravity: 2,
-                css: {
-                    "background": "url('./assets/background.png') no-repeat center center",
-                    "background-size": "90% 90%",
-                },
-            },
-            {
-                view: "align",
-                align: "middle,center",
-                body: {
-                    id: LOGIN_PAGE_FORM_ID,
-                    view: "form",
-                    width: 360,
-                    css: {
-                        "border-radius": "8px",
-                        "box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
-                        "-webkit-box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
-                        "-moz-box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
-                    },
-                    rows: [
+        view: "window",
+        modal: true,
+        head: "登录",
+        position: "center",
+        css: {
+            "padding": "0px 24px 0px 24px ",
+            "border-radius": "8px",
+            "box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
+            "-webkit-box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
+            "-moz-box-shadow": "0px 6px 8px 0px rgba(0,0,0,0.75)",
+        },
+        body: {
+            rows: [
+                login,
+                { height: 8, borderless: false },
+                {
+                    view: "toolbar",
+                    borderless: true,
+                    cols: [
+                        {},
                         {
-                            view: "fieldset",
-                            label: "登 录",
-                            body: {
-                                rows: [
-                                    { view: "text", name: "account_id", /*value: "admin",*/ label: "登录名", labelPosition: "top", clear: true, required: true },
-                                    { view: "text", name: "password", /*value: "12345678",*/ label: "密码", labelPosition: "top", type: "password", clear: true, required: true },
-                                    { view: "switch", name: "auto_login", label: "自动登录", value: 1, labelWidth: 60, labelAlign: "right" },
-                                ]
-                            }
-                        },
-                        { view: "combo", name: "depart_id", label: "登录部门", options: [], labelWidth: 60, labelAlign: "right" },
-                        {
-                            view: "toolbar",
-                            borderless: true,
-                            cols: [
-                                {},
-                                {
-                                    view: "button", value: "登录", css: "webix_primary",
-                                    click() {
-                                        if (!$$(LOGIN_PAGE_FORM_ID).validate()) return;
+                            view: "button", value: "登录", css: "webix_primary",
+                            click() {
+                                if (!$$(LOGIN_PAGE_FORM_ID).validate()) return;
 
-                                        var user = $$(LOGIN_PAGE_FORM_ID).getValues();
-                                        var departs = JSON.parse(webix.ajax().sync().get("/api/sys", { "method": "Depart", "PHOENIX_USING_MENU": "[所属部门]", scope: "LOGIN", "account_id": user["account_id"] }).responseText);
+                                var user = $$(LOGIN_PAGE_FORM_ID).getValues();
+                                var departs = JSON.parse(webix.ajax().sync().get("/api/sys", { "method": "Depart", "PHOENIX_USING_MENU": "[所属部门]", scope: "LOGIN", "account_id": user["account_id"] }).responseText);
 
-                                        var departView = $$(LOGIN_PAGE_FORM_ID).elements["depart_id"];
-                                        if (_.size(departs) < 1) {
-                                            webix.message({ type: "error", text: "不存在的用户" });
-                                            return
-                                        } else if (_.size(departs) === 1) {
-                                            // 只有1个部门时，不需要选择登录部门
-                                            user["depart_id"] = _.first(departs)["id"];
+                                var departView = $$(LOGIN_PAGE_FORM_ID).elements["depart_id"];
+                                if (_.size(departs) < 1) {
+                                    webix.message({ type: "error", text: "不存在的用户" });
+                                    return
+                                } else if (_.size(departs) === 1) {
+                                    // 只有1个部门时，不需要选择登录部门
+                                    user["depart_id"] = _.first(departs)["id"];
+                                } else {
+                                    // 需要选择登录部门
+                                    departView.define("options", _.map(departs, (depart) => ({ "id": depart["id"], "value": depart["name_"] })));
+                                    departView.refresh();
+
+                                    departView.show();
+                                    var find = _.find(departs, (depart) => depart["id"] === user["depart_id"])
+                                    if (!find) {
+                                        webix.message({ type: "info", text: "请选择登录部门" });
+                                        return
+                                    }
+                                }
+
+                                webix.ajax()
+                                    .post("/api/sys?method=LoginByPassword&PHOENIX_USING_MENU=[密码登录]", user)
+                                    .then((data) => {
+                                        // 自动登录
+                                        if (user["auto_login"]) {
+                                            webix.storage.local.put("PHOENIX_AUTO_LOGIN", 1);
                                         } else {
-                                            // 需要选择登录部门
-                                            departView.define("options", _.map(departs, (depart) => ({ "id": depart["id"], "value": depart["name_"] })));
-                                            departView.refresh();
-
-                                            departView.show();
-                                            var find = _.find(departs, (depart) => depart["id"] === user["depart_id"])
-                                            if (!find) {
-                                                webix.message({ type: "info", text: "请选择登录部门" });
-                                                return
-                                            }
+                                            webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
                                         }
 
-                                        webix.ajax()
-                                            .post("/api/sys?method=LoginByPassword&PHOENIX_USING_MENU=[密码登录]", user)
-                                            .then((data) => {
-                                                // 自动登录
-                                                if (user["auto_login"]) {
-                                                    webix.storage.local.put("PHOENIX_AUTO_LOGIN", 1);
-                                                } else {
-                                                    webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
-                                                }
+                                        $$(LOGIN_PAGE_FORM_ID).clear();
+                                        departView.hide();
 
-                                                $$(LOGIN_PAGE_FORM_ID).clear();
-                                                departView.hide();
+                                        webix.ui(buildMainPage()).show();
+                                        $$(LOGIN_PAGE_BACKGROUND).hide();
+                                        $$(LOGIN_PAGE_ID).hide();
 
-                                                webix.ui(buildMainPage()).show();
-                                                $$(LOGIN_PAGE_ID).hide();
-
-                                                // 设置该参数的意义：避免密码登录时，多显示1条Token登录
-                                                reloadMenus({ "byPassword": true });
-                                            })
-                                    }
-                                },
-                                {}
-                            ]
+                                        // 设置该参数的意义：避免密码登录时，多显示1条Token登录
+                                        reloadMenus({ "byPassword": true });
+                                    })
+                            }
                         },
+                        {}
                     ]
                 },
-            },
-        ],
+                { height: 8, css: { "border-top": "none" } },
+            ]
+        },
     }).hide();
 
     // 自动加载用户菜单
@@ -140,6 +149,7 @@ webix.ready(function () {
 
     // 如果是自动登录，那么直接请求加载菜单，如果因为Token无效加载失败，那么自动跳转到登录界面
     if (webix.storage.local.get("PHOENIX_AUTO_LOGIN")) {
+        $$(LOGIN_PAGE_BACKGROUND).hide();
         $$(LOGIN_PAGE_ID).hide();
         $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
@@ -147,6 +157,7 @@ webix.ready(function () {
         webix.ui(buildMainPage()).show();
         reloadMenus();
     } else {
+        $$(LOGIN_PAGE_BACKGROUND).show();
         $$(LOGIN_PAGE_ID).show();
         $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
@@ -193,6 +204,7 @@ function buildMainPage() {
                                         webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
 
                                         // 显示登录界面
+                                        $$(LOGIN_PAGE_BACKGROUND).show();
                                         $$(LOGIN_PAGE_ID).show();
 
                                         $$(LOGIN_PAGE_FORM_ID).clear();

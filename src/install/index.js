@@ -16,6 +16,7 @@ _.extend(global, {
     MAIN_PAGE_TASKS_ID: "MAIN_PAGE_TASKS",
     EXECUTING_PAGE_ID: "PHOENIX_EXECUTING_PAGE",
     LOGIN_PAGE_ID: "PHOENIX_LOGIN_PAGE",
+    LOGIN_PAGE_BACKGROUND: "PHOENIX_LOGIN_BACKGROUND",
     LOGIN_PAGE_FORM_ID: "PHOENIX_LOGIN_PAGE_FORM",
     CHANGE_PASSWORD_PAGE_ID: "PHOENIX_CHANGE_PASSWORD_PAGE",
     HOME_PAGE_ID: "PHOENIX_HOME_PAGE",
@@ -39,6 +40,7 @@ webix.attachEvent("onAjaxError", function (xhr) {
             webix.message({ type: "error", text: "登录令牌已过期，请重新登录" });
 
             // 显示登录界面
+            $$(LOGIN_PAGE_BACKGROUND) && $$(LOGIN_PAGE_BACKGROUND).show();
             $$(LOGIN_PAGE_ID) && $$(LOGIN_PAGE_ID).show();
             $$(LOGIN_PAGE_FORM_ID) && $$(LOGIN_PAGE_FORM_ID).elements["depart_id"].hide();
 
