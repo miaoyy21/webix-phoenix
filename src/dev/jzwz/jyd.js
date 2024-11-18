@@ -284,7 +284,6 @@ function builder() {
                     },
                     {
                         id: winId + "_print",
-                        type: "line",
                         rows: [
                             utils.protos.form({
                                 data: options,
@@ -299,9 +298,9 @@ function builder() {
                                     },
                                     {
                                         cols: [
-                                            { view: "text", gravity: 2, name: "ldbh", label: "入库单号：" },
+                                            { view: "text", name: "ldbh", label: "入库单号：" },
                                             {},
-                                            { view: "text", gravity: 3, name: "htbh", label: "合同号：" },
+                                            { view: "text", gravity: 2, name: "htbh", label: "合同号：" },
                                         ]
                                     },
                                     {
