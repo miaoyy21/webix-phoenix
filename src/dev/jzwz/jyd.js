@@ -285,17 +285,19 @@ function builder() {
                     {
                         id: winId + "_print",
                         rows: [
+                            {
+                                cols: [
+                                    {},
+                                    { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
+                                    {}
+                                ]
+                            },
+                            { height: 4 },
                             utils.protos.form({
                                 data: options,
                                 type: "line",
+                                css: { "border-top": "none" },
                                 rows: [
-                                    {
-                                        cols: [
-                                            {},
-                                            { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
-                                            {}
-                                        ]
-                                    },
                                     {
                                         cols: [
                                             { view: "text", name: "ldbh", label: "入库单号：" },
@@ -358,7 +360,7 @@ function builder() {
                                 ],
                                 elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
                             }),
-                            { height: 4 },
+                            { height: 2 },
                             {
                                 view: "toolbar", borderless: true,
                                 cols: [
