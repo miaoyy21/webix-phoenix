@@ -105,8 +105,8 @@ function builder() {
                     { view: "text", name: "bhgsl", label: "不合格数量", readonly: true, placeholder: "根据合格数量计算 ...", format: "1,111.00" },
                 ]
             },
-            { view: "textarea", name: "jynr", label: "检验内容", placeholder: "请输入检验内容 ..." },
             { view: "textarea", name: "jyjl", label: "检验结论", placeholder: "请输入检验结论 ..." },
+            { view: "textarea", name: "jynr", label: "检验内容", placeholder: "请输入检验内容 ..." },
             { view: "textarea", name: "bhgsm", label: "不合格说明", placeholder: "请输入不合格说明 ..." },
             { view: "textarea", name: "jyry_bz", label: "检验员备注", placeholder: "请输入备注信息 ..." },
             {
@@ -254,6 +254,11 @@ function builder() {
 
         var winId = utils.UUID();
 
+        // 供应商和项目
+        options["kh_ms"] = webix.template("#!khbh# | #!khmc#")(options);
+        options["gc_ms"] = webix.template("#!gcbh# | #!gcmc#")(options);
+        options["bz"] = webix.template("#!jyjl#  #!jynr#  #!bhgsm#  #!jyry_bz#")(options);
+
         webix.ui({
             id: winId,
             view: "window",
@@ -263,7 +268,7 @@ function builder() {
             head: "打印报验单【" + options["ldbh"] + " &nbsp; &nbsp; " + options["wzbh"] + " | " + options["wzms"] + "】",
             position: "center",
             body: {
-                paddingX: 24,
+                paddingX: 12,
                 rows: [
                     {
                         view: "toolbar",
@@ -279,80 +284,109 @@ function builder() {
                     },
                     {
                         id: winId + "_print",
+                        type: "line",
                         rows: [
                             utils.protos.form({
                                 data: options,
-                                type: "clean",
-                                paddingY: 12,
+                                type: "line",
                                 rows: [
                                     {
                                         cols: [
                                             {},
-                                            { view: "label", align: "center", template: "<span style='font-size:36px; font-weight:500'>物资报验单</span>", height: 60 },
+                                            { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
                                             {}
                                         ]
                                     },
                                     {
                                         cols: [
-                                            { view: "text", name: "ldbh", label: "入库单号：" },
-                                            { view: "text", name: "htbh", label: "合同号：" },
-                                            { gravity: 2 }
+                                            { view: "text", gravity: 2, name: "ldbh", label: "入库单号：" },
+                                            {},
+                                            { view: "text", gravity: 3, name: "htbh", label: "合同号：" },
                                         ]
                                     },
                                     {
                                         cols: [
-                                            { view: "text", name: "khbh", label: "供应商编号：" },
-                                            { view: "text", name: "khmc", label: "供应商名称：" },
-                                            { view: "text", name: "gcbh", label: "项目编号：" },
-                                            { view: "text", name: "gcmc", label: "项目名称：" },
+                                            { view: "text", name: "kh_ms", label: "供应商：" },
+                                            { view: "text", name: "gc_ms", label: "项目：" },
                                         ]
                                     },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "wzbh", label: "报验物资：" },
+                                            { view: "text", gravity: 3, name: "wzms" },
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "bylx", label: "报验类型：" },
+                                            { view: "text", gravity: 3, name: "byyq", label: "检验要求：" },
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "rksl", label: "交检数量：" },
+                                            { view: "text", name: "hgsl", label: "合格数量：" },
+                                            { view: "text", name: "jldw", label: "计量单位：" },
+                                            { view: "text", name: "jydd", label: "检验地点：" },
+                                        ]
+                                    },
+                                    { view: "textarea", name: "bz", label: "备注：", maxHeight: 48 },
+                                    // {
+                                    //     cols: [
+                                    //         { view: "label", label: "采购员：", align: "right", width: 80 },
+                                    //         { view: "text", name: "cgy" },
+                                    //         { view: "text", name: "kdrq" },
+                                    //         { view: "label", label: "部门领导：", align: "right", width: 80 },
+                                    //         { view: "text", name: "bmld" },
+                                    //         { view: "text", name: "bmld_shrq" },
+                                    //     ]
+                                    // },
                                     {
                                         cols: [
                                             { view: "text", name: "cgy", label: "采购员：" },
-                                            { view: "text", name: "kdrq", label: "开单日期：" },
-                                            { view: "text", name: "bmld", label: "部门领导" },
-                                            { view: "text", name: "bmld_shrq", label: "审核日期" },
+                                            { view: "text", name: "kdrq" },
+                                            { view: "text", name: "bmld", label: "部门领导：" },
+                                            { view: "text", name: "bmld_shrq" },
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "jyry", label: "检验员：" },
+                                            { view: "text", name: "jyrq" },
+                                            { gravity: 2 },
                                         ]
                                     },
                                 ],
-                                elementsConfig: { labelAlign: "right", labelWidth: 100, readonly: true, clear: false },
+                                elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
                             }),
-                            { height: 12 },
+                            { height: 4 },
                             {
                                 view: "toolbar", borderless: true,
                                 cols: [
                                     {
                                         cols: [
-                                            { view: "label", label: "采购员：", align: "right", width: 80 },
+                                            { view: "label", label: "采购员：", align: "right", width: 120 },
                                             utils.protos.signer(options["cgy_id"]),
                                             {}
                                         ]
                                     },
                                     {
                                         cols: [
-                                            { view: "label", label: "部门领导：", align: "right", width: 80 },
+                                            { view: "label", label: "部门领导：", align: "right", width: 120 },
                                             utils.protos.signer(options["bmld_id"]),
                                             {}
                                         ]
                                     },
                                     {
                                         cols: [
-                                            { view: "label", label: "检验员：", align: "right", width: 80 },
+                                            { view: "label", label: "检验员：", align: "right", width: 120 },
                                             utils.protos.signer(options["jyry_id"]),
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "label", label: "保管员：", align: "right", width: 80 },
-                                            utils.protos.signer(options["bgy_id"]),
                                             {}
                                         ]
                                     },
                                 ]
                             },
-                            { height: 24 },
+                            { height: 12 },
                         ]
                     },
                 ]
