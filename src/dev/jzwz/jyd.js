@@ -332,16 +332,6 @@ function builder() {
                                         ]
                                     },
                                     { view: "textarea", name: "bz", label: "备注：", maxHeight: 48 },
-                                    // {
-                                    //     cols: [
-                                    //         { view: "label", label: "采购员：", align: "right", width: 80 },
-                                    //         { view: "text", name: "cgy" },
-                                    //         { view: "text", name: "kdrq" },
-                                    //         { view: "label", label: "部门领导：", align: "right", width: 80 },
-                                    //         { view: "text", name: "bmld" },
-                                    //         { view: "text", name: "bmld_shrq" },
-                                    //     ]
-                                    // },
                                     {
                                         cols: [
                                             { view: "text", name: "cgy", label: "采购员：" },
