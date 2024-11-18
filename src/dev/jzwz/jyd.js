@@ -6,6 +6,7 @@ function builder() {
 
     var btnCheck = utils.UUID();
     var btnUnCheck = utils.UUID();
+    var btnPrint = utils.UUID();
 
     var form = utils.protos.form({
         data: {},
@@ -247,6 +248,119 @@ function builder() {
         }).show();
     }
 
+    // 打印的UI窗口
+    function openPrint(options) {
+        console.log(options);
+
+        var winId = utils.UUID();
+
+        webix.ui({
+            id: winId,
+            view: "window",
+            close: true,
+            modal: true,
+            animate: { type: "flip", subtype: "vertical" },
+            head: "打印报验单【" + options["ldbh"] + " &nbsp; &nbsp; " + options["wzbh"] + " | " + options["wzms"] + "】",
+            position: "center",
+            body: {
+                paddingX: 24,
+                rows: [
+                    {
+                        view: "toolbar",
+                        cols: [
+                            {
+                                view: "button", label: "打印报验单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                                click() {
+                                    webix.print($$(winId + "_print"));
+                                    $$(winId).hide();
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        id: winId + "_print",
+                        rows: [
+                            utils.protos.form({
+                                data: options,
+                                type: "clean",
+                                paddingY: 12,
+                                rows: [
+                                    {
+                                        cols: [
+                                            {},
+                                            { view: "label", align: "center", template: "<span style='font-size:36px; font-weight:500'>物资报验单</span>", height: 60 },
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "ldbh", label: "入库单号：" },
+                                            { view: "text", name: "htbh", label: "合同号：" },
+                                            { gravity: 2 }
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "khbh", label: "供应商编号：" },
+                                            { view: "text", name: "khmc", label: "供应商名称：" },
+                                            { view: "text", name: "gcbh", label: "项目编号：" },
+                                            { view: "text", name: "gcmc", label: "项目名称：" },
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "text", name: "cgy", label: "采购员：" },
+                                            { view: "text", name: "kdrq", label: "开单日期：" },
+                                            { view: "text", name: "bmld", label: "部门领导" },
+                                            { view: "text", name: "bmld_shrq", label: "审核日期" },
+                                        ]
+                                    },
+                                ],
+                                elementsConfig: { labelAlign: "right", labelWidth: 100, readonly: true, clear: false },
+                            }),
+                            { height: 12 },
+                            {
+                                view: "toolbar", borderless: true,
+                                cols: [
+                                    {
+                                        cols: [
+                                            { view: "label", label: "采购员：", align: "right", width: 80 },
+                                            utils.protos.signer(options["cgy_id"]),
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "label", label: "部门领导：", align: "right", width: 80 },
+                                            utils.protos.signer(options["bmld_id"]),
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "label", label: "检验员：", align: "right", width: 80 },
+                                            utils.protos.signer(options["jyry_id"]),
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            { view: "label", label: "保管员：", align: "right", width: 80 },
+                                            utils.protos.signer(options["bgy_id"]),
+                                            {}
+                                        ]
+                                    },
+                                ]
+                            },
+                            { height: 24 },
+                        ]
+                    },
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
     return {
         rows: [
             {
@@ -303,7 +417,45 @@ function builder() {
                                     }
                                 );
                         }
-                    }
+                    },
+                    { width: 24 },
+                    {
+                        id: btnPrint, view: "button", label: "打印报验单", disable: true, autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-cloud-print-outline",
+                        click() {
+                            var values = $$(form.id).getValues();
+                            if (!_.isEqual(values["zt"], "5") && !_.isEqual(values["zt"], "9")) {
+                                webix.message({ type: "error", text: "不允许打印未检验的入库单" });
+                                return;
+                            }
+
+                            openPrint(values);
+                            // var values = $$(form.id).getValues();
+                            // if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
+                            //     webix.message({ type: "error", text: "请输入或选择条形码" });
+                            //     return;
+                            // }
+
+                            // var rksl = utils.formats.number.editParse(values["rksl"], 2);
+                            // var hgsl = utils.formats.number.editParse(values["hgsl"], 2);
+                            // var bhgsl = utils.formats.number.editParse(values["bhgsl"], 2);
+                            // if (rksl != hgsl + bhgsl) {
+                            //     webix.message({ type: "error", text: "请输入合格数量" });
+                            //     return;
+                            // }
+
+                            // webix.ajax()
+                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.check", values)
+                            //     .then(
+                            //         (res) => {
+                            //             $$(form.id).setValues({});
+                            //             webix.message({ type: "success", text: "检验确认成功" });
+
+                            //             $$(btnCheck).enable();
+                            //             $$(btnUnCheck).enable();
+                            //         }
+                            //     );
+                        }
+                    },
                 ]
             },
             {

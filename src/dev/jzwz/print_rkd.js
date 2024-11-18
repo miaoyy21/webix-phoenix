@@ -334,7 +334,7 @@ function builder() {
             {
                 cols: [
                     {
-                        width: 240,
+                        width: 300,
                         rows: [
                             { view: "toolbar", cols: [mainGrid.actions.search({ fields: "ldbh,htbh,khbh,khmc,gcbh,gcmc", autoWidth: true })] },
                             mainGrid,
