@@ -194,7 +194,7 @@ function builder() {
                 width: 80
             },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 120 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
