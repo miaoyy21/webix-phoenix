@@ -128,7 +128,6 @@ function builder(options, values) {
                                                     });
                                                 })
 
-                                                console.log(newData);
                                                 showWindow({ "from": "wzrkd", "data": newData });
                                             })
                                     },
@@ -249,6 +248,12 @@ function builder(options, values) {
                                         return;
                                     }
 
+                                    // 是否设置项目
+                                    var formValues = $$(mainForm.id).getValues();
+                                    if (_.isEmpty(formValues["gcbh"]) && !_.isEmpty(_.first(values)["gcbh"])) {
+                                        $$(mainForm.id).setValues(_.extend(formValues, _.pick(_.first(values), "gcbh", "gcmc")));
+                                    }
+
                                     var rows = $$(mxGrid.id).serialize(true);
                                     _.each(values, (value) => {
                                         var has = _.findIndex(rows, (row) => row["wzbh"] == value["wzbh"]);
@@ -275,7 +280,7 @@ function builder(options, values) {
     }
 
     // 表单
-    var form = utils.protos.form({
+    var mainForm = utils.protos.form({
         data: values,
         rows: [
             {
@@ -294,12 +299,12 @@ function builder(options, values) {
                                 if (options["readonly"]) return;
 
                                 // 选择领料员
-                                var values = $$(form.id).getValues();
+                                var values = $$(mainForm.id).getValues();
                                 utils.windows.users({
                                     multiple: false,
                                     checked: !_.isEmpty(values["lly_id"]) ? [{ "id": values["lly_id"], "user_name_": values["lly"] }] : [],
                                     callback(checked) {
-                                        $$(form.id).setValues(_.extend(values, { "lly_id": checked["id"], "lly": checked["user_name_"] }));
+                                        $$(mainForm.id).setValues(_.extend(values, { "lly_id": checked["id"], "lly": checked["user_name_"] }));
                                         return true;
                                     }
                                 })
@@ -313,14 +318,14 @@ function builder(options, values) {
                                 if (options["readonly"]) return;
 
                                 // 选择项目
-                                var values = $$(form.id).getValues();
+                                var values = $$(mainForm.id).getValues();
                                 utils.windows.gcdm({
                                     multiple: false,
                                     checked: !_.isEmpty(values["gcbh"]) ? [_.pick(values, "gcbh", "gcmc")] : [],
                                     filter: (row) => row["tybz"] != '1' && row["wgbz"] != '1',
                                     callback(checked) {
                                         var newValues = _.extend(values, _.pick(checked, "gcbh", "gcmc"));
-                                        $$(form.id).setValues(newValues);
+                                        $$(mainForm.id).setValues(newValues);
                                         return true;
                                     }
                                 });
@@ -423,7 +428,7 @@ function builder(options, values) {
                         { width: 160 },
                         {
                             rows: [
-                                form,
+                                mainForm,
                                 { view: "resizer" },
                                 {
                                     gravity: 2,
@@ -446,7 +451,7 @@ function builder(options, values) {
             }
         },
         values() {
-            if (!$$(form.id).validate()) {
+            if (!$$(mainForm.id).validate()) {
                 webix.message({ type: "error", text: "缺少必输项" });
                 return;
             };
@@ -473,7 +478,7 @@ function builder(options, values) {
             }
 
 
-            var values = $$(form.id).getValues();
+            var values = $$(mainForm.id).getValues();
             values["rows"] = rows;
 
             console.log(values);
