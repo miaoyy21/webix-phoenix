@@ -250,8 +250,6 @@ function builder() {
 
     // 打印的UI窗口
     function openPrint(options) {
-        console.log(options);
-
         var winId = utils.UUID();
 
         // 供应商和项目
@@ -412,11 +410,15 @@ function builder() {
                                 .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.check", values)
                                 .then(
                                     (res) => {
-                                        $$(form.id).setValues({});
+                                        console.log(res.json());
                                         webix.message({ type: "success", text: "检验确认成功" });
 
                                         $$(btnCheck).enable();
                                         $$(btnUnCheck).enable();
+
+                                        openPrint(_.extend({}, $$(form.id).getValues(), res.json()));
+
+                                        $$(form.id).setValues({});
                                     }
                                 );
                         }
@@ -454,31 +456,6 @@ function builder() {
                             }
 
                             openPrint(values);
-                            // var values = $$(form.id).getValues();
-                            // if (_.isEmpty(values["txmvalue"]) || _.isEmpty(values["ldbh"]) || _.isEmpty(values["wzbh"])) {
-                            //     webix.message({ type: "error", text: "请输入或选择条形码" });
-                            //     return;
-                            // }
-
-                            // var rksl = utils.formats.number.editParse(values["rksl"], 2);
-                            // var hgsl = utils.formats.number.editParse(values["hgsl"], 2);
-                            // var bhgsl = utils.formats.number.editParse(values["bhgsl"], 2);
-                            // if (rksl != hgsl + bhgsl) {
-                            //     webix.message({ type: "error", text: "请输入合格数量" });
-                            //     return;
-                            // }
-
-                            // webix.ajax()
-                            //     .post("/api/sys/data_service?service=JZWZ_WZRKDWJMX.check", values)
-                            //     .then(
-                            //         (res) => {
-                            //             $$(form.id).setValues({});
-                            //             webix.message({ type: "success", text: "检验确认成功" });
-
-                            //             $$(btnCheck).enable();
-                            //             $$(btnUnCheck).enable();
-                            //         }
-                            //     );
                         }
                     },
                 ]
