@@ -262,7 +262,6 @@ function builder() {
             view: "window",
             close: true,
             modal: true,
-            animate: { type: "flip", subtype: "vertical" },
             head: "打印报验单【" + options["ldbh"] + " &nbsp; &nbsp; " + options["wzbh"] + " | " + options["wzms"] + "】",
             position: "center",
             body: {
@@ -274,8 +273,10 @@ function builder() {
                             {
                                 view: "button", label: "打印报验单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
                                 click() {
-                                    webix.print($$(winId + "_print"));
-                                    $$(winId).hide();
+                                    setTimeout(() => {
+                                        webix.print($$(winId + "_print"));
+                                        $$(winId).hide();
+                                    }, 500);
                                 }
                             },
                         ]
