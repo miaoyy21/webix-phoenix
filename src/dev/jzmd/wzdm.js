@@ -391,8 +391,6 @@ function builder() {
                                     view: "template",
                                     borderless: true,
                                     width: 160,
-                                    height: 140,
-                                    padding: 0,
                                     template: `<img src='` + url + `' style='width:100%; height:100%;'>`,
                                 },
                                 utils.protos.form({
