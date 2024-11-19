@@ -1,3 +1,5 @@
+var qrCode = require("qrcode");
+
 function builder() {
     var winId = utils.UUID();
     var winImportId = utils.UUID();
@@ -49,7 +51,8 @@ function builder() {
                 open(_.extend({}, row, { "operation": "update" }));
             },
             button_print(e, item) {
-                console.log("button_print", arguments)
+                var row = this.getItem(item.row);
+                openPrint(row);
             },
         },
         styles: {
@@ -357,129 +360,62 @@ function builder() {
     function openPrint(options) {
         var winId = utils.UUID();
 
-        webix.ui({
-            id: winId, view: "window",
-            close: true, modal: true,
-            animate: { type: "flip", subtype: "vertical" },
-            head: "打印报验单【" + options["ldbh"] + " &nbsp; &nbsp; " + options["wzbh"] + " | " + options["wzms"] + "】",
-            position: "center",
-            body: {
-                paddingX: 12,
-                rows: [
-                    {
-                        view: "toolbar",
-                        cols: [
-                            {
-                                view: "button", label: "打印报验单", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
-                                click() {
-                                    webix.print($$(winId + "_print"));
-                                    $$(winId).hide();
-                                }
-                            },
-                        ]
-                    },
-                    {
-                        id: winId + "_print",
-                        rows: [
-                            {
-                                cols: [
-                                    {},
-                                    { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
-                                    {}
-                                ]
-                            },
-                            { height: 4 },
-                            utils.protos.form({
-                                data: options,
-                                type: "line",
-                                css: { "border-top": "none" },
-                                rows: [
-                                    {
-                                        cols: [
-                                            { view: "text", name: "ldbh", label: "入库单号：" },
-                                            {},
-                                            { view: "text", gravity: 2, name: "htbh", label: "合同号：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "kh_ms", label: "供应商：" },
-                                            { view: "text", name: "gc_ms", label: "项目：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "wzbh", label: "报验物资：" },
-                                            { view: "text", gravity: 3, name: "wzms" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "bylx", label: "报验类型：" },
-                                            { view: "text", gravity: 3, name: "byyq", label: "检验要求：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "rksl", label: "交检数量：" },
-                                            { view: "text", name: "hgsl", label: "合格数量：" },
-                                            { view: "text", name: "jldw", label: "计量单位：" },
-                                            { view: "text", name: "jydd", label: "检验地点：" },
-                                        ]
-                                    },
-                                    { view: "textarea", name: "bz", label: "备注：", maxHeight: 48 },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "cgy", label: "采购员：" },
-                                            { view: "text", name: "kdrq" },
-                                            { view: "text", name: "bmld", label: "部门领导：" },
-                                            { view: "text", name: "bmld_shrq" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "jyry", label: "检验员：" },
-                                            { view: "text", name: "jyrq" },
-                                            { gravity: 2 },
-                                        ]
-                                    },
-                                ],
-                                elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
-                            }),
-                            { height: 2 },
-                            {
-                                view: "toolbar", borderless: true,
-                                cols: [
-                                    {
-                                        cols: [
-                                            { view: "label", label: "采购员：", align: "right", width: 120 },
-                                            utils.protos.signer(options["cgy_id"]),
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "label", label: "部门领导：", align: "right", width: 120 },
-                                            utils.protos.signer(options["bmld_id"]),
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "label", label: "检验员：", align: "right", width: 120 },
-                                            utils.protos.signer(options["jyry_id"]),
-                                            {}
-                                        ]
-                                    },
-                                ]
-                            },
-                            { height: 12 },
-                        ]
-                    },
-                ]
-            },
-            on: { onHide() { this.close() } }
-        }).show();
+        qrCode.toDataURL(webix.template("#!wzbh# | #!wzmc#/#!ggxh#")(options), { type: 'image/png', margin: 0 }, function (err, url) {
+            if (err) throw err;
+
+            webix.ui({
+                id: winId, view: "window", position: "center",
+                close: true, modal: true, head: "打印二维码【" + options["wzbh"] + " &nbsp; &nbsp; " + webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(options) + "】",
+                body: {
+                    paddingX: 12,
+                    rows: [
+                        {
+                            view: "toolbar",
+                            cols: [
+                                {
+                                    view: "button", label: "打印", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                                    click() {
+                                        setTimeout(() => {
+                                            webix.print($$(winId + "_print"));
+                                            $$(winId).hide();
+                                        }, 500);
+                                    }
+                                },
+                            ]
+                        },
+                        {
+                            id: winId + "_print",
+                            paddingY: 24,
+                            cols: [
+                                {
+                                    view: "template",
+                                    borderless: true,
+                                    width: 160,
+                                    height: 140,
+                                    padding: 0,
+                                    template: `<img src='` + url + `' style='width:100%; height:100%;'>`,
+                                },
+                                utils.protos.form({
+                                    data: options,
+                                    type: "clean",
+                                    borderless: true,
+                                    width: 280,
+                                    rows: [
+                                        { view: "text", name: "wzbh", label: "物资编号：" },
+                                        { view: "text", name: "wzmc", label: "物资名称：" },
+                                        { view: "text", name: "ggxh", label: "规格型号：" },
+                                        { view: "text", name: "wzph", label: "物资牌号：" },
+                                        { view: "text", name: "bzdh", label: "标准代号：" },
+                                    ],
+                                    elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
+                                }),
+                            ]
+                        },
+                    ]
+                },
+                on: { onHide() { this.close() } }
+            }).show();
+        })
     }
 
     return {
