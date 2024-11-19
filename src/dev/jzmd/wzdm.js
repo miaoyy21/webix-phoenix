@@ -41,7 +41,7 @@ function builder() {
                 template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
                                 <button webix_tooltip="编辑" type="button" class="button_edit webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-pencil"/> </button>
                                 <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
-                                <button webix_tooltip="打印" type="button" class="button_print webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-fingerprint"/> </button>
+                                <button webix_tooltip="打印" type="button" class="button_qrcode webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-fingerprint"/> </button>
                             </div>`,
             }
         ],
@@ -50,9 +50,9 @@ function builder() {
                 var row = this.getItem(item.row);
                 open(_.extend({}, row, { "operation": "update" }));
             },
-            button_print(e, item) {
+            button_qrcode(e, item) {
                 var row = this.getItem(item.row);
-                openPrint(row);
+                openPrintQRCode(row);
             },
         },
         styles: {
@@ -356,8 +356,8 @@ function builder() {
         }).show();
     }
 
-    // 打印的UI窗口
-    function openPrint(options) {
+    // 打印二维码标签
+    function openPrintQRCode(options) {
         var winId = utils.UUID();
 
         qrCode.toDataURL(webix.template("#!wzbh# | #!wzmc#/#!ggxh#")(options), { type: 'image/png', margin: 0 }, function (err, url) {
