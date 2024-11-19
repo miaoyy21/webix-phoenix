@@ -59,7 +59,7 @@ function builder(options, values) {
             var dlgPager = utils.protos.pager();
             var dlgGrid = utils.protos.datatable({
                 drag: false,
-                url: "/api/sys/data_service?service=JZWZ_WZRKDWJ.query&wgbz=1",
+                url: "/api/sys/data_service?service=JZWZ_WZRKDWJ.query&pager=true&wgbz=1",
                 columns: [
                     { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                     { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },

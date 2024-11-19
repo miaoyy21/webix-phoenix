@@ -373,6 +373,17 @@ function datatable(options) {
             }
 
             var tpl = column["template"];
+
+            // 单选框
+            if (_.isString(tpl) && tpl.indexOf("common.checkbox") >= 0) {
+                return;
+            }
+
+            // 函数
+            if (_.isFunction(tpl)) {
+                return
+            }
+
             var opts = column["options"];
 
             column.template = function (row) {
