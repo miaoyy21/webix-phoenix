@@ -183,7 +183,7 @@ function builder(options, values) {
                     format: (value) => utils.formats.number.format(value, 2),
                     css: { "text-align": "right" }, adjust: true, minWidth: 80
                 } : {
-                    id: "sssl", header: { text: "入库数量", css: { "text-align": "center" } },
+                    id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } },
                     format: (value) => utils.formats.number.format(value, 2),
                     css: { "text-align": "right" }, adjust: true, minWidth: 80
                 },
