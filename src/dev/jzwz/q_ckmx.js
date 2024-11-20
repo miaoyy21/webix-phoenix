@@ -40,7 +40,7 @@ function builder() {
             { id: "bmld", header: { text: "审批人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bmld_shrq", header: { text: "审批日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "qx", header: { text: "去向", css: { "text-align": "center" } }, width: 160 },
-            { id: "mxllrq", header: { text: "领料时间", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
+            { id: "mxllrq", header: { text: "出库时间", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
             { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
         ],

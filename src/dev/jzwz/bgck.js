@@ -112,7 +112,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
             // { id: "id", header: { text: "ID", css: { "text-align": "center" } }, width: 240 },
             { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_ckzt"], css: { "text-align": "center" }, width: 60 },
-            { id: "llrq", hidden: true, header: { text: "出库日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
+            { id: "llrq", hidden: true, header: { text: "出库时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 160 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -254,7 +254,6 @@ function builder() {
             editable: true,
             drag: false,
             sort: false,
-            multiselece: false,
             url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + values["id"],
             data: [],
             save: {},
@@ -262,7 +261,7 @@ function builder() {
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 { id: "checked", header: { text: "选择", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "Y", uncheckValue: "N", tooltip: false, css: { "text-align": "center" }, adjust: true, minWidth: 50 },
                 { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
-                { id: "llrq", header: { text: "领料日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
+                { id: "llrq", header: { text: "出库时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
                 { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", fillspace: true, minWidth: 180 },
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
@@ -313,7 +312,7 @@ function builder() {
                                     $$(printGrid.id).define("data", newData);
 
                                     printGrid.actions.hideColumn("checked", true);
-                                    printGrid.actions.hideColumn("llrq", true);
+                                    printGrid.actions.hideColumn("qls", true);
 
                                     webix.print($$(printGrid.id), { mode: "landscape" });
                                     $$(winPrintId).hide();

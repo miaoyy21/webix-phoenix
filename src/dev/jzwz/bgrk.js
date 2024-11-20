@@ -1,9 +1,11 @@
+var qrCode = require("qrcode");
 
 function builder() {
     var winId = utils.UUID();
 
     const qUrl = "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_bgrk";
 
+    var winPrintId = utils.UUID();
     var btnFinish = utils.UUID();
     var btnUnFinish = utils.UUID();
 
@@ -156,6 +158,97 @@ function builder() {
         }
     }
 
+
+    /***************************** 选择打印已入库的入库单 *****************************/
+    function openPrint() {
+        var printGrid = utils.protos.datatable({
+            editable: true,
+            drag: false,
+            sort: false,
+            multiselect: true,
+            url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_print",
+            data: [],
+            save: {},
+            rowHeight: 56,
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                {
+                    id: "qrcode", header: { text: "二维码", css: { "text-align": "center" } }, width: 64, css: "xxx",
+                    template(obj, common, value) {
+                        console.log("qrcode template", value);
+                        return `<img src = '` + value + `' align='center' style='width:100%; height:100%; object-fit:contain'></img>`;
+                    },
+                },
+                { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "rkrq", header: { text: "入库时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
+                { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
+                { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", fillspace: true, minWidth: 180 },
+                { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                { id: "rksl", header: { text: "入库数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+                { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
+                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 80 },
+                { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
+            ],
+            on: {
+                onAfterLoad() {
+                    this.eachRow((id) => {
+                        var row = this.getItem(id);
+
+                        var data = webix.template("#!txmvalue# | #!ldbh# #!wzbh# #!sssl#")(row);
+                        qrCode.toDataURL(data, { type: 'image/png', margin: 0 }, function (err, url) {
+                            if (err) throw err;
+
+                            row["qrcode"] = url;
+                        })
+                    }, true);
+                }
+            }
+        });
+
+        webix.ui({
+            id: winPrintId, view: "window",
+            close: true, modal: true, move: true, width: 720, height: 420,
+            head: "出库单打印", position: "center",
+            body: {
+                rows: [
+                    { paddingX: 8, cols: [printGrid] },
+                    {
+                        view: "toolbar",
+                        borderless: true,
+                        height: 34,
+                        cols: [
+                            {},
+                            {
+                                view: "button", width: 80, label: "打印", css: "webix_primary",
+                                click() {
+                                    var sel = $$(printGrid.id).getSelectedId(true, true);
+                                    if (_.size(sel) < 1) {
+                                        webix.message({ type: "error", text: "请选择需要打印的入库明细" });
+                                        return
+                                    }
+
+                                    var all = _.pluck($$(printGrid.id).serialize(true), "id");
+                                    $$(printGrid.id).remove(_.difference(all, sel));
+
+                                    setTimeout(() => {
+                                        printGrid.actions.hideColumn("rksl", true);
+                                        webix.print($$(printGrid.id), { mode: "landscape" });
+                                        $$(winPrintId).hide();
+                                    }, 500);
+                                }
+                            },
+                            { width: 8 },
+                            { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winPrintId).hide() },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
     function open() {
         var dlgPager = utils.protos.pager();
 
@@ -299,7 +392,13 @@ function builder() {
                                     }
                                 );
                         }
-                    }
+                    },
+                    {},
+                    {
+                        view: "button", label: "打印入库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                        click() { openPrint() }
+                    },
+                    {}
                 ]
             },
             {
