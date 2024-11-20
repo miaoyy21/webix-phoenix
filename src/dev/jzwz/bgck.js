@@ -256,8 +256,6 @@ function builder() {
             sort: false,
             multiselece: false,
             url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + values["id"],
-            leftSplit: 0,
-            rightSplit: 0,
             data: [],
             save: {},
             columns: [
