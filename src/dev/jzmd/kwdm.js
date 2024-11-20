@@ -50,7 +50,7 @@ function builder() {
                 tooltip: false,
                 template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
                                 <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
-                                <button webix_tooltip="打印" type="button" class="button_qrcode webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-fingerprint"/> </button>
+                                <button webix_tooltip="打印二维码" type="button" class="button_qrcode webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-fingerprint"/> </button>
                             </div>`,
             }
         ],
