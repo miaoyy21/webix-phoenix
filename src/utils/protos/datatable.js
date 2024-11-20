@@ -310,6 +310,7 @@ function datatable(options) {
                         }
 
                         // 由于可能分页，所以不能执行clearAll，清除后，客户端丢失已分页数据，将产生重复请求
+                        datatable.clearAll(); datatable.load(() => []);// ?? TODO 解决这个问题
                         datatable.load(() => webix.ajax(datatable.config.url, params));
                     }
                 }
