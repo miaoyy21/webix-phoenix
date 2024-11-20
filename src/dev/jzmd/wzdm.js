@@ -360,12 +360,14 @@ function builder() {
     function openPrintQRCode(options) {
         var winId = utils.UUID();
 
-        qrCode.toDataURL(webix.template("#!wzbh# | #!wzmc#/#!ggxh#")(options), { type: 'image/png', margin: 0 }, function (err, url) {
+        var data = webix.template("#!wzbh# | #!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(options);
+        qrCode.toDataURL(data, { type: 'image/png', margin: 0 }, function (err, url) {
             if (err) throw err;
 
+            options["wzph_bzdh"] = webix.template("#!wzph#/#!bzdh#")(options);
             webix.ui({
                 id: winId, view: "window", position: "center",
-                close: true, modal: true, head: "打印二维码【" + options["wzbh"] + " &nbsp; &nbsp; " + webix.template("#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#")(options) + "】",
+                close: true, modal: true, head: "打印二维码【" + data + "】",
                 body: {
                     paddingX: 12,
                     rows: [
@@ -385,12 +387,12 @@ function builder() {
                         },
                         {
                             id: winId + "_print",
-                            paddingY: 24,
+                            paddingY: 12,
                             cols: [
                                 {
                                     view: "template",
                                     borderless: true,
-                                    width: 160,
+                                    width: 140,
                                     template: `<img src='` + url + `' style='width:100%; height:100%;'>`,
                                 },
                                 utils.protos.form({
@@ -402,8 +404,7 @@ function builder() {
                                         { view: "text", name: "wzbh", label: "物资编号：" },
                                         { view: "text", name: "wzmc", label: "物资名称：" },
                                         { view: "text", name: "ggxh", label: "规格型号：" },
-                                        { view: "text", name: "wzph", label: "物资牌号：" },
-                                        { view: "text", name: "bzdh", label: "标准代号：" },
+                                        { view: "text", name: "wzph_bzdh", label: "牌号/代号：" },
                                     ],
                                     elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
                                 }),

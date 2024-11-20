@@ -1,3 +1,5 @@
+var qrCode = require("qrcode");
+
 function builder() {
 
     var ckGrid = utils.protos.datatable({
@@ -15,7 +17,6 @@ function builder() {
         on: {
             onAfterSelect(selection, preserve) {
                 var url = "/api/sys/data_service?service=JZMD_KWDM.query&ckdm_id=" + selection.id;
-
 
                 $$(kwGrid.id).showOverlay("数据加载中...");
                 $$(kwGrid.id).define("url", url);
@@ -49,6 +50,7 @@ function builder() {
                 tooltip: false,
                 template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
                                 <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
+                                <button webix_tooltip="打印" type="button" class="button_qrcode webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_primary_icon mdi mdi-18px mdi-fingerprint"/> </button>
                             </div>`,
             }
         ],
@@ -57,7 +59,74 @@ function builder() {
             "kwbh": webix.rules.isNotEmpty,
             "kwmc": webix.rules.isNotEmpty,
         },
+        onClick: {
+            button_qrcode(e, item) {
+                var ckData = $$(ckGrid.id).getSelectedItem(false);
+                var kwData = this.getItem(item.row);
+                openPrintQRCode(_.extend({}, _.pick(ckData, "ckbh", "ckmc"), _.pick(kwData, "kwbh", "kwmc")));
+            },
+        },
     });
+
+    // 打印二维码标签
+    function openPrintQRCode(options) {
+        var winId = utils.UUID();
+
+        var data = webix.template("#!ckbh#@#!kwbh# | #!ckmc#/#!kwmc#")(options);
+        qrCode.toDataURL(data, { type: 'image/png', margin: 0 }, function (err, url) {
+            if (err) throw err;
+
+            webix.ui({
+                id: winId, view: "window", position: "center",
+                close: true, modal: true, head: "打印二维码【" + data + "】",
+                body: {
+                    paddingX: 12,
+                    rows: [
+                        {
+                            view: "toolbar",
+                            cols: [
+                                {
+                                    view: "button", label: "打印", autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-printer",
+                                    click() {
+                                        setTimeout(() => {
+                                            webix.print($$(winId + "_print"));
+                                            $$(winId).hide();
+                                        }, 500);
+                                    }
+                                },
+                            ]
+                        },
+                        {
+                            id: winId + "_print",
+                            paddingY: 12,
+                            cols: [
+                                {
+                                    view: "template",
+                                    borderless: true,
+                                    width: 140,
+                                    template: `<img src='` + url + `' style='width:100%; height:100%;'>`,
+                                },
+                                utils.protos.form({
+                                    data: options,
+                                    type: "clean",
+                                    borderless: true,
+                                    width: 280,
+                                    rows: [
+                                        { view: "text", name: "ckbh", label: "仓库编号：" },
+                                        { view: "text", name: "ckmc", label: "仓库名称：" },
+                                        { view: "text", name: "kwbh", label: "库位编号：" },
+                                        { view: "text", name: "kwmc", label: "库位名称：" },
+                                    ],
+                                    elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
+                                }),
+                            ]
+                        },
+                    ]
+                },
+                on: { onHide() { this.close() } }
+            }).show();
+        })
+    }
 
     return {
         cols: [
