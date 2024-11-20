@@ -169,14 +169,13 @@ function builder() {
             url: "/api/sys/data_service?service=JZWZ_WZRKDWJMX.query_print",
             data: [],
             save: {},
-            rowHeight: 56,
+            rowHeight: 48,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 {
-                    id: "qrcode", header: { text: "二维码", css: { "text-align": "center" } }, width: 64, css: "xxx",
+                    id: "qrcode", header: { text: "二维码", css: { "text-align": "center" } }, width: 64,
                     template(obj, common, value) {
-                        console.log("qrcode template", value);
-                        return `<img src = '` + value + `' align='center' style='width:100%; height:100%; object-fit:contain'></img>`;
+                        return `<div class="datatable-qrcode" style='vertical-align:middle'> ` + value + ` </div>`;
                     },
                 },
                 { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
@@ -191,14 +190,16 @@ function builder() {
             ],
             on: {
                 onAfterLoad() {
+                    console.log("onAfterLoad");
+
                     this.eachRow((id) => {
                         var row = this.getItem(id);
 
                         var data = webix.template("#!txmvalue# | #!ldbh# #!wzbh# #!sssl#")(row);
-                        qrCode.toDataURL(data, { type: 'image/png', margin: 0 }, function (err, url) {
+                        qrCode.toString(data, { type: 'image/png', margin: 0 }, function (err, qrcode) {
                             if (err) throw err;
 
-                            row["qrcode"] = url;
+                            row["qrcode"] = qrcode;
                         })
                     }, true);
                 }
@@ -228,10 +229,11 @@ function builder() {
                                     }
 
                                     var all = _.pluck($$(printGrid.id).serialize(true), "id");
+
+                                    printGrid.actions.hideColumn("rksl", true);
                                     $$(printGrid.id).remove(_.difference(all, sel));
 
                                     setTimeout(() => {
-                                        printGrid.actions.hideColumn("rksl", true);
                                         webix.print($$(printGrid.id), { mode: "landscape" });
                                         $$(winPrintId).hide();
                                     }, 500);
