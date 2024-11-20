@@ -410,6 +410,7 @@ function builder() {
                                 }),
                             ]
                         },
+                        { height: 12 }
                     ]
                 },
                 on: { onHide() { this.close() } }

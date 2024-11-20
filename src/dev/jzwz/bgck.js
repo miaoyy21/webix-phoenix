@@ -249,13 +249,13 @@ function builder() {
     });
 
     /***************************** 选择打印已出库的领料单 *****************************/
-    function openPrint(sqId) {
+    function openPrint(values) {
         var printGrid = utils.protos.datatable({
             editable: true,
             drag: false,
             sort: false,
             multiselece: false,
-            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + sqId,
+            url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + values["id"],
             leftSplit: 0,
             rightSplit: 0,
             data: [],
@@ -270,7 +270,7 @@ function builder() {
                 { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
                 { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
                 { id: "sfs", header: { text: "实发数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 80 },
-                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, width: 80 },
                 { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
                 { id: "lly", header: { text: "领料员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
@@ -290,22 +290,12 @@ function builder() {
         });
 
         webix.ui({
-            id: winPrintId,
-            view: "window",
-            close: true,
-            modal: true,
-            move: true,
-            width: 720,
-            height: 420,
-            animate: { type: "flip", subtype: "vertical" },
-            head: "出库单打印",
-            position: "center",
+            id: winPrintId, view: "window",
+            close: true, modal: true, move: true, width: 720, height: 420,
+            head: "出库单打印", position: "center",
             body: {
                 rows: [
-                    {
-                        paddingX: 8,
-                        cols: [printGrid]
-                    },
+                    { paddingX: 8, cols: [printGrid] },
                     {
                         view: "toolbar",
                         borderless: true,
@@ -448,6 +438,10 @@ function builder() {
                                         ).then(
                                             (res) => {
                                                 webix.message({ type: "success", text: "出库确认成功" });
+                                                var values = $$(mainGrid.id).getSelectedItem(false);
+                                                if (values) {
+                                                    openPrint(values);
+                                                }
 
                                                 allSfData = {};
                                                 onAfterSelectMain(values["id"]);
@@ -463,9 +457,9 @@ function builder() {
                     {
                         view: "button", label: "打印出库单", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-printer",
                         click() {
-                            var sqId = $$(mainGrid.id).getSelectedId(false, true);
-                            if (sqId) {
-                                openPrint(sqId);
+                            var values = $$(mainGrid.id).getSelectedItem(false);
+                            if (values) {
+                                openPrint(values);
                             }
                         }
                     },
