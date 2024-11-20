@@ -123,7 +123,7 @@ function builder(options, values) {
                                                     var qls = _.min([sssl, qmsl]);
                                                     return _.extend(row, {
                                                         "checked": qls > 0 ? "1" : "0",
-                                                        "max_qls": qls,
+                                                        "max_qls": utils.formats.number.format(qls, 2),
                                                         "qls": qls
                                                     });
                                                 })
