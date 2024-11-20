@@ -162,7 +162,6 @@ function builder() {
     /***************************** 选择打印已入库的入库单 *****************************/
     function openPrint() {
         var printGrid = utils.protos.datatable({
-            editable: true,
             drag: false,
             sort: false,
             multiselect: true,
@@ -190,8 +189,6 @@ function builder() {
             ],
             on: {
                 onAfterLoad() {
-                    console.log("onAfterLoad");
-
                     this.eachRow((id) => {
                         var row = this.getItem(id);
 

@@ -1,3 +1,4 @@
+var qrCode = require("qrcode");
 
 function builder() {
     const mainUrl = "/api/sys/data_service?service=JZWZ_WZLLSQWJ.query_bgck";
@@ -251,15 +252,21 @@ function builder() {
     /***************************** 选择打印已出库的领料单 *****************************/
     function openPrint(values) {
         var printGrid = utils.protos.datatable({
-            editable: true,
             drag: false,
             sort: false,
             url: "/api/sys/data_service?service=JZWZ_WZLLSQWJMX.query_print&sq_id=" + values["id"],
             data: [],
             save: {},
+            rowHeight: 48,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 { id: "checked", header: { text: "选择", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "Y", uncheckValue: "N", tooltip: false, css: { "text-align": "center" }, adjust: true, minWidth: 50 },
+                {
+                    id: "qrcode", header: { text: "二维码", css: { "text-align": "center" } }, width: 64,
+                    template(obj, common, value) {
+                        return `<div class="datatable-qrcode" style='vertical-align:middle'> ` + value + ` </div>`;
+                    },
+                },
                 { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
                 { id: "llrq", header: { text: "出库时间", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 140 },
                 { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, width: 80 },
@@ -281,6 +288,13 @@ function builder() {
                         if (_.isEmpty(max)) { max = row["llrq"]; }
 
                         row["checked"] = row["llrq"] == max ? "Y" : "N";
+
+                        var data = webix.template("#!id# | #!sfs#")(row);
+                        qrCode.toString(data, { type: 'image/png', margin: 0 }, function (err, qrcode) {
+                            if (err) throw err;
+
+                            row["qrcode"] = qrcode;
+                        })
                     }, true);
                 }
             }
@@ -309,13 +323,18 @@ function builder() {
                                         return
                                     }
 
-                                    $$(printGrid.id).define("data", newData);
+                                    var all = _.pluck(allData, "id");
+                                    var sel = _.pluck(newData, "id");
 
                                     printGrid.actions.hideColumn("checked", true);
                                     printGrid.actions.hideColumn("qls", true);
+                                    printGrid.actions.hideColumn("lly", true);
+                                    $$(printGrid.id).remove(_.difference(all, sel));
 
-                                    webix.print($$(printGrid.id), { mode: "landscape" });
-                                    $$(winPrintId).hide();
+                                    setTimeout(() => {
+                                        webix.print($$(printGrid.id), { mode: "landscape" });
+                                        $$(winPrintId).hide();
+                                    }, 500);
                                 }
                             },
                             { width: 8 },
