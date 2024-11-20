@@ -148,14 +148,14 @@ function datatable(options) {
 
             // 加载前
             this.attachEvent("onBeforeLoad", function () {
-                console.log("onBeforeLoad");
+                // console.log("onBeforeLoad");
                 this.showOverlay("数据加载中...");
                 return true;
             })
 
             // 加载后
             this.attachEvent("onAfterLoad", function () {
-                console.log("onAfterLoad");
+                // console.log("onAfterLoad");
                 this.hideOverlay();
                 if (!this.count()) {
                     this.showOverlay("无检索数据");
@@ -169,12 +169,12 @@ function datatable(options) {
             })
 
             this.attachEvent("onDataRequest", function (start, count, callback, url) {
-                console.log("onDataRequest", start, count, callback, url)
+                // console.log("onDataRequest", start, count, callback, url)
             })
 
             // 选择记录行或单元格后触发
             this.attachEvent("onAfterSelect", function (selection, preserve) {
-                console.log("onAfterSelect 2", selection, preserve);
+                // console.log("onAfterSelect 2", selection, preserve);
             });
 
             // 默认选择第1条记录
