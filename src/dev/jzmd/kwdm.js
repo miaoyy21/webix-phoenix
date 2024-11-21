@@ -96,9 +96,9 @@ function builder() {
                                 },
                             ]
                         },
+                        { height: 24 },
                         {
                             id: winId + "_print",
-                            paddingY: 12,
                             cols: [
                                 {
                                     view: "template",
@@ -121,7 +121,7 @@ function builder() {
                                 }),
                             ]
                         },
-                        { height: 12 }
+                        { height: 24 }
                     ]
                 },
                 on: { onHide() { this.close() } }
