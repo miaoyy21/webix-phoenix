@@ -1,3 +1,4 @@
+var qrCode = require("qrcode");
 
 function builder() {
     var winId = utils.UUID();
@@ -163,8 +164,6 @@ function builder() {
             editable: false,
             drag: false,
             url: qUrl + "&pager=true",
-            leftSplit: 3,
-            rightSplit: 0,
             columns: [
                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                 { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
@@ -288,7 +287,7 @@ function builder() {
                                 cols: [
                                     {},
                                     { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
-                                    {}
+                                    {},
                                 ]
                             },
                             { height: 4 },
