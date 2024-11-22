@@ -209,21 +209,12 @@ function builder() {
                 rows: [
                     {
                         rows: [
-                            {
-                                view: "toolbar",
-                                height: 38,
-                                cols: [
-                                    dlgGrid.actions.search({ fields: "txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,cgy,jyry,bgy", autoWidth: true }),
-                                ]
-                            },
+                            dlgGrid.actions.search({ fields: "txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,cgy,jyry,bgy", autoWidth: true }),
                             dlgGrid,
                             dlgPager
                         ]
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             { width: 8 },
                             {},
@@ -350,7 +341,6 @@ function builder() {
                             }),
                             { height: 2 },
                             {
-                                view: "toolbar", borderless: true,
                                 cols: [
                                     {
                                         cols: [

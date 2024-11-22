@@ -44,10 +44,6 @@ function icons(options) {
         body: {
             rows: [
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    paddingX: 12,
-                    height: 38,
                     cols: [
                         {
                             id: instance.filter_id,
@@ -86,9 +82,6 @@ function icons(options) {
                 },
                 { height: 8, css: { "border-top": "none" } },
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    height: 34,
                     cols: [
                         { width: 8 },
                         {},

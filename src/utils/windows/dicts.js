@@ -53,14 +53,11 @@ webix.ui({
             },
             { height: 8 },
             {
-                view: "toolbar",
-                css: { "border-bottom": "none" },
-                height: 34,
                 cols: [
                     { width: 8 },
-                    { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload(instance.filter) },
+                    { view: "button", label: "刷新", width: 80, css: "webix_transparent", click: () => instance.reload(instance.filter) },
                     {},
-                    { view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary", click: instance.ok },
+                    { view: "button", label: "确定", width: 80, css: "webix_primary", click: instance.ok },
                     { width: 8 }
                 ]
             },

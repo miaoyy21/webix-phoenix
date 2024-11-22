@@ -106,9 +106,6 @@ function builder() {
                     elementsConfig: { labelAlign: "right", clear: false },
                 },
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    height: 34,
                     cols: [
                         {},
                         {

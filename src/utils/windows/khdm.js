@@ -94,13 +94,7 @@ webix.ui({
         rows: [
             {
                 rows: [
-                    {
-                        view: "toolbar",
-                        height: 38,
-                        cols: [
-                            { id: instance.filter_id, view: "text", placeholder: instance.filter_placeholder, clear: true, on: { onChange: instance.filter } }
-                        ]
-                    },
+                    { id: instance.filter_id, view: "text", placeholder: instance.filter_placeholder, clear: true, on: { onChange: instance.filter } },
                     {
                         id: instance.grid_id,
                         view: "datatable",
@@ -172,9 +166,6 @@ webix.ui({
                 ]
             },
             {
-                view: "toolbar",
-                borderless: true,
-                height: 34,
                 cols: [
                     { width: 8 },
                     { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload() },

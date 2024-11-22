@@ -234,7 +234,6 @@ function builder() {
                                 }),
                                 { height: 12 },
                                 {
-                                    view: "toolbar", borderless: true,
                                     cols: [
                                         {
                                             cols: [

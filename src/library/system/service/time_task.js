@@ -167,9 +167,6 @@ function builder() {
                     },
                     { height: 8, css: { "border-top": "none" } },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {},
                             {

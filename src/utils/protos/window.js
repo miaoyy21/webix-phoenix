@@ -46,8 +46,6 @@ window.form = function (options) {
                     },
                     { height: 8, css: { "border-top": "none" } },
                     {
-                        view: "toolbar",
-                        borderless: true,
                         cols: [
                             {},
                             {

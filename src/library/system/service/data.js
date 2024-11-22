@@ -46,9 +46,6 @@ function builder() {
                     },
                     { height: 8, css: { "border-top": "none" } },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {},
                             {
@@ -217,12 +214,11 @@ function builder() {
                         id: service_grid_id,
                         view: "datatable",
                         css: "webix_data_border webix_header_border",
-                        hover: "phoenix_hover",
                         resizeColumn: true,
                         tooltip: true,
                         rightSplit: 1,
                         drag: "order",
-                        // data: [],
+                        select: "row",
                         save: {
                             url: "/api/sys/data_service?method=ByTableId",
                             updateFromResponse: true,

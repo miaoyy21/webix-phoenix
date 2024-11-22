@@ -37,9 +37,6 @@ function builder() {
                     },
                     { height: 8 },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {},
                             {
@@ -68,7 +65,8 @@ function builder() {
                             { view: "button", width: 80, value: "取消", css: "webix_transparent ", click: () => $$(winId).hide() },
                             { width: 8 }
                         ]
-                    }
+                    },
+                    { height: 8 },
                 ]
             },
             on: {

@@ -82,15 +82,12 @@ function builder(options, values) {
                     rows: [
                         {
                             rows: [
-                                { view: "toolbar", height: 38, cols: [dlgGrid.actions.search({ fields: "ldbh,cgy,gcbh,gcmc,htbh,khbh,khmc", placeholder: "可根据 入库单号、采购员、供应商和项目 进行过滤" })] },
+                                dlgGrid.actions.search({ fields: "ldbh,cgy,gcbh,gcmc,htbh,khbh,khmc", placeholder: "可根据 入库单号、采购员、供应商和项目 进行过滤" }),
                                 dlgGrid,
                                 dlgPager
                             ]
                         },
                         {
-                            view: "toolbar",
-                            borderless: true,
-                            height: 34,
                             cols: [
                                 { width: 8 },
                                 {},
@@ -224,15 +221,12 @@ function builder(options, values) {
                 rows: [
                     {
                         rows: [
-                            { view: "toolbar", height: 38, cols: [dlgGrid.actions.filter({ fields: "wzbh,wzmc,ggxh,wzph,bzdh,sccjmc", placeholder: "请输入物资编号、物资名称、规格型号等信息过滤" })] },
+                            dlgGrid.actions.filter({ fields: "wzbh,wzmc,ggxh,wzph,bzdh,sccjmc", placeholder: "请输入物资编号、物资名称、规格型号等信息过滤" }),
                             dlgGrid,
                             dlgPager
                         ]
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             { width: 8 },
                             {},

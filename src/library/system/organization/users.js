@@ -114,9 +114,6 @@ function builder() {
                     elementsConfig: { labelAlign: "right" },
                 },
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    height: 34,
                     cols: [
                         {},
                         {

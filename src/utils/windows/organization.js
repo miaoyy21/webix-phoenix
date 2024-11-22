@@ -88,14 +88,7 @@ webix.ui({
     head: "组织选择",
     body: {
         rows: [
-            {
-                view: "toolbar",
-                paddingX: 12,
-                height: 38,
-                cols: [
-                    { id: instance.filter_id, view: "text", placeholder: instance.filter_placeholder, clear: true, on: { onChange: instance.filter } }
-                ]
-            },
+            { id: instance.filter_id, view: "text", placeholder: instance.filter_placeholder, clear: true, on: { onChange: instance.filter } },
             {
                 id: instance.list_id,
                 view: "unitlist",
@@ -144,9 +137,6 @@ webix.ui({
             },
             { height: 8, css: { "border-top": "none" } },
             {
-                view: "toolbar",
-                borderless: true,
-                height: 34,
                 cols: [
                     { width: 8 },
                     { view: "button", label: "刷新", minWidth: 88, autowidth: true, css: "webix_transparent", click: () => instance.reload(instance.filter) },

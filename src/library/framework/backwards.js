@@ -88,9 +88,6 @@ function backwards(options) {
                     body: { id: comm, name: "comment", view: "textarea", placeholder: "请输入流转意见 ..." },
                 },
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    height: 34,
                     cols: [
                         {},
                         {

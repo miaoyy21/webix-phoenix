@@ -187,9 +187,6 @@ function builder() {
                         }
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {},
                             {
@@ -303,9 +300,6 @@ function builder() {
                         ]
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {
                                 view: "button", label: "导出", autowidth: true, css: "webix_transparent", type: "icon", icon: "mdi mdi-18px mdi-microsoft-excel",

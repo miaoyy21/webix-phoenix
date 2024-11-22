@@ -150,21 +150,12 @@ function builder(options, values) {
                 rows: [
                     {
                         rows: [
-                            {
-                                view: "toolbar",
-                                height: 38,
-                                cols: [
-                                    dlgGrid.actions.search({ fields: "ldbh,wzbh,wzmc,ggxh,wzph,bzdh,kwbh,kwmc", autoWidth: true }),
-                                ]
-                            },
+                            dlgGrid.actions.search({ fields: "ldbh,wzbh,wzmc,ggxh,wzph,bzdh,kwbh,kwmc", autoWidth: true }),
                             dlgGrid,
                             dlgPager
                         ]
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             { width: 8 },
                             {},

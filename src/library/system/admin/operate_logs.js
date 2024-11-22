@@ -47,8 +47,8 @@ function builder() {
                 css: "webix_data_border webix_header_border",
                 resizeColumn: true,
                 tooltip: true,
-                hover: "phoenix_hover",
                 leftSplit: 4,
+                select: "row",
                 sort: "multi",
                 url: "/api/sys/operate_logs?PHOENIX_IGNORE_LOG=true",
                 columns: [
@@ -94,6 +94,8 @@ function builder() {
                             this.showOverlay("无检索数据");
                             return;
                         }
+
+                        this.select(this.getFirstId());
                     },
                 }
             },

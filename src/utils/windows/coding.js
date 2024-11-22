@@ -43,9 +43,6 @@ function coding(options) {
                 { id: instance.editor_id, view: "ace-editor", mode: "javascript" },
                 { height: 8, css: { "border-top": "none" } },
                 {
-                    view: "toolbar",
-                    borderless: true,
-                    height: 34,
                     cols: [
                         {},
                         { view: "button", label: "确定", autowidth: true, css: "webix_primary", click: instance.ok },

@@ -182,9 +182,6 @@ function builder() {
                         }
                     },
                     {
-                        view: "toolbar",
-                        borderless: true,
-                        height: 34,
                         cols: [
                             {},
                             {
