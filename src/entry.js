@@ -295,7 +295,7 @@ setInterval(() => {
                 var data = res.json();
 
                 // 待办数量
-                var oldTasks = $$(MAIN_PAGE_TASKS_ID).data.badge;
+                var oldTasks = $$(MAIN_PAGE_TASKS_ID).data.badge || 0;
 
                 if (!_.isEqual(oldTasks, data["tasks"])) {
                     $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;

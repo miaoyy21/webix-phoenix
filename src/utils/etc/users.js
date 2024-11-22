@@ -13,6 +13,10 @@ users.getUserCode = function () {
 
 users.getUserName = function () {
     var encoded = webix.storage.cookie.getRaw("PHOENIX_USER_NAME");
+    if (_.isEmpty(encoded)) {
+        return null;
+    }
+
     return utf8.decode(base64.decode(encoded));
 }
 
@@ -26,6 +30,10 @@ users.getDepartCode = function () {
 
 users.getDepartName = function () {
     var encoded = webix.storage.cookie.getRaw("PHOENIX_DEPART_NAME");
+    if (_.isEmpty(encoded)) {
+        return null;
+    }
+
     return utf8.decode(base64.decode(encoded));
 }
 
