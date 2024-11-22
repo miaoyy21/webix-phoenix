@@ -158,7 +158,7 @@ function builder() {
                                         <div style='text-indent:0em;'> #keyword_text_#</div>
                                     `,
                                 type: {
-                                    height: 54
+                                    height: 60
                                 },
                                 on: {
                                     "data->onStoreUpdated": function () {

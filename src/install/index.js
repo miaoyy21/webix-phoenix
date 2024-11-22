@@ -1,5 +1,9 @@
 
 /** WebIX CSS **/
+// import "webix/skins/compact.css";
+// import "webix/skins/contrast.css";
+// import "webix/skins/flat.css";
+// import "webix/skins/material.css";
 import "webix/skins/mini.css";
 
 import "@mdi/font/css/materialdesignicons.min.css";

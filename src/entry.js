@@ -230,7 +230,6 @@ function buildMainPage() {
                     {
                         id: MENU_TREE_ID,
                         view: "sidebar",
-                        css: { "background": "#F9F9F9" },
                         scroll: "y",
                         width: 240,
                         data: null,
