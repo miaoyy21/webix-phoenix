@@ -309,9 +309,11 @@ function datatable(options) {
                             _.forEach(state.filter, (v, k) => { params["filter[" + k + "]"] = v });
                         }
 
-                        // 由于可能分页，所以不能执行clearAll，清除后，客户端丢失已分页数据，将产生重复请求
-                        datatable.clearAll(); datatable.load(() => []);// ?? TODO 解决这个问题
-                        datatable.load(() => webix.ajax(datatable.config.url, params));
+                        // 由于可能分页，清除后，客户端丢失已分页数据，将产生重复请求，需要设置 clearAll 的参数为true
+                        datatable.clearAll(true);
+                        setTimeout(() => {
+                            datatable.load(() => webix.ajax(datatable.config.url, params));
+                        }, 50);
                     }
                 }
             },
