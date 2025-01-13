@@ -11,7 +11,7 @@ function builder() {
     var mainGrid = utils.protos.datatable({
         editable: false,
         drag: false,
-        url: mainUrl + "&start=" + initStart + "&end=" + initEnd,
+        url: mainUrl + "&start_date=" + initStart + "&end_date=" + initEnd,
         data: [],
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
@@ -72,7 +72,7 @@ function builder() {
                             }
 
                             $$(mainGrid.id).clearAll();
-                            $$(mainGrid.id).define("url", mainUrl + "&start=" + start + "&end=" + end);
+                            $$(mainGrid.id).define("url", mainUrl + "&start_date=" + start + "&end_date=" + end);
                         }
                     },
                     {},
