@@ -166,6 +166,7 @@ function builder() {
                     {
                         id: winId + "_print",
                         view: "scrollview",
+                        width: 1600,
                         body: {
                             paddingX: 12,
                             rows: [
@@ -176,7 +177,7 @@ function builder() {
                                         {
                                             cols: [
                                                 {},
-                                                { view: "label", align: "center", template: "<span style='font-size:36px; font-weight:500'>物资零星入库单</span>", height: 60 },
+                                                { view: "label", align: "center", template: "<span style='font-size:36px; font-weight:500'>产品入帐结算单</span>", height: 60 },
                                                 {}
                                             ]
                                         },
@@ -206,7 +207,7 @@ function builder() {
                                     ],
                                     elementsConfig: { labelAlign: "right", labelWidth: 100, readonly: true, clear: false },
                                 }),
-                                { view: "label", label: "<span style='margin-left:8px'></span>物资入库清单" },
+                                { view: "label", label: "<span style='margin-left:8px'></span>产品入帐结算单" },
                                 utils.protos.datatable({
                                     data: options["rows"],
                                     url: null,
@@ -217,7 +218,7 @@ function builder() {
                                     columns: [
                                         { id: "index", header: { text: "№", css: { "text-align": "center" } }, footer: { text: "合  计：", colspan: 3 }, css: { "text-align": "center" }, width: 50 },
                                         { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-                                        { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", minWidth: 220, fillspace: true },
+                                        { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", maxWidth: 360, fillspace: true },
                                         { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
                                         { id: "sssl", header: { text: "实收数量", css: { "text-align": "center" } }, css: { "text-align": "right" }, format: (value) => utils.formats.number.format(value, 2), width: 100 },
                                         { id: "cgdj", header: { text: "采购单价", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },

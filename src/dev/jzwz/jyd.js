@@ -238,7 +238,7 @@ function builder() {
         }).show();
     }
 
-    // 打印的UI窗口
+    // 打印的UI窗口 
     function openPrint(options) {
         var winId = utils.UUID();
 
@@ -405,8 +405,6 @@ function builder() {
 
                                         $$(btnCheck).enable();
                                         $$(btnUnCheck).enable();
-
-                                        openPrint(_.extend({}, $$(form.id).getValues(), res.json()));
 
                                         $$(form.id).setValues({});
                                     }
