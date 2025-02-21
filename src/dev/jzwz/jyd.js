@@ -238,22 +238,99 @@ function builder() {
         }).show();
     }
 
+
+    /***************************** 选择打印已检验的入库单 *****************************/
+    function openSelectPrint() {
+        var printSelectPager = utils.protos.pager();
+
+        var printSelectGrid = utils.protos.datatable({
+            drag: false,
+            sort: false,
+            url: qUrl + "&jyry_id=" + utils.users.getUserId() + "&sort[jyrq]=desc&pager=true",
+            columns: [
+                { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 40 },
+                { id: "checked", header: { text: "选择", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "Y", uncheckValue: "N", tooltip: false, css: { "text-align": "center" }, adjust: true, minWidth: 50 },
+                { id: "zt", header: { text: "状态", css: { "text-align": "center" } }, options: utils.dicts["wz_rkzt"], css: { "text-align": "center" }, width: 60 },
+                { id: "jyrq", header: { text: "检验日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
+                { id: "ldbh", header: { text: "入库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 220 },
+                { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+                { id: "rksl", header: { text: "交检数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "bylx", header: { text: "报验类型", css: { "text-align": "center" } }, options: utils.dicts["md_bylx"], css: { "text-align": "center" }, width: 80 },
+                { id: "byyq", header: { text: "检验要求", css: { "text-align": "center" } }, minWidth: 240, maxWidth: 360 },
+                { id: "jydd", header: { text: "检验地点", css: { "text-align": "center" } }, width: 80 },
+                { id: "hgsl", header: { text: "合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "bhgsl", header: { text: "不合格数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 80 },
+                { id: "jynr", header: { text: "检验内容", css: { "text-align": "center" } }, width: 180 },
+                { id: "jyjl", header: { text: "检验结论", css: { "text-align": "center" } }, width: 180 },
+                { id: "txmvalue", header: { text: "条形码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
+                { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, width: 180 },
+                { id: "gcmc", header: { text: "项目名称", css: { "text-align": "center" } }, width: 180 },
+                { id: "sccjmc", header: { text: "生产厂家", css: { "text-align": "center" } }, width: 160 },
+                { id: "kdrq", header: { text: "开单日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
+                { id: "cgy", header: { text: "采购员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+                { id: "rkrq", header: { text: "入库日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, width: 140 },
+                { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            ],
+            pager: printSelectPager.id,
+        });
+
+        webix.ui({
+            id: winId + "_select_print_win",
+            view: "window",
+            close: true, modal: true, move: true, width: 720, height: 420,
+            head: "检验单打印", position: "center",
+            body: {
+                paddingX: 12,
+                rows: [
+                    {
+                        rows: [
+                            printSelectGrid.actions.search({ fields: "txmvalue,ldbh,htbh,khbh,khmc,gcbh,gcmc,wzbh,wzmc,ggxh,bylx,byyq,cgy,jyry,bgy", autoWidth: true }),
+                            printSelectGrid,
+                            printSelectPager
+                        ]
+                    },
+                    {
+                        cols: [
+                            { width: 8 },
+                            {},
+                            {
+                                view: "button", label: "预览", minWidth: 88, autowidth: true, css: "webix_primary",
+                                click() {
+                                    var allData = $$(printSelectGrid.id).serialize(true);
+                                    var selectedData = _.filter(allData, (row) => row["checked"] == "Y");
+                                    if (_.size(selectedData) < 1) {
+                                        webix.message({ type: "error", text: "请选择需要打印的检验单" });
+                                        return
+                                    }
+
+                                    setTimeout(() => {
+                                        openPrint(selectedData);
+                                        $$(winId + "_select_print_win").hide();
+                                    }, 500);
+                                },
+                            },
+                            { width: 8 }
+                        ]
+                    },
+                    { height: 8 }
+                ]
+            },
+            on: { onHide() { this.close() } }
+        }).show();
+    }
+
     // 打印的UI窗口 
     function openPrint(options) {
         var winId = utils.UUID();
 
-        // 供应商和项目
-        options["kh_ms"] = webix.template("#!khbh# | #!khmc#")(options);
-        options["gc_ms"] = webix.template("#!gcbh# | #!gcmc#")(options);
-        options["bz"] = webix.template("#!jyjl#  #!jynr#  #!bhgsm#  #!jyry_bz#")(options);
-
         webix.ui({
             id: winId,
             view: "window",
-            close: true,
-            modal: true,
-            head: "打印报验单【" + options["ldbh"] + " &nbsp; &nbsp; " + options["wzbh"] + " | " + options["wzms"] + "】",
             position: "center",
+            close: true, modal: true, width: 820, height: 480,
+            head: "报验单打印预览",
             body: {
                 paddingX: 12,
                 rows: [
@@ -273,100 +350,188 @@ function builder() {
                     },
                     {
                         id: winId + "_print",
-                        rows: [
-                            {
-                                cols: [
-                                    {},
-                                    { view: "label", align: "center", template: "<span style='font-size:24px; font-weight:500'>物资报验单</span>", height: 48 },
-                                    {},
-                                ]
-                            },
-                            { height: 4 },
-                            utils.protos.form({
-                                data: options,
-                                type: "line",
-                                css: { "border-top": "none" },
-                                rows: [
-                                    {
-                                        cols: [
-                                            { view: "text", name: "ldbh", label: "入库单号：" },
-                                            {},
-                                            { view: "text", gravity: 2, name: "htbh", label: "合同号：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "kh_ms", label: "供应商：" },
-                                            { view: "text", name: "gc_ms", label: "项目：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "wzbh", label: "报验物资：" },
-                                            { view: "text", gravity: 3, name: "wzms" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "bylx", label: "报验类型：" },
-                                            { view: "text", gravity: 3, name: "byyq", label: "检验要求：" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "rksl", label: "交检数量：" },
-                                            { view: "text", name: "hgsl", label: "合格数量：" },
-                                            { view: "text", name: "jldw", label: "计量单位：" },
-                                            { view: "text", name: "jydd", label: "检验地点：" },
-                                        ]
-                                    },
-                                    { view: "textarea", name: "bz", label: "备注：", maxHeight: 48 },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "cgy", label: "采购员：" },
-                                            { view: "text", name: "kdrq" },
-                                            { view: "text", name: "bmld", label: "部门领导：" },
-                                            { view: "text", name: "bmld_shrq" },
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "text", name: "jyry", label: "检验员：" },
-                                            { view: "text", name: "jyrq" },
-                                            { gravity: 2 },
-                                        ]
-                                    },
-                                ],
-                                elementsConfig: { labelAlign: "right", labelWidth: 80, readonly: true, clear: false },
-                            }),
-                            { height: 2 },
-                            {
-                                cols: [
-                                    {
-                                        cols: [
-                                            { view: "label", label: "采购员：", align: "right", width: 120 },
-                                            utils.protos.signer(options["cgy_id"]),
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "label", label: "部门领导：", align: "right", width: 120 },
-                                            utils.protos.signer(options["bmld_id"]),
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            { view: "label", label: "检验员：", align: "right", width: 120 },
-                                            utils.protos.signer(options["jyry_id"]),
-                                            {}
-                                        ]
-                                    },
-                                ]
-                            },
-                            { height: 12 },
-                        ]
+                        view: "dataview",
+                        item: {
+                            width: 760,
+                            height: 360
+                        },
+                        data: options,
+                        xCount: 1,
+                        template: `
+                        <div class="webix_view webix_layout_line" style="border-left-width: 0px; border-right-width: 0px; border-bottom-width: 0px; margin-left: 12px; margin-top: 24px;  ">
+                            <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: 0px; height: 36px;">
+                                <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 240px; height: 36px;"></div>
+                                    <div class="webix_view webix_control webix_el_label" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 240px; height: 36px; text-align: center;">
+                                        <span style="font-size: 24px; font-weight: 500; display: inline-block;vertical-align: middle;">物资报验单</span>
+                                    </div>
+                                    <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 240px; height: 36px;"></div>
+                            </div>
+                            <div class="webix_view webix_spacer" style="border-width: 0px; margin-left: 0px; margin-top: -1px; height: 4px;"></div>
+                            <div class="webix_view webix_form webix_layout_line" role="form" style="border-width: 1px 0px; margin-left: 0px; margin-top: -1px; height: 263px;">
+                                <div class="webix_scroll_cont">
+                                    <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: 0px; height: 30px;">
+                                        <div class="webix_view webix_control webix_el_text" view_id="$text#!id#36" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                                            <div class="webix_el_box" style="width:179px; height:30px">
+                                                <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330235" class="webix_inp_label ">入库单号：</label>
+                                                <input readonly="true" aria-readonly="" id="174011#!id#7330235" type="text" value="#!ldbh#" style="width:95px;text-align:left;border:none;">
+                                            </div>
+                                        </div>
+                                    <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;"></div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#37" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 357px; height: 30px;">
+                                        <div class="webix_el_box" style="width:357px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330237" class="webix_inp_label ">合同号：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330237" type="text" value="#!htbh#" style="width:273px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#38" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 357px; height: 30px;">
+                                        <div class="webix_el_box" style="width:357px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" class="webix_inp_label ">供应商：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330239" type="text" value="#!khbh# | #!khmc#" style="width:273px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#39" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 356px; height: 30px;">
+                                        <div class="webix_el_box" style="width:356px; height:30px"><label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330241" class="webix_inp_label ">项目：</label>
+                                        <input readonly="true" aria-readonly="" id="174011#!id#7330241" type="text" value="#!gcbh# | #!gcmc#" style="width:272px;text-align:left;border:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#40" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 178px; height: 30px;">
+                                        <div class="webix_el_box" style="width:178px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330243" class="webix_inp_label ">报验物资：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330243" type="text" value="#!wzbh#" style="width:94px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#41" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 535px; height: 30px;">
+                                        <div class="webix_el_box" style="width:535px; height:30px">
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330245" type="text" value="#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#" style="width:531px;text-align:left;border:none;"></div>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_layout_line" view_id="$layout84" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#42" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 178px; height: 30px;">
+                                        <div class="webix_el_box" style="width:178px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330247" class="webix_inp_label ">报验类型：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330247" type="text" value="#!bylx#" style="width:94px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#43" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 535px; height: 30px;">
+                                        <div class="webix_el_box" style="width:535px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330249" class="webix_inp_label ">检验要求：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330249" type="text" value="#!byyq#" style="width:451px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_layout_line" view_id="$layout85" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#44" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330251" class="webix_inp_label ">交检数量：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330251" type="text" value="#!rksl#" style="width:95px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#45" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330253" class="webix_inp_label ">合格数量：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330253" type="text" value="#!hgsl#" style="width:95px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#46" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330255" class="webix_inp_label ">计量单位：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330255" type="text" value="#!jldw#" style="width:95px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#47" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                                        <div class="webix_el_box" style="width:178px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330257" class="webix_inp_label ">检验地点：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330257" type="text" value="#!jydd#" style="width:94px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_control webix_el_textarea" view_id="$text#!id#area6" style="border-width: 0px; margin-left: 0px; margin-top: -1px; height: 48px;">
+                                    <div class="webix_el_box" style="width:712px; height:48px">
+                                        <label style="text-align:right; line-height:px; width:80px;" onclick="" for="x174011#!id#7330259" class="webix_inp_label ">检验备注：</label>
+                                        <textarea readonly="true" aria-readonly="" style="width:628px;border:none;" id="x174011#!id#7330259" name="jyry_bz" class="webix_inp_textarea">#!jyry_bz#</textarea>
+                                    </div>
+                                </div>
+                                <div class="webix_view webix_layout_line" view_id="$layout86" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#48" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330261" class="webix_inp_label ">采购员：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330261" type="text" value="#!cgy#" style="width:95px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#49" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330263" type="text" value="#!kdrq#" style="width:175px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#50" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                                        <div class="webix_el_box" style="width:179px; height:30px">
+                                            <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330265" class="webix_inp_label ">部门领导：</label>
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330265" type="text" value="#!bmld#" style="width:95px;text-align:left;border:none;">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_control webix_el_text" view_id="$text#!id#51" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                                        <div class="webix_el_box" style="width:178px; height:30px">
+                                            <input readonly="true" aria-readonly="" id="174011#!id#7330267" type="text" value="#!bmld_shrq#" style="width:174px;text-align:left;border:none;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_layout_line" view_id="$layout87" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                        <div class="webix_view webix_control webix_el_text" view_id="$text#!id#52" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                                            <div class="webix_el_box" style="width:179px; height:30px">
+                                                <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="174011#!id#7330269" class="webix_inp_label ">检验员：</label>
+                                                <input readonly="true" aria-readonly="" id="174011#!id#7330269" type="text" value="#!jyry#" style="width:95px;text-align:left;border:none;">
+                                            </div>
+                                        </div>
+                                        <div class="webix_view webix_control webix_el_text" view_id="$text#!id#53" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                                            <div class="webix_el_box" style="width:178px; height:30px">
+                                                <input readonly="true" aria-readonly="" id="174011#!id#7330271" type="text" value="#!jyrq#" style="width:174px;text-align:left;border:none;">
+                                            </div>
+                                        </div>
+                                        <div class="webix_view webix_spacer" view_id="$spacer75" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 357px; height: 30px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="webix_view webix_spacer" view_id="$spacer76" style="border-width: 0px; margin-left: 0px; margin-top: -1px; height: 2px;"></div>
+                            <div class="webix_view webix_layout_line" view_id="$layout88" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; height: 30px;">
+                                <div class="webix_view webix_layout_line" view_id="$layout89" style="white-space: nowrap; display: inline-block; vertical-align: top; border-left-width: 0px; margin-top: 0px; margin-left: 0px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_label" view_id="$label9" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                                        <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">采购员：</div>
+                                    </div>
+                                    <div class="webix_view" view_id="$template#!id#22" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                                        <div class=" webix_template">
+                                            <img src="/api/sys/docs?method=Signer&user=#!cgy_id#" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_spacer" view_id="$spacer77" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+                                </div>
+                                <div class="webix_view webix_layout_line" view_id="$layout90" style="white-space: nowrap; display: inline-block; vertical-align: top; margin-top: 0px; margin-left: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_label" view_id="$label10" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                                        <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">部门领导：</div>
+                                    </div>
+                                    <div class="webix_view" view_id="$template#!id#23" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                                        <div class=" webix_template">
+                                            <img src="/api/sys/docs?method=Signer&user=#!bmld_id#" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_spacer" view_id="$spacer78" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+                                </div>
+                                <div class="webix_view webix_layout_line" view_id="$layout91" style="white-space: nowrap; display: inline-block; vertical-align: top; border-right-width: 0px; margin-top: 0px; margin-left: -1px; height: 30px;">
+                                    <div class="webix_view webix_control webix_el_label" view_id="$label11" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                                        <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">检验员：</div>
+                                    </div>
+                                    <div class="webix_view" view_id="$template#!id#24" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                                        <div class=" webix_template">
+                                            <img src="/api/sys/docs?method=Signer&user=#!jyry_id#" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'">
+                                        </div>
+                                    </div>
+                                    <div class="webix_view webix_spacer" view_id="$spacer79" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+                                </div>
+                            </div>
+                            <div class="webix_view webix_spacer" view_id="$spacer80" style="border-width: 0px; margin-left: 0px; margin-top: -1px; height: 12px;"></div>
+                        </div>
+`
                     },
                 ]
             },
@@ -437,13 +602,14 @@ function builder() {
                     {
                         id: btnPrint, view: "button", label: "打印报验单", disable: true, autowidth: true, css: "webix_primary", type: "icon", icon: "mdi mdi-18px mdi-cloud-print-outline",
                         click() {
-                            var values = $$(form.id).getValues();
-                            if (!_.isEqual(values["zt"], "5") && !_.isEqual(values["zt"], "9")) {
-                                webix.message({ type: "error", text: "不允许打印未检验的入库单" });
-                                return;
-                            }
+                            // var values = $$(form.id).getValues();
+                            // if (!_.isEqual(values["zt"], "5") && !_.isEqual(values["zt"], "9")) {
+                            //     webix.message({ type: "error", text: "不允许打印未检验的入库单" });
+                            //     return;
+                            // }
 
-                            openPrint(values);
+                            // openPrint(values);
+                            openSelectPrint();
                         }
                     },
                 ]

@@ -30,10 +30,184 @@ function builder() {
                 view: "dataview",
                 id: "mydata",
                 item: {
-                    height: 90
+                    width: 712,
+                    height: 400
                 },
-                template: "<div class='overall'><div class='rank'>#rank#." +
-                    "</div><div class='title'>#title#</div><div class='year'>#year# year</div> </div>",
+                xCount: 1,
+                template: `
+<div class="webix_view webix_layout_line" style="border-left-width: 0px; border-right-width: 0px; border-bottom-width: 0px; margin-left: 12px; margin-top: -1px; width: 712px; height: 356px;">
+    <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: 0px; width: 712px; height: 48px;">
+        <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 238px; height: 48px;"></div>
+        <div class="webix_view webix_control webix_el_label" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 238px; height: 48px; text-align: center;">
+            <span style="font-size: 24px; font-weight: 500; display: inline-block;">物资报验单</span>
+        </div>
+        <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 238px; height: 48px;"></div>
+    </div>
+    <div class="webix_view webix_spacer" style="border-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 4px;"></div>
+    <div class="webix_view webix_form webix_layout_line" role="form" style="border-width: 1px 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 263px;">
+        <div class="webix_scroll_cont">
+            <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: 0px; width: 712px; height: 30px;">
+                <div class="webix_view webix_control webix_el_text" view_id="$text36" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                    <div class="webix_el_box" style="width:179px; height:30px">
+                        <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330235" class="webix_inp_label ">入库单号：</label>
+                        <input readonly="true" aria-readonly="" id="1740117330235" type="text" value="LXR2400080" style="width:95px;text-align:left;">
+                    </div>
+                </div>
+            <div class="webix_view webix_spacer" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;"></div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text37" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 357px; height: 30px;">
+                <div class="webix_el_box" style="width:357px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330237" class="webix_inp_label ">合同号：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330237" type="text" value="333" style="width:273px;text-align:left;">
+                </div>
+            </div>
+        </div>
+        <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+            <div class="webix_view webix_control webix_el_text" view_id="$text38" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 357px; height: 30px;">
+                <div class="webix_el_box" style="width:357px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" class="webix_inp_label ">供应商：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330239" type="text" value="KH00005 | 南京高华科技有限公司" style="width:273px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text39" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 356px; height: 30px;">
+                <div class="webix_el_box" style="width:356px; height:30px"><label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330241" class="webix_inp_label ">项目：</label>
+                <input readonly="true" aria-readonly="" id="1740117330241" type="text" value="1114-701-21K009-009 | 平台 CD 型收放式减摇储应用验证" style="width:272px;text-align:left;"></div>
+            </div>
+        </div>
+        <div class="webix_view webix_layout_line" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+            <div class="webix_view webix_control webix_el_text" view_id="$text40" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 178px; height: 30px;">
+                <div class="webix_el_box" style="width:178px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330243" class="webix_inp_label ">报验物资：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330243" type="text" value="B00066" style="width:94px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text41" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 535px; height: 30px;">
+                <div class="webix_el_box" style="width:535px; height:30px">
+                    <input readonly="true" aria-readonly="" id="1740117330245" type="text" value="垫圈/33      JB982-77//橡胶组合垫" style="width:531px;text-align:left;"></div>
+            </div>
+        </div>
+        <div class="webix_view webix_layout_line" view_id="$layout84" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+            <div class="webix_view webix_control webix_el_text" view_id="$text42" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 178px; height: 30px;">
+                <div class="webix_el_box" style="width:178px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330247" class="webix_inp_label ">报验类型：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330247" type="text" value="标准件" style="width:94px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text43" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 535px; height: 30px;">
+                <div class="webix_el_box" style="width:535px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330249" class="webix_inp_label ">检验要求：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330249" type="text" value="数量、型号" style="width:451px;text-align:left;">
+                </div>
+            </div>
+        </div>
+        <div class="webix_view webix_layout_line" view_id="$layout85" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+            <div class="webix_view webix_control webix_el_text" view_id="$text44" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330251" class="webix_inp_label ">交检数量：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330251" type="text" value="20" style="width:95px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text45" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330253" class="webix_inp_label ">合格数量：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330253" type="text" value="20" style="width:95px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text46" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330255" class="webix_inp_label ">计量单位：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330255" type="text" value="个" style="width:95px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text47" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                <div class="webix_el_box" style="width:178px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330257" class="webix_inp_label ">检验地点：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330257" type="text" value="" style="width:94px;text-align:left;">
+                </div>
+            </div>
+        </div>
+        <div class="webix_view webix_control webix_el_textarea" view_id="$textarea6" style="border-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 48px;">
+            <div class="webix_el_box" style="width:712px; height:48px">
+                <label style="text-align:right; line-height:px; width:80px;" onclick="" for="x1740117330259" class="webix_inp_label ">备注：</label>
+                <textarea readonly="true" aria-readonly="" style="width:628px;" id="x1740117330259" name="bz" class="webix_inp_textarea">合格      </textarea>
+            </div>
+        </div>
+        <div class="webix_view webix_layout_line" view_id="$layout86" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+            <div class="webix_view webix_control webix_el_text" view_id="$text48" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330261" class="webix_inp_label ">采购员：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330261" type="text" value="系统管理员" style="width:95px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text49" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <input readonly="true" aria-readonly="" id="1740117330263" type="text" value="2024-09-18 16:48:45" style="width:175px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text50" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 179px; height: 30px;">
+                <div class="webix_el_box" style="width:179px; height:30px">
+                    <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330265" class="webix_inp_label ">部门领导：</label>
+                    <input readonly="true" aria-readonly="" id="1740117330265" type="text" value="系统管理员" style="width:95px;text-align:left;">
+                </div>
+            </div>
+            <div class="webix_view webix_control webix_el_text" view_id="$text51" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                <div class="webix_el_box" style="width:178px; height:30px">
+                    <input readonly="true" aria-readonly="" id="1740117330267" type="text" value="2024-09-18 16:50:15" style="width:174px;text-align:left;"></div>
+                </div>
+            </div>
+            <div class="webix_view webix_layout_line" view_id="$layout87" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+                <div class="webix_view webix_control webix_el_text" view_id="$text52" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 179px; height: 30px;">
+                    <div class="webix_el_box" style="width:179px; height:30px">
+                        <label style="text-align:right; line-height:24px; width:80px;" onclick="" for="1740117330269" class="webix_inp_label ">检验员：</label>
+                        <input readonly="true" aria-readonly="" id="1740117330269" type="text" value="系统管理员" style="width:95px;text-align:left;">
+                    </div>
+                </div>
+                <div class="webix_view webix_control webix_el_text" view_id="$text53" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 178px; height: 30px;">
+                    <div class="webix_el_box" style="width:178px; height:30px">
+                        <input readonly="true" aria-readonly="" id="1740117330271" type="text" value="2024-09-19 00:19:07" style="width:174px;text-align:left;">
+                    </div>
+                </div>
+                <div class="webix_view webix_spacer" view_id="$spacer75" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 357px; height: 30px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="webix_view webix_spacer" view_id="$spacer76" style="border-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 2px;"></div>
+    <div class="webix_view webix_layout_line" view_id="$layout88" style="white-space: nowrap; border-left-width: 0px; border-right-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 30px;">
+        <div class="webix_view webix_layout_line" view_id="$layout89" style="white-space: nowrap; display: inline-block; vertical-align: top; border-left-width: 0px; margin-top: 0px; margin-left: 0px; width: 238px; height: 30px;">
+            <div class="webix_view webix_control webix_el_label" view_id="$label9" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">采购员：</div>
+            </div>
+            <div class="webix_view" view_id="$template22" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                <div class=" webix_template">
+                    <img src="/assets/signer_none.png" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'">
+                </div>
+            </div>
+            <div class="webix_view webix_spacer" view_id="$spacer77" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+        </div>
+        <div class="webix_view webix_layout_line" view_id="$layout90" style="white-space: nowrap; display: inline-block; vertical-align: top; margin-top: 0px; margin-left: -1px; width: 238px; height: 30px;">
+            <div class="webix_view webix_control webix_el_label" view_id="$label10" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">部门领导：</div>
+            </div>
+            <div class="webix_view" view_id="$template23" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                <div class=" webix_template"><img src="/assets/signer_none.png" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'"></div>
+            </div>
+            <div class="webix_view webix_spacer" view_id="$spacer78" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+        </div>
+        <div class="webix_view webix_layout_line" view_id="$layout91" style="white-space: nowrap; display: inline-block; vertical-align: top; border-right-width: 0px; margin-top: 0px; margin-left: -1px; width: 238px; height: 30px;">
+            <div class="webix_view webix_control webix_el_label" view_id="$label11" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: 0px; width: 120px; height: 30px;">
+                <div class="webix_el_box" style="width: 120px; height: 30px; line-height: 24px; float: right; text-align: right;">检验员：</div>
+            </div>
+            <div class="webix_view" view_id="$template24" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 120px; height: 30px;">
+                <div class=" webix_template">
+                    <img src="/assets/signer_none.png" style="width:100%; height:100%; object-position:left; object-fit:contain" onerror="this.src = '/assets/signer_none.png'">
+                </div>
+            </div>
+            <div class="webix_view webix_spacer" view_id="$spacer79" style="display: inline-block; vertical-align: top; border-width: 0px; margin-top: 0px; margin-left: -1px; width: 0px; height: 30px;"></div>
+        </div>
+    </div>
+    <div class="webix_view webix_spacer" view_id="$spacer80" style="border-width: 0px; margin-left: 0px; margin-top: -1px; width: 712px; height: 12px;"></div>
+</div>
+
+    `,
                 data: big_film_set
             }
         ]
