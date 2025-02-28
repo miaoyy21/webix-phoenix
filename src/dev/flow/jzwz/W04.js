@@ -336,10 +336,10 @@ function builder(options, values) {
             var values = $$(mainForm.id).getValues();
 
             // 转出仓库是否与转入仓库相同
-            if (_.isEqual(values["zc_ckbh"], values["zr_ckbh"])) {
-                webix.message({ type: "error", text: "转出仓库不能与转入仓库相同" });
-                return
-            }
+            // if (_.isEqual(values["zc_ckbh"], values["zr_ckbh"])) {
+            //     webix.message({ type: "error", text: "转出仓库不能与转入仓库相同" });
+            //     return
+            // }
 
             values["rows"] = rows;
 

@@ -33,6 +33,10 @@ _.extend(global, {
 // 全局可以使用工具库和组件库 webix md5
 _.extend(global, { _, webix });
 
+webix.env.printSizes = [
+    { id: "a4", preset: "A4", width: 8.27, height: 11.7 },
+];
+
 // 组件库的相关配置
 webix.env.cdn = "./";
 webix.i18n.setLocale("zh-CN");
