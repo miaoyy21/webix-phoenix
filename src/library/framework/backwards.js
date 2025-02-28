@@ -76,7 +76,7 @@ function backwards(options) {
         minHeight: !isEnd ? 300 : 240,
         headHeight: 40,
         position: "center",
-        head: options["title"],
+        head: _.size(options["title"]) > 36 ? options["title"].substring(0, 36) + "..." : _.size(options["title"]),
         body: {
             paddingX: 12,
             rows: [

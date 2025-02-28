@@ -1,4 +1,3 @@
-var qrCode = require("qrcode");
 
 function builder() {
     var winId = utils.UUID();
@@ -450,7 +449,7 @@ function builder() {
                                 </div>
                                 <div class="webix_view webix_control webix_el_textarea" view_id="$text#!id#area6" style="border-width: 0px; margin-left: 0px; margin-top: -1px; height: 48px;">
                                     <div class="webix_el_box" style="width:712px; height:48px">
-                                        <label style="text-align:right; line-height:px; width:80px;" onclick="" for="x174011#!id#7330259" class="webix_inp_label ">检验备注：</label>
+                                        <label style="text-align:right; line-height:px; width:80px;" onclick="" for="x174011#!id#7330259" class="webix_inp_label ">检验员备注：</label>
                                         <textarea readonly="true" aria-readonly="" style="width:628px;border:none;" id="x174011#!id#7330259" name="jyry_bz" class="webix_inp_textarea">#!jyry_bz#</textarea>
                                     </div>
                                 </div>
