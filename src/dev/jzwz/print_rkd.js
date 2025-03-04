@@ -178,6 +178,7 @@ function builder() {
                                             cols: [
                                                 {},
                                                 { view: "label", gravity: 2, align: "center", template: "<span style='font-size:42px; font-weight:500; margin-top:12px'>产品入帐结算单</span>", height: 72 },
+                                                { width: 80 },
                                                 { gravity: 2 }
                                             ]
                                         },
@@ -185,6 +186,7 @@ function builder() {
                                             cols: [
                                                 { view: "text", name: "ldbh", label: "入库单号：" },
                                                 { view: "text", name: "htbh", label: "合同号：" },
+                                                { width: 80 },
                                                 { gravity: 3 }
                                             ]
                                         },
@@ -194,6 +196,7 @@ function builder() {
                                                 { view: "text", name: "khmc", label: "供应商名称：" },
                                                 { view: "text", name: "gcbh", label: "项目编号：" },
                                                 { view: "text", name: "gcmc", label: "项目名称：" },
+                                                { width: 80 },
                                                 {}
                                             ]
                                         },
@@ -203,6 +206,7 @@ function builder() {
                                                 { view: "text", name: "kdrq", label: "开单日期：" },
                                                 { view: "text", name: "bmld", label: "部门领导" },
                                                 { view: "text", name: "bmld_shrq", label: "审核日期" },
+                                                { width: 80 },
                                                 {}
                                             ]
                                         },
@@ -239,6 +243,7 @@ function builder() {
                                                 { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                                             ],
                                         }),
+                                        { width: 80 },
                                         {}
                                     ]
                                 },
@@ -273,6 +278,7 @@ function builder() {
                                                 {}
                                             ]
                                         },
+                                        { width: 80 },
                                         {}
                                     ]
                                 },

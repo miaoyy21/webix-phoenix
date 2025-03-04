@@ -83,7 +83,7 @@ function open(options) {
                             data: [],
                             columns: [
                                 { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 50 },
-                                { id: "keyword_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", width: 360 },
+                                { id: "keyword_", header: { text: "关键字", css: { "text-align": "center" } }, sort: "text", fillspace: true },
                                 { id: "status_", header: { text: "流程状态", css: { "text-align": "center" } }, options: "/assets/flow_status.json", sort: "text", css: { "text-align": "center" }, width: 80 },
                                 { id: "status_text_", header: { text: "流程状态描述", css: { "text-align": "center" } }, sort: "text", width: 240 },
                                 { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", format: utils.formats["datetime"].format, width: 140, css: { "text-align": "center" } },
