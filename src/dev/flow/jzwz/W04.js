@@ -194,7 +194,7 @@ function builder(options, values) {
             { id: "wzms", header: { text: "物资名称/型号/牌号/代号", css: { "text-align": "center" } }, template: "#!wzmc#/#!ggxh#/#!wzph#/#!bzdh#", width: 240 },
             { id: "jldw", header: { text: "单位", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "src_kwbh", header: { text: "转出库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
-            { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "src_kwmc", header: { text: "转出库位名称", css: { "text-align": "center" } }, fillspace: true },
             { id: "qmsl", header: { text: "转库数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, adjust: true, minWidth: 80 },
             {
                 id: "dst_kwbh", header: { text: "转入库位编号", css: { "text-align": "center" } },
@@ -208,7 +208,7 @@ function builder(options, values) {
                     return (values["dst_kwbh"] || "");
                 }, css: { "text-align": "center" }, width: 120
             },
-            { id: "dst_kwmc", header: { text: "转入库位名称", css: { "text-align": "center" } }, width: 160 },
+            { id: "dst_kwmc", header: { text: "转入库位名称", css: { "text-align": "center" } }, fillspace: true },
             {
                 id: "buttons",
                 width: 80,

@@ -77,20 +77,19 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            if (_.isEqual(valuesText, JSON.stringify(newValues))) {
-                // console.log("数据没有发生变化，直接流转");
+            var self = this;
+            self.disable();
+
+            webix.ajax().post("/api/wf/flows", {
+                "operation": "update",
+                "id": options["flow_id_"],
+                "values_": JSON.stringify(newValues),
+                "keyword_": webix.template(options["keyword_"])(newValues),
+            }).then((res) => {
                 advAccept(options);
-            } else {
-                // console.log("数据已发生变化，先保存后再流转");
-                webix.ajax().post("/api/wf/flows", {
-                    "operation": "update",
-                    "id": options["flow_id_"],
-                    "values_": JSON.stringify(newValues),
-                    "keyword_": webix.template(options["keyword_"])(newValues),
-                }).then((res) => {
-                    advAccept(options);
-                })
-            }
+            }).finally(() => {
+                setTimeout(() => { self.enable() }, 500)
+            })
         }
     };
 
@@ -98,6 +97,10 @@ function show(options) {
     var reject = {
         view: "button", label: "驳回", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-backspace",
         click() {
+            var self = this;
+            self.disable();
+            setTimeout(() => { self.enable() }, 500)
+
             advReject(options);
         }
     }
@@ -114,6 +117,7 @@ function show(options) {
 // 任务处理/查看
 function showUI(view, actions, options) {
     console.log("showUI() Options is", options);
+
 
     // 标题
     var operation = _.isEqual(options["operation"], "execute") ? "执行" : "查看";
@@ -247,7 +251,7 @@ function showUI(view, actions, options) {
         modal: true,
         fullscreen: true,
         animate: { type: "flip", subtype: "horizontal" },
-        head: operation + "  【" + options["diagram_code_"] + "】" + options["diagram_name_"],
+        head: operation + " 【" + options["diagram_code_"] + ": " + options["diagram_name_"] + " * " + options["name_"] + "】",
         position: "center",
         body: {
             view: "tabview",

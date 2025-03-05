@@ -215,8 +215,8 @@ function builder() {
                                 }),
                                 { view: "label", label: "<span style='margin-left:8px'></span>入库单明细" },
                                 {
+                                    view: "flexlayout",
                                     cols: [
-                                        { width: 1 },
                                         utils.protos.datatable({
                                             data: options["rows"],
                                             url: null,
@@ -243,7 +243,7 @@ function builder() {
                                                 { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                                             ],
                                         }),
-                                        { width: 80 },
+                                        { width: 100 },
                                         {}
                                     ]
                                 },

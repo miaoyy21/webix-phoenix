@@ -334,11 +334,8 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            // if (_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
-            //     webix.message({ type: "info", text: "没有修改数据！" });
-            //     return;
-            // }
-
+            var self = this;
+            self.disable();
             webix.ajax().post("/api/wf/flows", {
                 "operation": options["operation"],
                 "id": options["flow_id_"],
@@ -354,6 +351,8 @@ function show(options) {
 
                 webix.message({ type: "success", text: "保存成功" });
                 refresh(options);
+            }).finally(() => {
+                setTimeout(() => { self.enable() }, 500)
             })
         }
     };
@@ -365,8 +364,8 @@ function show(options) {
             var newValues = view.values();
             if (!newValues) return;
 
-            // if (!_.isEqual(JSON.stringify(values), JSON.stringify(newValues))) {
-            console.log("数据已发生变化，先保存后再启动流程");
+            var self = this;
+            self.disable();
             webix.ajax().post("/api/wf/flows", {
                 "operation": options["operation"],
                 "id": options["flow_id_"],
@@ -379,11 +378,9 @@ function show(options) {
                 options["operation"] = "update";
                 options["flow_id_"] = row["id"];
                 advStart(options);
+            }).finally(() => {
+                setTimeout(() => { self.enable() }, 500)
             })
-            // } else {
-            //     console.log("数据没有发生变化，直接启动流程");
-            //     advStart(options);
-            // }
         }
     };
 
