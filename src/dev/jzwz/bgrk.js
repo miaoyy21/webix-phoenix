@@ -206,7 +206,7 @@ function builder() {
         webix.ui({
             id: winPrintId, view: "window",
             close: true, modal: true, move: true, width: 720, height: 420,
-            head: "出库单打印", position: "center",
+            head: "入库单打印", position: "center",
             body: {
                 rows: [
                     { paddingX: 8, cols: [printGrid] },
