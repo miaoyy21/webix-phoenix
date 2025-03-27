@@ -264,7 +264,7 @@ function builder() {
                 {
                     id: "qrcode", header: { text: "二维码", css: { "text-align": "center" } }, width: 64,
                     template(obj, common, value) {
-                        return `<div class="datatable-qrcode" style='vertical-align:middle'> ` + value + ` </div>`;
+                        return `<div class="datatable-qrcode" style='text-align:center;vertical-align:middle'> ` + value + ` </div>`;
                     },
                 },
                 { id: "ldbh", header: { text: "出库单号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
