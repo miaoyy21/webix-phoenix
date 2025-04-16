@@ -17,7 +17,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "tybz", header: { text: "停用", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "1", uncheckValue: "0", tooltip: false, css: { "text-align": "center" }, width: 60 },
             { id: "khbh", header: { text: "供应商编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 90 },
-            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, editor: "text", width: 240 },
+            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, editor: "text", width: 320 },
             { id: "gyssx", header: { text: "供应商属性", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_gyssx"], css: { "text-align": "center" }, width: 100 },
             { id: "cpfw", header: { text: "产品认定范围", css: { "text-align": "center" } }, editor: "text", width: 360 },
             { id: "sf", header: { text: "省份", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },

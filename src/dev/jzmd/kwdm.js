@@ -41,7 +41,7 @@ function builder() {
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, editor: "text", width: 120 },
-            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, editor: "text", minWidth: 240, fillspace: true },
+            { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, editor: "text", minWidth: 180, fillspace: true },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, width: 140 },
             {
                 id: "buttons",

@@ -88,7 +88,7 @@ webix.ui({
     close: true,
     move: true,
     height: 420,
-    width: 520,
+    width: 600,
     headHeight: 38,
     position: "center",
     head: "选择库位",

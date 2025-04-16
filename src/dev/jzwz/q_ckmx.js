@@ -27,7 +27,7 @@ function builder() {
             { id: "sf_gcbh", header: { text: "实发项目编号", css: { "text-align": "center" } }, width: 180 },
             { id: "sf_gcmc", header: { text: "实发项目名称", css: { "text-align": "center" } }, width: 200 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 100 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" } }, width: 120 },
             { id: "qls", header: { text: "请领数量", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right" }, width: 100 },

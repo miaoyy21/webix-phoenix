@@ -87,7 +87,7 @@ webix.ui({
     close: true,
     move: true,
     height: 420,
-    width: 600,
+    width: 640,
     headHeight: 38,
     position: "center",
     head: "选择项目",

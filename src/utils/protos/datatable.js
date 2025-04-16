@@ -99,6 +99,7 @@ function datatable(options) {
         ],
         ready() {
             var self = this;
+            webix.extend(this, webix.ProgressBar);   // 进度条
 
             // ⭐️ 解决数据不在列中，当编辑后未改变内容时，请求服务端的问题
             this.attachEvent("onBeforeEditStart", function (cell) {

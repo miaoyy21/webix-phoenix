@@ -101,7 +101,6 @@ function builder() {
             },
             {
                 cols: [
-                    {},
                     {
                         id: pager_id,
                         view: "pager",
@@ -116,7 +115,8 @@ function builder() {
                         },
                         group: 5,
                         size: 50
-                    }
+                    },
+                    {},
                 ]
             }
         ]

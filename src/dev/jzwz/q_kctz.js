@@ -4,11 +4,11 @@ function builder() {
         editable: false,
         drag: false,
         footer: true,
-        url: "/api/sys/data_service?service=JZWZ_WZYE.query_kctz&pager=true",
+        url: "/api/sys/data_service?service=JZWZ_WZYE.query_kctz",
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, footer: { text: "合  计：", colspan: 3 }, width: 50 },
             { id: "ckbh", header: { text: "仓库编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },
-            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, width: 80 },
+            { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
             { id: "kwbh", header: { text: "库位编号", css: { "text-align": "center" }, rowspan: 2 }, width: 100 },
             { id: "kwmc", header: { text: "库位名称", css: { "text-align": "center" }, rowspan: 2 }, width: 120 },
             { id: "wzbh", header: { text: "物资编号", css: { "text-align": "center" }, rowspan: 2 }, css: { "text-align": "center" }, width: 80 },

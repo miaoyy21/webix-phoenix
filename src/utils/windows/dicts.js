@@ -38,7 +38,7 @@ webix.ui({
     modal: true,
     close: true,
     move: true,
-    height: 360,
+    height: 420,
     width: 560,
     headHeight: 40,
     position: "center",
