@@ -112,7 +112,7 @@ function builder() {
                                 cols: [
                                     { template: "待办事项", borderless: true, type: "header" },
                                     {
-                                        view: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                        view: "icon", icon: "mdi mdi-18px mdi-refresh", tooltip: "刷新",
                                         click() {
                                             $$(HOME_PAGE_ID + "_unitlist").clearAll();
                                             $$(HOME_PAGE_ID + "_unitlist").load("/api/wf/flows?method=Tasks&status=Executing");
@@ -120,7 +120,7 @@ function builder() {
                                     },
                                     { width: 4 },
                                     {
-                                        view: "icon", icon: "mdi mdi-18px mdi-format-list-bulleted",
+                                        view: "icon", icon: "mdi mdi-18px mdi-format-list-bulleted", tooltip: "更多",
                                         click() {
                                             if (!$$(EXECUTING_PAGE_ID)) {
                                                 $$(VIEWS_ID).addView(_.extend(
@@ -198,14 +198,14 @@ function builder() {
                                 view: "toolbar", cols: [
                                     { template: "常用功能", borderless: true, type: "header" },
                                     {
-                                        view: "icon", icon: "mdi mdi-18px mdi-refresh",
+                                        view: "icon", icon: "mdi mdi-18px mdi-refresh", tooltip: "刷新",
                                         click() {
                                             $$(HOME_PAGE_ID + "_dataview").clearAll();
                                             $$(HOME_PAGE_ID + "_dataview").load(menusUrl);
                                         }
                                     },
                                     { width: 4 },
-                                    { view: "icon", icon: "mdi mdi-18px mdi-cogs", click: openMenus },
+                                    { view: "icon", icon: "mdi mdi-18px mdi-cogs", tooltip: "配置", click: openMenus },
                                 ],
                             },
                             {

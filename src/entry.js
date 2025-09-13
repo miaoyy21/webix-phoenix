@@ -278,8 +278,7 @@ function buildMainPage() {
                                     },
                                     { view: "template", borderless: true, css: { "text-align": "center", "background": "#F8F9F9" }, template: "【登录】" + utils.users.getUserName() },
                                 ]
-                            },
-                            { height: 4 }
+                            }
                         ]
                     }
                 ]
