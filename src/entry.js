@@ -175,12 +175,14 @@ function buildMainPage() {
         rows: [
             {
                 view: "toolbar",
-                css: { "background": "#1D2A3D" }, elements: [
+                css: { "background": "#1D2A3D" },
+                elements: [
                     { view: "icon", icon: "mdi mdi-menu", click: () => { $$(MENU_TREE_ID).toggle() } },
                     { view: "label", label: "<span style='color:#eee'>" + PHOENIX_SETTING["name"] + "</span>" },
                     {},
                     {
-                        id: MAIN_PAGE_TASKS_ID, view: "icon", icon: "mdi mdi-message", tooltip: "任务中心",
+                        id: MAIN_PAGE_TASKS_ID,
+                        view: "icon", icon: "mdi mdi-chat", tooltip: "任务中心",
                         click() {
                             onMenuSelect({
                                 "id": EXECUTING_PAGE_ID,
@@ -190,7 +192,7 @@ function buildMainPage() {
                         }
                     },
                     {
-                        view: "icon", icon: "wxi-user", tooltip: "个人设置",
+                        view: "icon", icon: "mdi mdi-account-settings", tooltip: "个人设置",
                         popup: {
                             view: 'contextmenu',
                             data: [
@@ -225,6 +227,7 @@ function buildMainPage() {
                             }
                         }
                     },
+                    { width: 4 }
                 ]
             },
             {
@@ -273,9 +276,10 @@ function buildMainPage() {
                                         css: { "text-align": "center", "background": "#F8F9F9" },
                                         template: PHOENIX_SETTING["copyright"] + "<span style='padding-left:24px'>版本号: " + PHOENIX_SETTING["version"] + "</span>"
                                     },
-                                    { view: "template", borderless: true, css: { "text-align": "center", "background": "#F8F9F9" }, template: "【登录用户】" + utils.users.getUserName() },
+                                    { view: "template", borderless: true, css: { "text-align": "center", "background": "#F8F9F9" }, template: "【登录】" + utils.users.getUserName() },
                                 ]
-                            }
+                            },
+                            { height: 4 }
                         ]
                     }
                 ]
