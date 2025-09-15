@@ -17,6 +17,11 @@ dev.dev_jzwz_q_kctz_quick = require("./jzwz/q_kctz_quick.js");
 dev.dev_jzwz_q_rkmx = require("./jzwz/q_rkmx.js");
 dev.dev_jzwz_q_ckmx = require("./jzwz/q_ckmx.js");
 
+dev.stock_fund = require("./stock/fund.js")
+dev.stock_settlement = require("./stock/settlement.js")
+dev.stock_settlement_npv = require("./stock/settlement_npv.js")
+dev.stock_settlement_holdings = require("./stock/settlement_holdings.js")
+
 dev.dev_demo = require("./demo.js")
 
 export { dev }
