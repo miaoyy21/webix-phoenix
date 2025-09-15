@@ -37,8 +37,15 @@ function builder() {
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "code", header: { text: "基金代码", css: { "text-align": "center" } }, editor: "text", width: 120 },
-            { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, editor: "text", minWidth: 180, fillspace: true },
+            {
+                id: "code", header: { text: "基金代码", css: { "text-align": "center" } },
+                template(values) {
+                    return ` <div class="webix_el_box"> ` + (values["code"] || "") + `
+                                <span class="button_code webix_input_icon wxi-search" style="height:22px;"/>
+                            </div>`;
+                }, css: { "text-align": "center" }, width: 160
+            },
+            { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
             {
                 id: "npv", header: { text: "净值", css: { "text-align": "center" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 4),
@@ -70,6 +77,22 @@ function builder() {
             "npv": webix.rules.isNumber,
             "holdings": webix.rules.isNumber,
         },
+        onClick: {
+            button_code: function (e, item) {
+                var data = $$(detailGrid.id).getItem(item.row);
+                if (!data) return;
+
+                // 选择用户
+                utils.windows.fund({
+                    multiple: false,
+                    checked: [],
+                    callback(checked) {
+                        $$(detailGrid.id).updateItem(item.row, _.extend(data, _.pick(checked, "code", "name")));
+                        return true;
+                    }
+                })
+            },
+        }
     });
 
     return {

@@ -1,73 +1,128 @@
-function builder() {
-    var pager = utils.protos.pager();
+var qrCode = require("qrcode");
 
-    var datatable = utils.protos.datatable({
+function builder() {
+
+    var mainGrid = utils.protos.datatable({
+        multiselect: false,
+        editable: false,
+        url: "/api/sys/data_service?service=ST_SETTLEMENT.query",
+        columns: [
+            { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
+            { id: "settlement_at", header: { text: "结算日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
+            { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, adjust: true, minWidth: 160 },
+        ],
+        on: {
+            onAfterSelect(selection, preserve) {
+                var url = "/api/sys/data_service?service=ST_SETTLEMENT_HOLDINGS.query&settlement_id=" + selection.id + "&pager=true";
+
+                $$(detailGrid.id).showOverlay("数据加载中...");
+                $$(detailGrid.id).define("url", url);
+                $$(detailGrid.id).refresh();
+            }
+        }
+    });
+
+
+    var detailPager = utils.protos.pager();
+    var detailGrid = utils.protos.datatable({
         multiselect: false,
         editable: true,
-        leftSplit: 4,
+        leftSplit: 0,
         rightSplit: 1,
-        url: "/api/sys/data_service?service=JZMD_KHDM.query&pager=true",
+        url: "/api/sys/data_service?service=ST_SETTLEMENT_HOLDINGS.query&pager=true",
         save: {
-            url: "/api/sys/data_service?service=JZMD_KHDM.save",
+            url: "/api/sys/data_service?service=ST_SETTLEMENT_HOLDINGS.save",
             updateFromResponse: true,
             trackMove: true,
             operationName: "operation",
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "tybz", header: { text: "停用", css: { "text-align": "center" } }, template: "{common.checkbox()}", checkValue: "1", uncheckValue: "0", tooltip: false, css: { "text-align": "center" }, width: 60 },
-            { id: "khbh", header: { text: "供应商编号", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 90 },
-            { id: "khmc", header: { text: "供应商名称", css: { "text-align": "center" } }, editor: "text", width: 320 },
-            { id: "gyssx", header: { text: "供应商属性", css: { "text-align": "center" } }, editor: "combo", options: utils.dicts["md_gyssx"], css: { "text-align": "center" }, width: 100 },
-            { id: "cpfw", header: { text: "产品认定范围", css: { "text-align": "center" } }, editor: "text", width: 360 },
-            { id: "sf", header: { text: "省份", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
-            { id: "cs", header: { text: "城市", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
-            { id: "dwdz", header: { text: "单位地址", css: { "text-align": "center" } }, editor: "text", width: 200 },
-            { id: "nsh", header: { text: "纳税号", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 160 },
-            { id: "khyh", header: { text: "开户银行", css: { "text-align": "center" } }, editor: "text", width: 240 },
-            { id: "yhzh", header: { text: "银行账号", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 160 },
-            { id: "frdb", header: { text: "法人代表", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
-            { id: "lxr", header: { text: "联系人", css: { "text-align": "center" } }, css: { "text-align": "center" }, editor: "text", width: 80 },
-            { id: "lxdh", header: { text: "联系电话", css: { "text-align": "center" } }, editor: "text", width: 100 },
-            { id: "tyry", header: { text: "禁用人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "tyrq", header: { text: "禁用日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 140 },
-            { id: "tyyy", header: { text: "禁用原因", css: { "text-align": "center" } }, editor: "text", width: 360 },
-            { id: "bz", header: { text: "备注", css: { "text-align": "center" } }, editor: "text", width: 360 },
-            { id: "create_user_name_", header: { text: "创建人员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
-            { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, format: utils.formats.date.format, css: { "text-align": "center" }, width: 140 },
+            { id: "rank", header: { text: "名次", css: { "text-align": "center" } }, editor: "text", width: 80 },
+            {
+                id: "code", header: { text: "基金代码", css: { "text-align": "center" } },
+                template(values) {
+                    return ` <div class="webix_el_box"> ` + (values["code"] || "") + `
+                                <span class="button_code webix_input_icon wxi-search" style="height:22px;"/>
+                            </div>`;
+                }, css: { "text-align": "center" }, width: 160
+            },
+            { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
+            {
+                id: "holdings", header: { text: "持仓金额（万元）", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right" }, adjust: true, minWidth: 100
+            },
+            { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, adjust: true, minWidth: 160 },
             {
                 id: "buttons",
                 width: 80,
                 header: { text: "操作按钮", css: { "text-align": "center" } },
                 tooltip: false,
                 template: ` <div class="webix_el_box" style="padding:0px; text-align:center"> 
-                                 <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
+                                <button webix_tooltip="删除" type="button" class="button_remove webix_icon_button" style="height:30px;width:30px;"> <span class="phoenix_danger_icon mdi mdi-18px mdi-trash-can"/> </button>
                             </div>`,
             }
         ],
         rules: {
-            "khmc": webix.rules.isNotEmpty,
+            "code": webix.rules.isNotEmpty,
+            "name": webix.rules.isNotEmpty,
+            "holdings": webix.rules.isNumber,
         },
-        styles: {
-            cellTextColor: function (row, col) { return row["tybz"] == "1" ? "red" : "none" }
+        onClick: {
+            button_code: function (e, item) {
+                var data = $$(detailGrid.id).getItem(item.row);
+                if (!data) return;
+
+                // 选择用户
+                utils.windows.fund({
+                    multiple: false,
+                    checked: [],
+                    callback(checked) {
+                        $$(detailGrid.id).updateItem(item.row, _.extend(data, _.pick(checked, "code", "name")));
+                        return true;
+                    }
+                })
+            },
         },
-        pager: pager.id
+        pager: detailPager.id
     });
 
     return {
-        rows: [
+        cols: [
             {
-                view: "toolbar",
-                cols: [
-                    datatable.actions.add({ callback: () => ({ "gyssx": "合格供方", "tybz": "0" }) }),
-                    datatable.actions.refresh(),
-                    {},
-                    datatable.actions.search({ fields: "khbh,khmc,gyssx,cpfw,sf,cs,dwdz,nsh,khyh,yhzh,lxr" }),
-                ]
+                view: "scrollview",
+                width: 320,
+                body: {
+                    rows: [
+                        { view: "label", label: "<span style='margin-left:8px'></span>结算日期", height: 38 },
+                        mainGrid
+                    ]
+                },
             },
-            datatable,
-            pager
-        ],
+            { view: "resizer" },
+            {
+                view: "scrollview",
+                gravity: 1,
+                body: {
+                    rows: [
+                        {
+                            view: "toolbar",
+                            cols: [
+                                detailGrid.actions.add({
+                                    callback: () => ({ "settlement_id": $$(mainGrid.id).getSelectedId(false, true) })
+                                }),
+                                detailGrid.actions.refresh(),
+                            ]
+                        },
+                        detailGrid,
+                        detailPager
+                    ]
+                }
+            }
+        ]
     };
 }
 

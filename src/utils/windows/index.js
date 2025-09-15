@@ -12,6 +12,8 @@ import { kwdm } from "./kwdm";
 import { khdm } from "./khdm";
 import { wzdm } from "./wzdm";
 
+import { fund } from "./fund";
+
 var windows = {};
 
 windows.organization = organization;
@@ -27,5 +29,7 @@ windows.ckdm = ckdm;
 windows.kwdm = kwdm;
 windows.khdm = khdm;
 windows.wzdm = wzdm;
+
+windows.fund = fund;
 
 export { windows }

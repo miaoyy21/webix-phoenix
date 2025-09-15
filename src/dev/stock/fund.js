@@ -16,7 +16,7 @@ function builder() {
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
             { id: "code", header: { text: "基金代码", css: { "text-align": "center" } }, editor: "text", sort: "text", css: { "text-align": "center" }, width: 100 },
             { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
-            { id: "settlement_at", header: { text: "结算日期", css: { "text-align": "center" } }, format: utils.formats.date.format, sort: "date", css: { "text-align": "center" }, width: 140 },
+            { id: "settlement_at", header: { text: "结算日期", css: { "text-align": "center" } }, format: utils.formats.date.format, sort: "date", css: { "text-align": "center" }, width: 120 },
             { id: "npv", header: { text: "净值", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 4), sort: "int", css: { "text-align": "right" }, minWidth: 80 },
             { id: "holdings", header: { text: "持仓金额（元）", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), sort: "int", css: { "text-align": "right" }, minWidth: 120 },
             { id: "holdings_percentage", header: { text: "持仓占比（%）", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), sort: "int", css: { "text-align": "right" }, minWidth: 120 },
