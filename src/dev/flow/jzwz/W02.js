@@ -56,6 +56,42 @@ function builder(options, values) {
         loadWzye((wzye) => {
             var winId = utils.UUID();
 
+            function onOK() {
+                var wzrkdId = $$(dlgGrid.id).getSelectedId(false, true);
+
+                // 加载物资入库单明细
+                webix.ajax()
+                    .get("/api/sys/data_service?service=JZWZ_WZRKDWJMX.query", { "wzrkd_id": wzrkdId, "zt": "9", "ly": "NONE" })
+                    .then((res) => {
+                        var rows = res.json()["data"];
+                        if (_.size(rows) < 1) return;
+
+                        $$(winId).hide();
+                        var newData = _.map(rows, (row) => {
+                            var findWzye = _.findWhere(wzye, { "wzbh": row["wzbh"] });
+                            if (!findWzye) {
+                                return _.extend(row, {
+                                    "checked": "0",
+                                    "max_qls": 0,
+                                    "qls": 0
+                                });
+                            }
+
+                            var sssl = utils.formats.number.editParse(row["sssl"], 2) || 0;
+                            var qmsl = utils.formats.number.editParse(findWzye["qmsl"], 2) || 0;
+
+                            var qls = _.min([sssl, qmsl]);
+                            return _.extend(row, {
+                                "checked": qls > 0 ? "1" : "0",
+                                "max_qls": utils.formats.number.format(qls, 2),
+                                "qls": qls
+                            });
+                        })
+
+                        showWindow({ "from": "wzrkd", "data": newData });
+                    })
+            }
+
             var dlgPager = utils.protos.pager();
             var dlgGrid = utils.protos.datatable({
                 drag: false,
@@ -70,6 +106,7 @@ function builder(options, values) {
                     { id: "bmld", header: { text: "部门领导", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                     { id: "bmld_shrq", header: { text: "审核日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 80 },
                 ],
+                on: { onItemDblClick: onOK },
                 pager: dlgPager.id,
             });
 
@@ -91,44 +128,7 @@ function builder(options, values) {
                             cols: [
                                 { width: 8 },
                                 {},
-                                {
-                                    view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
-                                    click() {
-                                        var wzrkdId = $$(dlgGrid.id).getSelectedId(false, true);
-
-                                        // 加载物资入库单明细
-                                        webix.ajax()
-                                            .get("/api/sys/data_service?service=JZWZ_WZRKDWJMX.query", { "wzrkd_id": wzrkdId, "zt": "9", "ly": "NONE" })
-                                            .then((res) => {
-                                                var rows = res.json()["data"];
-                                                if (_.size(rows) < 1) return;
-
-                                                $$(winId).hide();
-                                                var newData = _.map(rows, (row) => {
-                                                    var findWzye = _.findWhere(wzye, { "wzbh": row["wzbh"] });
-                                                    if (!findWzye) {
-                                                        return _.extend(row, {
-                                                            "checked": "0",
-                                                            "max_qls": 0,
-                                                            "qls": 0
-                                                        });
-                                                    }
-
-                                                    var sssl = utils.formats.number.editParse(row["sssl"], 2) || 0;
-                                                    var qmsl = utils.formats.number.editParse(findWzye["qmsl"], 2) || 0;
-
-                                                    var qls = _.min([sssl, qmsl]);
-                                                    return _.extend(row, {
-                                                        "checked": qls > 0 ? "1" : "0",
-                                                        "max_qls": utils.formats.number.format(qls, 2),
-                                                        "qls": qls
-                                                    });
-                                                })
-
-                                                showWindow({ "from": "wzrkd", "data": newData });
-                                            })
-                                    },
-                                },
+                                { view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary", click: onOK },
                                 { width: 8 }
                             ]
                         },

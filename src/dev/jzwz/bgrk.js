@@ -251,6 +251,14 @@ function builder() {
     function open() {
         var dlgPager = utils.protos.pager();
 
+        function onOK() {
+            var values = $$(dlgGrid.id).getSelectedItem();
+            if (_.isEmpty(values)) return;
+
+            onLoad(values);
+            $$(winId).hide();
+        }
+
         var dlgGrid = utils.protos.datatable({
             editable: false,
             drag: false,
@@ -279,6 +287,7 @@ function builder() {
                 { id: "ckmc", header: { text: "仓库名称", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
                 { id: "bgy", header: { text: "保管员", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 80 },
             ],
+            on: { onItemDblClick: onOK },
             pager: dlgPager.id,
         });
 
@@ -307,16 +316,7 @@ function builder() {
                         cols: [
                             { width: 8 },
                             {},
-                            {
-                                view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary",
-                                click() {
-                                    var values = $$(dlgGrid.id).getSelectedItem();
-                                    if (_.isEmpty(values)) return;
-
-                                    onLoad(values);
-                                    $$(winId).hide();
-                                },
-                            },
+                            { view: "button", label: "确定", minWidth: 88, autowidth: true, css: "webix_primary", click: onOK },
                             { width: 8 }
                         ]
                     },

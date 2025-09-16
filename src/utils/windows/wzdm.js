@@ -149,6 +149,11 @@ webix.ui({
                                     return;
                                 }
                             },
+                            onItemDblClick() {
+                                if (!instance.options.multiple && $$(instance.grid_id).select) {
+                                    instance.ok();
+                                }
+                            },
                             onCheck(id, col, value) {
                                 var row = this.getItem(id);
                                 if (!row) return;

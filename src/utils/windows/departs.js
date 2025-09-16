@@ -126,7 +126,7 @@ webix.ui({
                                 } else {
                                     overlayBox.hideOverlay();
                                 }
-                            }
+                            },
                         }
                     },
                     { height: 8, css: { "border-top": "none" } },
