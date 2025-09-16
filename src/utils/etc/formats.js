@@ -167,13 +167,13 @@ formats.method = function (value) {
     var background;
 
     if (value === "GET") {
-        background = "#FFFFFF";
+        background = "#80C880";
     } else if (value === "PUT") {
-        background = "#F0FFF0";
+        background = "#C88080";
     } else if (value === "POST") {
-        background = "#F0F0FF";
+        background = "#8080C8";
     } else {
-        background = "#FFF0F0";
+        background = "#888888";
     }
 
     return { "background": background };
