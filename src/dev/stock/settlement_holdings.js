@@ -38,7 +38,7 @@ function builder() {
         },
         columns: [
             { id: "index", header: { text: "№", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 60 },
-            { id: "rank", header: { text: "名次", css: { "text-align": "center" } }, editor: "text", width: 80 },
+            { id: "rank", header: { text: "名次", css: { "text-align": "center" } }, editor: "text", width: 160 },
             {
                 id: "code", header: { text: "基金代码", css: { "text-align": "center" } },
                 template(values) {
@@ -47,7 +47,7 @@ function builder() {
                             </div>`;
                 }, css: { "text-align": "center" }, width: 160
             },
-            { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
+            { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 160, fillspace: true },
             {
                 id: "holdings", header: { text: "持仓金额（万元）", css: { "text-align": "center" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 2),

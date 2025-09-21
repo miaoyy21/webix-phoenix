@@ -21,6 +21,7 @@ dev.stock_fund = require("./stock/fund.js")
 dev.stock_settlement = require("./stock/settlement.js")
 dev.stock_settlement_npv = require("./stock/settlement_npv.js")
 dev.stock_settlement_holdings = require("./stock/settlement_holdings.js")
+dev.stock_settlement_calculate = require("./stock/settlement_calculate.js")
 
 dev.dev_demo = require("./demo.js")
 
