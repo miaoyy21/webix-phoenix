@@ -120,6 +120,8 @@ function builder() {
                                     callback: () => ({ "settlement_id": $$(mainGrid.id).getSelectedId(false, true) })
                                 }),
                                 detailGrid.actions.refresh(),
+                                {},
+                                detailGrid.actions.search({ fields: "rank,code,name" }),
                             ]
                         },
                         detailGrid,
