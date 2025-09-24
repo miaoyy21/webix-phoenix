@@ -142,8 +142,14 @@ webix.ready(function () {
 
                 _.extend(global, { PHOENIX_USER_MENUS_DATA }); // 记录用户菜单数据，这边为平面的数据
 
-                $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
+                var tasksCount = data["tasks_count"];
+                var tasksMaxActivated = data["tasks_max_activated"];
+
+                $$(MAIN_PAGE_TASKS_ID).data.badge = tasksCount > 0 ? tasksCount : null;
                 $$(MAIN_PAGE_TASKS_ID).refresh();
+
+                global.TASKS_MAX_ACTIVATED = tasksMaxActivated;
+                global.TASKS_COUNT = tasksCount;
 
                 webix.extend(view, webix.ProgressBar).hideProgress();
             })
