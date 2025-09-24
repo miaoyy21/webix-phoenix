@@ -47,13 +47,6 @@ function builder() {
             },
             { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
             {
-                id: "npv", header: { text: "净值", css: { "text-align": "center" } }, editor: "text",
-                format: (value) => utils.formats.number.format(value, 4),
-                editParse: (value) => utils.formats.number.editParse(value, 4),
-                editFormat: (value) => utils.formats.number.editFormat(value, 4),
-                css: { "text-align": "right" }, adjust: true, minWidth: 100
-            },
-            {
                 id: "holdings", header: { text: "持仓金额（元）", css: { "text-align": "center" } }, editor: "text",
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
@@ -74,7 +67,6 @@ function builder() {
         rules: {
             "code": webix.rules.isNotEmpty,
             "name": webix.rules.isNotEmpty,
-            "npv": webix.rules.isNumber,
             "holdings": webix.rules.isNumber,
         },
         onClick: {

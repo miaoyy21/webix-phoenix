@@ -34,19 +34,29 @@ function builder() {
             { id: "code", header: { text: "基金代码", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
             { id: "name", header: { text: "基金名称", css: { "text-align": "center" } }, minWidth: 180, fillspace: true },
             {
-                id: "holdings", header: { text: "持仓金额（万元）", css: { "text-align": "center" } },
+                id: "sum_holdings", header: { text: "累计持仓(万元)", css: { "text-align": "center" } },
                 format: (value) => utils.formats.number.format(value, 2),
                 editParse: (value) => utils.formats.number.editParse(value, 2),
                 editFormat: (value) => utils.formats.number.editFormat(value, 2),
-                css: { "text-align": "right" }, adjust: true, minWidth: 160
+                css: { "text-align": "right" }, width: 120
             },
             {
                 id: "percentage", header: { text: "持仓占比（%）", css: { "text-align": "center" } },
                 template: "#!percentage#%",
-                css: { "text-align": "right" }, adjust: true, minWidth: 160
+                css: { "text-align": "right" }, width: 120
             },
-            { id: "money", header: { text: "购买金额（元）", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#d5f5e3" }, adjust: true, minWidth: 160 },
-            { id: "convert", header: { text: "转换份额", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 2), css: { "text-align": "right", "background": "#f5d5e3" }, adjust: true, minWidth: 160 },
+            { id: "pre_holdings", header: { text: "当前持仓(元)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#F0FFFF" }, width: 120 },
+            { id: "holdings", header: { text: "下次持仓(元)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#FFF5EE" }, width: 120 },
+            {
+                id: "difference", header: { text: "持仓操作", css: { "text-align": "center" } },
+                template(values) {
+                    if (values["operation"].indexOf("购买") > 0) {
+                        return "<span style='color:red;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-weight:bold;'>" + values["difference"] + "</span>";
+                    }
+
+                    return "<span style='color:green;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-weight:bold;'>" + values["difference"] + "</span>";
+                }, width: 180
+            },
         ],
     });
 
@@ -73,7 +83,6 @@ function builder() {
                             cols: [
                                 detailGrid.actions.refresh(),
                                 {},
-                                detailGrid.actions.search({ fields: "rank,code,name" }),
                             ]
                         },
                         detailGrid,
