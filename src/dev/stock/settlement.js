@@ -21,6 +21,13 @@ function builder() {
                 editFormat: utils.formats.date.editFormat,
                 css: { "text-align": "center" }, width: 120
             },
+            {
+                id: "preset_holdings", header: { text: "预设持仓（元）", css: { "text-align": "center" } }, editor: "text",
+                format: (value) => utils.formats.number.format(value, 2),
+                editParse: (value) => utils.formats.number.editParse(value, 2),
+                editFormat: (value) => utils.formats.number.editFormat(value, 2),
+                css: { "text-align": "right" }, width: 120
+            },
             { id: "description", header: { text: "描述", css: { "text-align": "center" } }, editor: "text", sort: "text", fillspace: true },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, adjust: true, minWidth: 160 },
             {
@@ -35,6 +42,7 @@ function builder() {
         ],
         rules: {
             "settlement_at": webix.rules.isNotEmpty,
+            "preset_holdings": webix.rules.isNotEmpty,
         },
         styles: {
             cellTextColor: function (row, col) { return row["tybz"] == "1" ? "red" : "none" }

@@ -46,15 +46,15 @@ function builder() {
                 css: { "text-align": "right" }, width: 120
             },
             { id: "pre_holdings", header: { text: "当前持仓(元)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#F0FFFF" }, width: 120 },
-            { id: "holdings", header: { text: "下次持仓(元)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#FFF5EE" }, width: 120 },
+            { id: "holdings", header: { text: "最新持仓(元)", css: { "text-align": "center" } }, format: (value) => utils.formats.number.format(value, 0), css: { "text-align": "right", "background": "#FFF5EE" }, width: 120 },
             {
                 id: "difference", header: { text: "持仓操作", css: { "text-align": "center" } },
                 template(values) {
                     if (values["operation"].indexOf("购买") > 0) {
-                        return "<span style='color:red;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-weight:bold;'>" + values["difference"] + "</span>";
+                        return "<span style='color:red;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-size:16px;font-style:italic;color:#9932CC;font-weight:bold;'>" + values["difference"] + "</span>";
                     }
 
-                    return "<span style='color:green;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-weight:bold;'>" + values["difference"] + "</span>";
+                    return "<span style='color:green;font-weight:bold;'>" + values["operation"] + "</span>" + "<span style='font-size:16px;font-style:italic;color:#0000CD;font-weight:bold;'>" + values["difference"] + "</span>";
                 }, width: 180
             },
         ],

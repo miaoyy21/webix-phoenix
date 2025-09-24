@@ -2,6 +2,14 @@ var qrCode = require("qrcode");
 
 function builder() {
 
+    function onLoad(selection) {
+        var url = "/api/sys/data_service?service=ST_SETTLEMENT_NPV.query&settlement_id=" + selection.id;
+
+        $$(detailGrid.id).showOverlay("数据加载中...");
+        $$(detailGrid.id).define("url", url);
+        $$(detailGrid.id).refresh();
+    }
+
     var mainGrid = utils.protos.datatable({
         multiselect: false,
         editable: false,
@@ -11,15 +19,7 @@ function builder() {
             { id: "settlement_at", header: { text: "结算日期", css: { "text-align": "center" } }, css: { "text-align": "center" }, width: 120 },
             { id: "create_at_", header: { text: "创建日期", css: { "text-align": "center" } }, format: utils.formats.datetime.format, css: { "text-align": "center" }, adjust: true, minWidth: 160 },
         ],
-        on: {
-            onAfterSelect(selection, preserve) {
-                var url = "/api/sys/data_service?service=ST_SETTLEMENT_NPV.query&settlement_id=" + selection.id;
-
-                $$(detailGrid.id).showOverlay("数据加载中...");
-                $$(detailGrid.id).define("url", url);
-                $$(detailGrid.id).refresh();
-            }
-        }
+        on: { onAfterSelect: onLoad }
     });
 
 
