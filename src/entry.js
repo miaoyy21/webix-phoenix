@@ -299,19 +299,24 @@ setInterval(() => {
                 var data = res.json();
 
                 // 待办数量
-                var oldTasks = $$(MAIN_PAGE_TASKS_ID).data.badge || 0;
+                var oldTasksCount = global.TASKS_COUNT || 0;
+                var oldTasksMaxActivated = global.TASKS_MAX_ACTIVATED || "191900-01-01 01:01:01";
 
-                if (!_.isEqual(oldTasks, data["tasks"])) {
-                    $$(MAIN_PAGE_TASKS_ID).data.badge = data["tasks"] > 0 ? data["tasks"] : null;
+                var newTasksCount = data["tasks_count"];
+                var newTasksMaxActivated = data["tasks_max_activated"];
+                if (newTasksMaxActivated > oldTasksMaxActivated) {
+                    webix.message({ type: "info", text: "你收到新的待办事项！" });
+                    global.TASKS_MAX_ACTIVATED = newTasksMaxActivated;
+                }
+
+                if (!_.isEqual(newTasksCount, oldTasksCount)) {
+                    $$(MAIN_PAGE_TASKS_ID).data.badge = newTasksCount > 0 ? newTasksCount : null;
                     $$(MAIN_PAGE_TASKS_ID).refresh();
 
-                    // 刷新首页的待办事项
                     $$(HOME_PAGE_ID + "_unitlist").clearAll();
                     $$(HOME_PAGE_ID + "_unitlist").load($$(HOME_PAGE_ID + "_unitlist").config.url);
 
-                    if (data["tasks"] > oldTasks) {
-                        webix.message({ type: "info", text: "你收到新的待办事项！" })
-                    }
+                    global.TASKS_COUNT = newTasksCount;
                 }
             });
     } catch (e) {
