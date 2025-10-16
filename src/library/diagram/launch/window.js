@@ -406,7 +406,8 @@ function show(options) {
         }
     }
 
-    showUI(view.show(), actions, options);
+    var newActions = view.extras ? view.extras(actions) : actions;
+    showUI(view.show(), newActions, options);
 };
 
 function showUI(view, actions, options) {
@@ -419,7 +420,7 @@ function showUI(view, actions, options) {
     var views = {
         header: "<span class='webix_icon mdi mdi-format-wrap-tight'></span>" + options["diagram_name_"],
         body: _.size(actions) > 0 ?
-            { rows: [{ view: "toolbar", cols: [...actions, {},] }, view] } :
+            { rows: [{ view: "toolbar", cols: [...actions, {}] }, view] } :
             view,
     };
 
