@@ -92,6 +92,7 @@ function show(options) {
             })
         }
     };
+    if (view.buttons && view.buttons.accept) { accept = _.extend(accept, view.buttons.accept) };
 
     // 按钮 驳回
     var reject = {
@@ -104,6 +105,7 @@ function show(options) {
             advReject(options);
         }
     }
+    if (view.buttons && view.buttons.reject) { reject = _.extend(reject, view.buttons.reject) };
 
     // 显示按钮
     var actions = [];

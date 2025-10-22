@@ -383,12 +383,14 @@ function show(options) {
             })
         }
     };
+    if (view.buttons && view.buttons.start) { start = _.extend(start, view.buttons.start) };
 
     // 按钮 撤回
     var revoke = {
         view: "button", label: "撤回", autowidth: true, css: "webix_danger", type: "icon", icon: "mdi mdi-18px mdi-undo-variant",
         click() { advRevoke(options) }
     }
+    if (view.buttons && view.buttons.revoke) { revoke = _.extend(revoke, view.buttons.revoke) };
 
     // 显示按钮
     var actions = [];
@@ -406,7 +408,7 @@ function show(options) {
         }
     }
 
-    var newActions = view.extras ? view.extras(actions) : actions;
+    var newActions = view.buttons && view.buttons.extras ? view.buttons.extras(actions) : actions;
     showUI(view.show(), newActions, options);
 };
 

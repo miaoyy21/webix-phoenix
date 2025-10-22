@@ -15,6 +15,7 @@ function builder() {
             onAfterSelect(selection, preserve) {
                 var url = "/api/sys/data_service?service=ST_SETTLEMENT_HOLDINGS.query&settlement_id=" + selection.id + "&pager=true";
 
+                $$(detailGrid.id).clearAll();
                 $$(detailGrid.id).showOverlay("数据加载中...");
                 $$(detailGrid.id).define("url", url);
                 $$(detailGrid.id).refresh();
