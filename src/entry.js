@@ -66,7 +66,7 @@ webix.ready(function () {
                 $$(LOGIN_PAGE_ID).hide();
 
                 // 设置该参数的意义：避免密码登录时，多显示1条Token登录
-                reloadMenus({ "byPassword": true });
+                reloadMenus();
             })
     }
 
@@ -121,11 +121,22 @@ webix.ready(function () {
     }).hide();
 
     // 自动加载用户菜单
-    function reloadMenus(params) {
+    function reloadMenus() {
         webix.extend($$(MENU_TREE_ID), webix.ProgressBar).showProgress();
-        webix.ajax().get("/api/sys/users?method=LoginByToken&PHOENIX_USING_MENU=[Token登录]", params)
+        webix.ajax().get("/api/sys/users?method=LoginByToken&PHOENIX_USING_MENU=[Token登录]")
             .then((res) => {
                 var data = res.json();
+
+                // var start = new Date(data["user"]["password_at"] || "1900-01-01");
+                // var end = new Date(utils.users.getDateTime())
+                // var days = (end - start) / (1000 * 60 * 60 * 24);
+
+                // // 如果是默认密码或者密码期限超过90天，需要修改密码
+                // console.log(days)
+                // if (days >= 90) {
+                //     $$(MAIN_PAGE_BODY_ID).hide();
+                //     change_password(true);
+                // }
 
                 var PHOENIX_USER_MENUS_DATA = data["menus"];
                 var menus = _.map(
@@ -173,6 +184,26 @@ webix.ready(function () {
     }
 });
 
+function onLogout() {
+    // 移除自动登录
+    webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
+
+    // 显示登录界面
+    $$(LOGIN_PAGE_BACKGROUND).show();
+    $$(LOGIN_PAGE_ID).show();
+
+    $$(LOGIN_PAGE_FORM_ID).clear();
+    $$(LOGIN_PAGE_FORM_ID).setValues({ "auto_login": 1 });
+
+    // 关闭所有的页面，并隐藏主界面
+    var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
+    _.each(menus, (id) => { id != HOME_PAGE_ID && $$(VIEWS_TABBAR_ID).removeOption(id) });
+    $$(MAIN_PAGE_ID).hide();
+
+    webix.storage.cookie.put("PHOENIX_USING_MENU", null);
+
+    $$(MAIN_PAGE_ID).destructor();
+}
 
 // 应用主页面构建
 function buildMainPage() {
@@ -208,26 +239,9 @@ function buildMainPage() {
                             on: {
                                 onMenuItemClick(id) {
                                     if (id === "change_password") {
-                                        change_password();
+                                        change_password(false);
                                     } else if (id === 'logout') {
-                                        // 移除自动登录
-                                        webix.storage.local.remove("PHOENIX_AUTO_LOGIN");
-
-                                        // 显示登录界面
-                                        $$(LOGIN_PAGE_BACKGROUND).show();
-                                        $$(LOGIN_PAGE_ID).show();
-
-                                        $$(LOGIN_PAGE_FORM_ID).clear();
-                                        $$(LOGIN_PAGE_FORM_ID).setValues({ "auto_login": 1 });
-
-                                        // 关闭所有的页面，并隐藏主界面
-                                        var menus = _.pluck($$(VIEWS_TABBAR_ID).data.options, "id")
-                                        _.each(menus, (id) => { id != HOME_PAGE_ID && $$(VIEWS_TABBAR_ID).removeOption(id) });
-                                        $$(MAIN_PAGE_ID).hide();
-
-                                        webix.storage.cookie.put("PHOENIX_USING_MENU", null);
-
-                                        $$(MAIN_PAGE_ID).destructor();
+                                        onLogout();
                                     }
                                 }
                             }
@@ -237,6 +251,7 @@ function buildMainPage() {
                 ]
             },
             {
+                id: MAIN_PAGE_BODY_ID,
                 cols: [
                     {
                         id: MENU_TREE_ID,
@@ -333,12 +348,12 @@ setInterval(() => {
 /*****************************************************************************************************************/
 
 // 修改密码
-function change_password() {
+function change_password(force) {
     webix.ui({
         id: CHANGE_PASSWORD_PAGE_ID,
         view: "window",
         modal: true,
-        close: true,
+        close: false,
         move: true,
         height: 420,
         width: 360,
@@ -354,9 +369,39 @@ function change_password() {
                     gravity: 2,
                     data: {},
                     rows: [
-                        { view: "text", name: "old_password", label: "原密码", labelPosition: "top", type: "password", clear: true, required: true },
-                        { view: "text", name: "new_password1", label: "新密码", labelPosition: "top", type: "password", clear: true, required: true },
-                        { view: "text", name: "new_password2", label: "确认密码", labelPosition: "top", type: "password", clear: true, required: true },
+                        {
+                            view: "text", name: "old_password", label: "原密码", labelPosition: "top", type: "password", placeholder: "请输入原密码...",
+                            invalidMessage: "请输入原密码",
+                            validate(value) {
+                                return webix.rules.isNotEmpty(value);
+                            },
+                            clear: true, required: true
+                        },
+                        {
+                            view: "text", name: "new_password1", label: "新密码", labelPosition: "top", type: "password",
+                            // placeholder: "数字、字母及特殊字符的组合，且至少为8位。",
+                            // invalidMessage: "必须为数字、字母及特殊字符的组合，且长度至少为8位",
+                            // validate(value) {
+                            //     const regexp = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+                            //     return regexp.test(value);
+                            // },
+                            placeholder: "请再次输入新密码...",
+                            invalidMessage: "请输入新的密码",
+                            validate(value) {
+                                return webix.rules.isNotEmpty(value);
+                            },
+                            clear: true, required: true
+                        },
+                        {
+                            view: "text", name: "new_password2", label: "确认密码", labelPosition: "top", type: "password", placeholder: "请再次输入新密码...",
+                            invalidMessage: "必须与新密码相同",
+                            validate(value) {
+                                var values = $$(PHOENIX_CHANGE_PASSWORD_FORM).getValues();
+
+                                return values["new_password1"] == value;
+                            },
+                            clear: true, required: true
+                        },
                     ],
                 },
                 { height: 8, css: { "border-top": "none" } },
@@ -373,12 +418,6 @@ function change_password() {
 
                                 var values = $$(PHOENIX_CHANGE_PASSWORD_FORM).getValues();
 
-                                // 确认密码与新密码
-                                if (values["new_password1"] != values["new_password2"]) {
-                                    webix.message({ type: "error", text: "确认密码与新密码不一致" });
-                                    return
-                                }
-
                                 // 新密码与旧密码
                                 if (values["new_password1"] == values["old_password"]) {
                                     webix.message({ type: "error", text: "新密码不能与旧密码相同" });
@@ -394,16 +433,25 @@ function change_password() {
                                 ).then((data) => {
                                     webix.message({ type: "success", text: "修改密码成功" });
                                     $$(CHANGE_PASSWORD_PAGE_ID).hide();
+                                    $$(MAIN_PAGE_BODY_ID).show();
                                 })
                             }
                         },
-                        {},
+                        { width: 8 },
+                        {
+                            view: "button", width: 80, value: "取消", css: "webix_transparent ",
+                            click() {
+                                $$(CHANGE_PASSWORD_PAGE_ID).hide();
+
+                                if (force) { onLogout(); }
+                            }
+                        },
+                        { width: 8 },
                     ]
                 },
                 { height: 8 }
             ]
         },
-        on: { onHide() { this.close() } }
     }).show();
 }
 

@@ -47,12 +47,6 @@ function builder() {
                         {
                             cols: [
                                 { view: "text", name: "account_id_", label: "登录名", required: true },
-                                { view: "radio", name: "sex_", label: "性别", options: utils.dicts["user_sex"] },
-                            ]
-                        },
-                        {
-                            cols: [
-
                                 {
                                     view: "search", name: "depart_name_", label: "部门名称", readonly: true, required: true, clear: false,
                                     on: {
@@ -71,6 +65,11 @@ function builder() {
                                         }
                                     }
                                 },
+                            ]
+                        },
+                        {
+                            cols: [
+                                { view: "radio", name: "sex_", label: "性别", options: utils.dicts["user_sex"] },
                                 { view: "checkbox", name: "is_depart_leader_", label: "部门领导", checkValue: "Yes", uncheckValue: "No" },
                             ]
                         },
@@ -371,7 +370,8 @@ function builder() {
                                         { id: "birth_", header: { text: "出生日期", css: { "text-align": "center" } }, format: utils.formats["date"].format, css: { "text-align": "center" }, width: 100 },
                                         { id: "description_", header: { text: "备注", css: { "text-align": "center" } }, width: 360 },
                                         { id: "create_at_", header: { text: "创建时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 },
-                                        { id: "login_at_", header: { text: "最近登录时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 }
+                                        { id: "login_at_", header: { text: "最近登录时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 },
+                                        { id: "password_at_", header: { text: "修改密码时间", css: { "text-align": "center" } }, sort: "date", css: { "text-align": "center" }, sort: "date", format: utils.formats["datetime"].format, width: 150 }
                                     ],
                                     ready() {
                                         if (PHOENIX_SETTING["classification_enable"] === "Yes") {
